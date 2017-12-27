@@ -29,17 +29,26 @@ import org.osmdroid.bonuspack.routing.RoadManager
 import org.osmdroid.bonuspack.routing.Road
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.bonuspack.location.OverpassAPIProvider
+import android.support.v4.widget.SearchViewCompat.setSearchableInfo
+import android.support.v4.view.MenuItemCompat.getActionView
+import android.content.Context.SEARCH_SERVICE
+import android.app.SearchManager
+import android.R.menu
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.view.Menu
+import android.view.MenuInflater
+import android.widget.EditText
+import android.widget.SearchView
+
 
 class MainActivity : Activity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val ctx = applicationContext
-        //val mMapView : MapView
-        //val mMapController : MapController
-        //important! set your user agent to prevent getting banned from the osm servers
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
         setContentView(R.layout.activity_map)
-
         val map = findViewById<View>(R.id.mapview) as MapView
         map.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
         map.setMultiTouchControls(true)
@@ -47,6 +56,15 @@ class MainActivity : Activity() {
         map_ctrl.setZoom(18)
         val gPt = GeoPoint(-2.14630, -79.96575)
         map_ctrl.setCenter(gPt)
+
+
+        val intent = getIntent()
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+          val query = intent.getStringExtra(SearchManager.QUERY);
+            print(query)
+            //  doMySearch(query)
+    }
+
         //val overpassProvider = OverpassAPIProvider()
         //overpassProvider.getPOIsFromUrl(overpassProvider.urlForPOISearch("restaurante", map.boundingBox, 200, 30))
 /*
@@ -55,7 +73,9 @@ class MainActivity : Activity() {
         startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
         map.overlays.add(startMarker)
 */
+
     }
+
 
     public override fun onResume() {
         super.onResume()
