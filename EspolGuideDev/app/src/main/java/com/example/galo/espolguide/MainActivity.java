@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.TypedValue;
 import android.view.View;
 import org.osmdroid.bonuspack.location.GeocoderNominatim;
 import org.osmdroid.config.Configuration;
@@ -29,7 +30,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import org.osmdroid.api.IMapController;
 
@@ -40,21 +43,56 @@ import org.osmdroid.api.IMapController;
  */
 
 public class MainActivity extends Activity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        double ESPOL_CENTRAL_LONG = -79.96575;
+        double ESPOL_CENTRAL_LAT = -2.14630;
+        int START_ZOOM = 18;
+        int ZOOM_MAX = 20;
+        int SEARCH_POI_FONTSIZE = 15;
+
         super.onCreate(savedInstanceState);
         Context ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         setContentView(R.layout.activity_map);
         MapView map = (MapView) findViewById(R.id.mapview);
+
+        map.setClickable(true);
         map.setTileSource(TileSourceFactory.MAPNIK);
         map.setMultiTouchControls(true);
-        IMapController mapController = map.getController();
-        mapController.setZoom(18);
-        GeoPoint startPoint = new GeoPoint(-2.14630, -79.96575);
-        mapController.setCenter(startPoint);
+        IMapController map_controller = map.getController();
+        map_controller.setZoom(START_ZOOM);
+        GeoPoint espol_central_point = new GeoPoint(ESPOL_CENTRAL_LAT, ESPOL_CENTRAL_LONG);
+        map_controller.setCenter(espol_central_point);
+        SearchView search_poi_sv = (SearchView) findViewById(R.id.POI_search_view);
+        setSearchviewTextSize(search_poi_sv, SEARCH_POI_FONTSIZE);
+
+        map.setMaxZoomLevel(ZOOM_MAX);
+
+
     }
+
+    private void setSearchviewTextSize(SearchView searchView, int fontSize) {
+        try {
+            AutoCompleteTextView autoCompleteTextViewSearch = (AutoCompleteTextView) searchView.findViewById(searchView.getContext().getResources().getIdentifier("app:id/search_src_text", null, null));
+            if (autoCompleteTextViewSearch != null) {
+                autoCompleteTextViewSearch.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
+            } else {
+                LinearLayout linearLayout1 = (LinearLayout) searchView.getChildAt(0);
+                LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
+                LinearLayout linearLayout3 = (LinearLayout) linearLayout2.getChildAt(1);
+                AutoCompleteTextView autoComplete = (AutoCompleteTextView) linearLayout3.getChildAt(0);
+                autoComplete.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
+            }
+        } catch (Exception e) {
+            LinearLayout linearLayout1 = (LinearLayout) searchView.getChildAt(0);
+            LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
+            LinearLayout linearLayout3 = (LinearLayout) linearLayout2.getChildAt(1);
+            AutoCompleteTextView autoComplete = (AutoCompleteTextView) linearLayout3.getChildAt(0);
+            autoComplete.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
+        }
+    }
+
 
     public void onResume(){
         super.onResume();

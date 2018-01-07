@@ -15,16 +15,18 @@
         android:orientation="vertical"
         android:background="@color/colorSearchBar"
         android:layout_marginTop="55dip"
-        android:layout_marginLeft="35dip"
-        android:layout_marginRight="35dip"
+        android:layout_marginLeft="25dip"
+        android:layout_marginRight="25dip"
         android:layout_gravity="left|top">
 
         <SearchView
             android:id="@+id/POI_search_view"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:queryHint='Buscar en ESPOL...'
             android:iconifiedByDefault="false"
+            style="@style/AppSearchView"
+
             />
     </LinearLayout>
 </FrameLayout>
