@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/custom_toast_container"
+    android:orientation="horizontal"
+    android:layout_width="320dp"
+    android:layout_height="320dp"
+    android:layout_margin="6dp"
+    android:padding="8dp"
+    android:background="#DAAA"
+    >
+    <ImageView android:src="@drawable/fiec"
+        android:layout_width="320dp"
+        android:layout_height="300dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        />
+    <TextView android:id="@+id/text"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:textColor="#FFF"
+        android:text="FIEC VIEJA"
+        />
+</LinearLayout>

@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import org.osmdroid.bonuspack.location.GeocoderNominatim;
 import org.osmdroid.config.Configuration;
@@ -30,10 +32,15 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import org.osmdroid.api.IMapController;
 
 
@@ -67,6 +74,25 @@ public class MainActivity extends Activity {
         SearchView search_poi_sv = (SearchView) findViewById(R.id.POI_search_view);
         setSearchviewTextSize(search_poi_sv, SEARCH_POI_FONTSIZE);
 
+        Button view_poi = (Button) findViewById(R.id.button_id);
+        view_poi.setX(430);
+        view_poi.setY(1200);
+        view_poi.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                LayoutInflater inflater = getLayoutInflater();
+                View layout = inflater.inflate(R.layout.custom_toast,
+                        (ViewGroup) findViewById(R.id.custom_toast_container));
+
+                TextView text = (TextView) layout.findViewById(R.id.text);
+                //text.setText("This is a custom toast");
+
+                Toast toast = new Toast(getApplicationContext());
+                toast.setGravity(Gravity.TOP, 0, 0);
+                //toast.setDuration(Toast.LENGTH_LONG);
+                toast.setView(layout);
+                toast.show();
+            }
+        });
         map.setMaxZoomLevel(ZOOM_MAX);
 
 
