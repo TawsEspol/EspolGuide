@@ -27,6 +27,11 @@ allprojects {
 	flatDir {
 	      dirs 'libs'
 	}
+
+        //PRUEBA
+//        maven { url "https://jitpack.io" }
+
+
     }
 }
 
