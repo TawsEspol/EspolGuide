@@ -3,6 +3,9 @@ package com.example.galo.espolguide;
 import java.io.File;
 import java.io.BufferedReader;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -78,19 +81,24 @@ public class MainActivity extends Activity {
         view_poi.setX(430);
         view_poi.setY(1200);
         view_poi.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View v) {
+
+                openPOIinfo();
+                /*
                 LayoutInflater inflater = getLayoutInflater();
                 View layout = inflater.inflate(R.layout.custom_toast,
                         (ViewGroup) findViewById(R.id.custom_toast_container));
 
                 TextView text = (TextView) layout.findViewById(R.id.text);
                 //text.setText("This is a custom toast");
+                //setContentView(R.layout.custom_toast);
 
                 Toast toast = new Toast(getApplicationContext());
                 toast.setGravity(Gravity.TOP, 0, 0);
                 //toast.setDuration(Toast.LENGTH_LONG);
                 toast.setView(layout);
-                toast.show();
+                toast.show();*/
             }
         });
         map.setMaxZoomLevel(ZOOM_MAX);
@@ -98,6 +106,12 @@ public class MainActivity extends Activity {
 
     }
 
+    public void openPOIinfo() {
+        final Dialog dialog = new Dialog(this); // Context, this, etc.
+        dialog.setContentView(R.layout.custom_toast);
+        //dialog.setTitle("Prueba");
+        dialog.show();
+    }
     private void setSearchviewTextSize(SearchView searchView, int fontSize) {
         try {
             AutoCompleteTextView autoCompleteTextViewSearch = (AutoCompleteTextView) searchView.findViewById(searchView.getContext().getResources().getIdentifier("app:id/search_src_text", null, null));
