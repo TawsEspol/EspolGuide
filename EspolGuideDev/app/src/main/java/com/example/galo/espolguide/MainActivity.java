@@ -1,7 +1,12 @@
 package com.example.galo.espolguide;
 
+import com.example.galo.espolguide.pois.Bloque;
+import com.example.galo.espolguide.pois.Poi;
+
 import java.io.File;
 import java.io.BufferedReader;
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -36,12 +41,14 @@ import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
+
 
 
 
@@ -94,6 +101,38 @@ public class MainActivity extends Activity {
             }
         });
         map.setMaxZoomLevel(ZOOM_MAX);
+
+
+
+
+
+
+        //PRUEBAS
+         String codigo = "mp-1";
+         String nombre = "Mopol";
+         String unidad = "N/A";
+         int favoritos_count = 55;
+         String descripcion = "Area verde recreativa";
+         ArrayList<String> nombres_alternativos = new ArrayList<String>();
+         String geo_json_string = "{ \"type\": \"FeatureCollection\", \"features\": [ { \"type\": \"Feature\", \"properties\": {}, \"geometry\": { \"type\": \"Polygon\", \"coordinates\": [ [ [ -79.96602773666382, -2.1462682376840805 ], [ -79.96617794036865, -2.1463700901212497 ], [ -79.9659714102745, -2.146501426148642 ], [ -79.96582120656967, -2.14674265555733 ], [ -79.96550738811493, -2.1465979179166923 ], [ -79.96552348136902, -2.146356688485168 ], [ -79.96602773666382, -2.1462682376840805 ] ] ] } } ] }";
+        nombres_alternativos.add("Mopolito");
+        nombres_alternativos.add("Mopolito2");
+
+         //Hay que construir el ImageView
+        // ImageView foto_iv = new ImageView();
+//         Bloque bloque_mopol_test = new Bloque(codigo, nombre, unidad, favoritos_count,
+//                descripcion, nombres_alternativos, geo_json_string, foto_iv);
+
+
+
+         Bloque bloque_mopol_test = new Bloque(codigo, nombre, unidad, favoritos_count,
+                descripcion, nombres_alternativos, geo_json_string);
+        bloque_mopol_test.construir_shape(map, ctx);
+
+
+
+
+        //TERMINAN LAS PRUEBAS
 
 
     }

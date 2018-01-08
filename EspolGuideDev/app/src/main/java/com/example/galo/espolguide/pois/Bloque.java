@@ -1,4 +1,4 @@
-package Pois;
+package com.example.galo.espolguide.pois;
 
 import android.widget.ImageView;
 
@@ -17,6 +17,13 @@ public class Bloque extends Poi {
         super(codigo, nombre, unidad, favoritos_count, descripcion, nombres_alternativos,
                 geo_json_string);
         this.setFoto_iv(foto_iv);
+    }
+
+    public Bloque(String codigo, String nombre, String unidad, int favoritos_count,
+                  String descripcion, ArrayList<String> nombres_alternativos,
+                  String geo_json_string){
+        super(codigo, nombre, unidad, favoritos_count, descripcion, nombres_alternativos,
+                geo_json_string);
     }
 
     public ImageView getFoto_iv() {

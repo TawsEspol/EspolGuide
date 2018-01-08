@@ -1,4 +1,4 @@
-package Pois;
+package com.example.galo.espolguide.pois;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -26,6 +26,8 @@ public abstract class Poi {
     private String descripcion;
     private ArrayList<String> nombres_alternativos;
     private String geo_json_string;
+    private Bitmap poligono;
+
 
     public Poi(String codigo, String nombre, String unidad, int favoritos_count,
                String descripcion, ArrayList<String> nombres_alternativos, String geo_json_string){
@@ -113,5 +115,7 @@ public abstract class Poi {
         FolderOverlay geoJsonOverlay = (FolderOverlay) kmlDocument.mKmlRoot.buildOverlay(map, defaultStyle, null, kmlDocument);
         map.getOverlays().add(geoJsonOverlay);
         map.invalidate();
+        this.poligono = defaultBitmap;
+
     }
 }
