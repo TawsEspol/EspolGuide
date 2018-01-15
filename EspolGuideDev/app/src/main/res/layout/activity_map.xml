@@ -26,7 +26,6 @@
             android:queryHint='Buscar en ESPOL...'
             android:iconifiedByDefault="false"
             style="@style/AppSearchView"
-
             />
 
     </LinearLayout>
