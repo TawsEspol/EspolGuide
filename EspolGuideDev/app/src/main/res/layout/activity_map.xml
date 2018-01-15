@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical" >
 
     <org.osmdroid.views.MapView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -9,30 +9,52 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:clickable="true" />
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+    <EditText
+        android:id="@+id/search"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/colorSearchBar"
-        android:layout_marginTop="55dip"
-        android:layout_marginLeft="25dip"
-        android:layout_marginRight="25dip"
-        android:layout_gravity="left|top">
+        >
+        <requestFocus />
+    </EditText>
 
-        <SearchView
-            android:id="@+id/POI_search_view"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:queryHint='Buscar en ESPOL...'
-            android:iconifiedByDefault="false"
-            style="@style/AppSearchView"
-
-            />
-
-    </LinearLayout>
-    <Button
-        android:id="@+id/button_id"
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="View POI" />
-</FrameLayout>
+        android:layout_below="@+id/search"
+        android:visibility="gone"
+        android:background="#FF0000"/>
+
+    <LinearLayout android:id="@+id/overlay"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#99000000"
+        android:clickable="true"
+        android:visibility="gone">
+        <ImageView
+            android:id="@+id/flag"
+            android:layout_width="fill_parent"
+            android:layout_height="250dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/fiec" />
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true" />
+
+        <EditText android:id="@+id/edittext"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_margin="50dp" />
+    </LinearLayout>
+
+</RelativeLayout>

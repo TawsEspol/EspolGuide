@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.view.View;
 
 import com.example.galo.espolguide.R;
 
@@ -18,7 +19,7 @@ import java.util.ArrayList;
  * Created by galo on 07/01/18.
  */
 
-public abstract class Poi {
+public abstract class Poi implements View.OnClickListener {
     private String codigo;
     private String nombre;
     private String unidad;
@@ -30,7 +31,7 @@ public abstract class Poi {
 
 
     public Poi(String codigo, String nombre, String unidad, int favoritos_count,
-               String descripcion, ArrayList<String> nombres_alternativos, String geo_json_string){
+               String descripcion, ArrayList<String> nombres_alternativos, String geo_json_string) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.unidad = unidad;
@@ -41,7 +42,7 @@ public abstract class Poi {
     }
 
     public Poi(String codigo, String nombre, String unidad, int favoritos_count,
-               String descripcion){
+               String descripcion) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.unidad = unidad;
@@ -105,7 +106,7 @@ public abstract class Poi {
         this.geo_json_string = geo_json_string;
     }
 
-    public void construir_shape(MapView map, Context current_context){
+    public void construir_shape(MapView map, Context current_context) {
         KmlDocument kmlDocument = new KmlDocument();
         String geoJsonString = this.getGeo_json_string();
         kmlDocument.parseGeoJSON(geoJsonString);
@@ -118,4 +119,10 @@ public abstract class Poi {
         this.poligono = defaultBitmap;
 
     }
+    @Override
+    public void onClick(View view) {
+
+        view.setVisibility(View.VISIBLE);
+    }
+
 }

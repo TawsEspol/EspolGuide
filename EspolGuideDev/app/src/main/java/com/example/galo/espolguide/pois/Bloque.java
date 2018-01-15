@@ -1,5 +1,6 @@
 package com.example.galo.espolguide.pois;
 
+import android.view.View;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
@@ -33,4 +34,6 @@ public class Bloque extends Poi {
     public void setFoto_iv(ImageView foto_iv) {
         this.foto_iv = foto_iv;
     }
+
+
 }
