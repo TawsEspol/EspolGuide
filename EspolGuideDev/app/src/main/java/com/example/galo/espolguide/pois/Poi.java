@@ -1,17 +1,21 @@
 package com.example.galo.espolguide.pois;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
-import com.example.galo.espolguide.R;
+import android.graphics.Color;
+import android.widget.Toast;
 
-import org.osmdroid.bonuspack.kml.KmlDocument;
-import org.osmdroid.bonuspack.kml.Style;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.FolderOverlay;
+import org.osmdroid.views.overlay.Polygon;
 
 import java.util.ArrayList;
 
@@ -20,33 +24,42 @@ import java.util.ArrayList;
  */
 
 public abstract class Poi implements View.OnClickListener {
+    private String id;
     private String codigo;
     private String nombre;
     private String unidad;
     private int favoritos_count;
     private String descripcion;
+    private String tipo;
     private ArrayList<String> nombres_alternativos;
-    private String geo_json_string;
-    private Bitmap poligono;
+    private Polygon poligono;
 
-
-    public Poi(String codigo, String nombre, String unidad, int favoritos_count,
-               String descripcion, ArrayList<String> nombres_alternativos, String geo_json_string) {
+    public Poi(String id){
+        this. id = id;
+    }
+    public Poi(String id,String codigo, String nombre, String unidad, int favoritos_count,
+               String descripcion, ArrayList<String> nombres_alternativos){
+        this.id = id;
         this.codigo = codigo;
         this.nombre = nombre;
         this.unidad = unidad;
         this.favoritos_count = favoritos_count;
         this.descripcion = descripcion;
         this.nombres_alternativos = nombres_alternativos;
-        this.setGeo_json_string(geo_json_string);
     }
 
-    public Poi(String codigo, String nombre, String unidad, int favoritos_count,
+    public Poi(String id,String codigo, String nombre, String unidad, int favoritos_count,
                String descripcion) {
+        this.id = id;
         this.codigo = codigo;
         this.nombre = nombre;
         this.unidad = unidad;
         this.favoritos_count = favoritos_count;
+        this.descripcion = descripcion;
+    }
+
+    public Poi(String codigo, String descripcion){
+        this.codigo = codigo;
         this.descripcion = descripcion;
     }
 
@@ -98,26 +111,53 @@ public abstract class Poi implements View.OnClickListener {
         this.nombres_alternativos = nombres_alternativos;
     }
 
-    public String getGeo_json_string() {
-        return geo_json_string;
+
+    public void construir_poligono(JSONArray coordenadas, MapView map, Context ctx){
+        ProgressDialog pDialog = new ProgressDialog(ctx);
+        try{
+            System.out.println("ENTRAAAA");
+            ArrayList<GeoPoint> geoPoints = new ArrayList<>();
+            for(int j=0; j<coordenadas.length(); j++){
+                JSONArray point_coord = coordenadas.getJSONArray(j);
+                double lat = point_coord.getDouble(0);
+                double lon = point_coord.getDouble(1);
+                GeoPoint geotest = new GeoPoint(lat, lon);
+                geoPoints.add(geotest);
+            }
+            mapear_poligono(map, geoPoints);
+            geoPoints.clear();
+        }catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(ctx, "Error , try again ! ", Toast.LENGTH_LONG).show();
+            pDialog.dismiss();
+        }
     }
 
-    public void setGeo_json_string(String geo_json_string) {
-        this.geo_json_string = geo_json_string;
+    public void mapear_poligono(MapView map, ArrayList<GeoPoint> geoPoints){
+        Polygon polygon = new Polygon();
+        polygon.setFillColor(Color.argb(30, 0,0,220));
+        polygon.setPoints(geoPoints);
+        polygon.setStrokeColor(Color.BLUE);
+        polygon.setStrokeWidth(0.7F);
+        polygon.setTitle("A sample polygon");
+        this.setPoligono(polygon);
+        map.getOverlayManager().add(this.getPoligono());
     }
 
-    public void construir_shape(MapView map, Context current_context) {
-        KmlDocument kmlDocument = new KmlDocument();
-        String geoJsonString = this.getGeo_json_string();
-        kmlDocument.parseGeoJSON(geoJsonString);
-        Drawable defaultMarker = current_context.getResources().getDrawable(R.drawable.marker_default);
-        Bitmap defaultBitmap = ((BitmapDrawable) defaultMarker).getBitmap();
-        Style defaultStyle = new Style(defaultBitmap, 0x901010AA, 5f, 0x20AA1010);
-        FolderOverlay geoJsonOverlay = (FolderOverlay) kmlDocument.mKmlRoot.buildOverlay(map, defaultStyle, null, kmlDocument);
-        map.getOverlays().add(geoJsonOverlay);
-        map.invalidate();
-        this.poligono = defaultBitmap;
+    public String getTipo() {
+        return tipo;
+    }
 
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public Polygon getPoligono() {
+        return poligono;
+    }
+
+    public void setPoligono(Polygon poligono) {
+        this.poligono = poligono;
     }
     @Override
     public void onClick(View view) {

@@ -1,5 +1,11 @@
 package com.example.galo.espolguide;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.galo.espolguide.pois.AppController;
 import com.example.galo.espolguide.pois.Bloque;
 
 import java.util.ArrayList;
@@ -7,6 +13,12 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.Dialog;
+
+import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.pm.ActivityInfo;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
@@ -15,6 +27,8 @@ import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.View;
 
+
+import org.json.JSONArray;
 import org.osmdroid.config.Configuration;
 
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -26,14 +40,17 @@ import android.widget.Adapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import org.osmdroid.api.IMapController;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -45,6 +62,16 @@ public class MainActivity extends Activity {
     EditText editsearch;
     ArrayList<String> country;
     SearchViewAdapter adapter;
+
+    JSONObject jsonObj;
+    ProgressDialog pDialog;
+
+    String IP_LAB_SOFT = "172.19.66.151";
+    String IP_GALO = "192.168.0.13:8000";
+
+    String obtener_informacionBloques_ws = "http://" + IP_LAB_SOFT + "/obtenerBloques/";
+    //String geocampus_webserviceURL = "http://sigeo.espol.edu.ec/geoapi/geocampus/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geocampus:BLOQUES&srsName=EPSG:4326&outputFormat=application%2Fjson";
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         //rank = new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
@@ -71,10 +98,11 @@ public class MainActivity extends Activity {
         int SEARCH_POI_FONTSIZE = 15;
 
         super.onCreate(savedInstanceState);
-        Context ctx = getApplicationContext();
+        final Context ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         setContentView(R.layout.activity_map);
-        MapView map = (MapView) findViewById(R.id.mapview);
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        final MapView map = (MapView) findViewById(R.id.mapview);
 
         map.setClickable(true);
         map.setTileSource(TileSourceFactory.MAPNIK);
@@ -133,67 +161,73 @@ public class MainActivity extends Activity {
             }
         });
 
-
-
-
-
         map.setMaxZoomLevel(ZOOM_MAX);
 
 
+        //PRUEBAS HTTP REQUEST
 
-
-
-
-        //PRUEBAS
-        String codigo = "mp-1";
-        String nombre = "Mopol";
-        String unidad = "N/A";
-        int favoritos_count = 55;
-        String descripcion = "Area verde recreativa";
-        ArrayList<String> nombres_alternativos = new ArrayList<String>();
-        String geo_json_string = "{ \"type\": \"FeatureCollection\", \"features\": [ { \"type\": \"Feature\", \"properties\": {}, \"geometry\": { \"type\": \"Polygon\", \"coordinates\": [ [ [ -79.96602773666382, -2.1462682376840805 ], [ -79.96617794036865, -2.1463700901212497 ], [ -79.9659714102745, -2.146501426148642 ], [ -79.96582120656967, -2.14674265555733 ], [ -79.96550738811493, -2.1465979179166923 ], [ -79.96552348136902, -2.146356688485168 ], [ -79.96602773666382, -2.1462682376840805 ] ] ] } } ] }";
-        nombres_alternativos.add("Mopolito");
-        nombres_alternativos.add("Mopolito2");
-
-
-        //Hay que construir el ImageView
-        // ImageView foto_iv = new ImageView();
-        //         Bloque bloque_mopol_test = new Bloque(codigo, nombre, unidad, favoritos_count,
-        //                descripcion, nombres_alternativos, geo_json_string, foto_iv);
-
-
-
-        final Bloque bloque_mopol_test = new Bloque(codigo, nombre, unidad, favoritos_count,
-            descripcion, nombres_alternativos, geo_json_string);
-        bloque_mopol_test.construir_shape(map, ctx);
-
-        //View n = (View) findViewById(R.id.overlay);
-        //bloque_mopol_test.onClick(n);
-
-
-    }
-
-    private void setSearchviewTextSize(SearchView searchView, int fontSize) {
-        try {
-            AutoCompleteTextView autoCompleteTextViewSearch = (AutoCompleteTextView) searchView.findViewById(searchView.getContext().getResources().getIdentifier("app:id/search_src_text", null, null));
-            if (autoCompleteTextViewSearch != null) {
-                autoCompleteTextViewSearch.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
+            pDialog = new ProgressDialog(this);
+            pDialog.setMessage("Espera mientras carga el mapa de ESPOL...");
+            pDialog.setCancelable(false);
+            if (!isNetworkAvailable(this)) {
+                Toast.makeText(this, "Revisa tu conexion a internet.", Toast.LENGTH_LONG).show();
             } else {
-                LinearLayout linearLayout1 = (LinearLayout) searchView.getChildAt(0);
-                LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
-                LinearLayout linearLayout3 = (LinearLayout) linearLayout2.getChildAt(1);
-                AutoCompleteTextView autoComplete = (AutoCompleteTextView) linearLayout3.getChildAt(0);
-                autoComplete.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
-            }
-        } catch (Exception e) {
-            LinearLayout linearLayout1 = (LinearLayout) searchView.getChildAt(0);
-            LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
-            LinearLayout linearLayout3 = (LinearLayout) linearLayout2.getChildAt(1);
-            AutoCompleteTextView autoComplete = (AutoCompleteTextView) linearLayout3.getChildAt(0);
-            autoComplete.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
+                pDialog.show();
+                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                        obtener_informacionBloques_ws, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray features = response.getJSONArray("features");
+                            int total_features = features.length();
+                            response = null;
+                            for (int i=0; i<total_features; i++){
+                                JSONObject jsonObj = (JSONObject) features.get(i);
+                                JSONObject jsonObj_properties = jsonObj.getJSONObject("properties");
+                                JSONObject jsonObj_geometry = jsonObj.getJSONObject("geometry");
+                                JSONArray coordenadas = jsonObj_geometry.getJSONArray("coordinates").getJSONArray(0);
+                                System.out.println(i);
+
+                                //String unidad = jsonObj_properties.getString("unidad");
+                                String codigo = jsonObj_properties.getString("codigo");
+                                Bloque bloque = new Bloque(codigo);
+                                bloque.construir_poligono(coordenadas, map, ctx);
+                                jsonObj = null;
+                                coordenadas = null;
+                                System.out.println(i);
+                                pDialog.dismiss();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "Error , try again ! ", Toast.LENGTH_LONG).show();
+                            pDialog.dismiss();
+                        }
+                        finally {
+                            System.gc();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("tag", "Error: " + error.getMessage());
+                        Toast.makeText(getApplicationContext(), "Error while loading ... ", Toast.LENGTH_SHORT).show();
+                        // hide the progress dialog
+                        pDialog.dismiss();
+                    }
+                });
+                // Adding request to request queue
+            AppController.getInstance(this).addToRequestQueue(jsonObjReq);
         }
     }
 
+
+    public boolean isNetworkAvailable(final Context context) {
+        final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+    }
+    
 
     public void onResume(){
         super.onResume();

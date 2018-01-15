@@ -12,19 +12,23 @@ import java.util.ArrayList;
 public class Bloque extends Poi {
     private ImageView foto_iv;
 
-    public Bloque(String codigo, String nombre, String unidad, int favoritos_count,
-                  String descripcion, ArrayList<String> nombres_alternativos,
-                  String geo_json_string, ImageView foto_iv){
-        super(codigo, nombre, unidad, favoritos_count, descripcion, nombres_alternativos,
-                geo_json_string);
+    public Bloque(String id,String codigo, String nombre, String unidad, int favoritos_count,
+                  String descripcion, ImageView foto_iv){
+        super(id, codigo, nombre, unidad, favoritos_count, descripcion);
         this.setFoto_iv(foto_iv);
     }
 
-    public Bloque(String codigo, String nombre, String unidad, int favoritos_count,
-                  String descripcion, ArrayList<String> nombres_alternativos,
-                  String geo_json_string){
-        super(codigo, nombre, unidad, favoritos_count, descripcion, nombres_alternativos,
-                geo_json_string);
+    public Bloque(String id, String codigo, String nombre, String unidad, int favoritos_count,
+                  String descripcion){
+        super(id,codigo, nombre, unidad, favoritos_count, descripcion);
+    }
+
+    public Bloque(String codigo){
+        super(codigo);
+    }
+
+    public Bloque(String codigo, String descripcion){
+        super(codigo, descripcion);
     }
 
     public ImageView getFoto_iv() {
