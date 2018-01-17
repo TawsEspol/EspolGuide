@@ -9,6 +9,7 @@ import com.example.galo.espolguide.pois.AppController;
 import com.example.galo.espolguide.pois.Bloque;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -26,7 +27,6 @@ import android.text.Layout;
 import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.View;
-
 
 import org.json.JSONArray;
 import org.osmdroid.config.Configuration;
@@ -48,7 +48,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.osmdroid.api.IMapController;
 
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -66,10 +65,12 @@ public class MainActivity extends Activity {
     JSONObject jsonObj;
     ProgressDialog pDialog;
 
-    String IP_LAB_SOFT = "172.19.66.151";
+    String IP_LAB_SOFT = "172.19.66.151:8000";
     String IP_GALO = "192.168.0.13:8000";
+    String IP_TAWS = "192.168.0.126:8000";
 
-    String obtener_informacionBloques_ws = "http://" + IP_LAB_SOFT + "/obtenerBloques/";
+    String obtenerBloques_ws = "http://" + IP_TAWS + "/obtenerBloques/";
+    String nombresAlternativo_ws = "http://" + IP_TAWS + "/nombresAlternativo/";
     //String geocampus_webserviceURL = "http://sigeo.espol.edu.ec/geoapi/geocampus/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geocampus:BLOQUES&srsName=EPSG:4326&outputFormat=application%2Fjson";
 
     @Override
@@ -87,9 +88,6 @@ public class MainActivity extends Activity {
         country.add("Bangladesh,Jugo");
         country.add("Russia,Fabricio");
         country.add("Japan,Mabe");
-
-
-
 
         double ESPOL_CENTRAL_LONG = -79.96575;
         double ESPOL_CENTRAL_LAT = -2.14630;
@@ -135,22 +133,18 @@ public class MainActivity extends Activity {
 
         // Capture Text in EditText
         editsearch.addTextChangedListener(new TextWatcher() {
-
-
             @Override
             public void afterTextChanged(Editable arg0) {
                 // TODO Auto-generated method stub
 
                 String text = editsearch.getText().toString().toLowerCase(Locale.getDefault());
                 adapter.filter(text);
-
             }
 
             @Override
             public void beforeTextChanged(CharSequence arg0, int arg1,
                                           int arg2, int arg3) {
                 // TODO Auto-generated method stub
-
             }
 
             @Override
@@ -163,18 +157,15 @@ public class MainActivity extends Activity {
 
         map.setMaxZoomLevel(ZOOM_MAX);
 
-
-        //PRUEBAS HTTP REQUEST
-
             pDialog = new ProgressDialog(this);
             pDialog.setMessage("Espera mientras carga el mapa de ESPOL...");
             pDialog.setCancelable(false);
             if (!isNetworkAvailable(this)) {
-                Toast.makeText(this, "Revisa tu conexion a internet.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "No se pueden obtener datos, revisa tu conexion a Internet...", Toast.LENGTH_LONG).show();
             } else {
                 pDialog.show();
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                        obtener_informacionBloques_ws, null, new Response.Listener<JSONObject>() {
+                        obtenerBloques_ws, null,  new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
@@ -184,23 +175,18 @@ public class MainActivity extends Activity {
                             response = null;
                             for (int i=0; i<total_features; i++){
                                 JSONObject jsonObj = (JSONObject) features.get(i);
-                                JSONObject jsonObj_properties = jsonObj.getJSONObject("properties");
+                                String identificador = jsonObj.getString("identificador");
                                 JSONObject jsonObj_geometry = jsonObj.getJSONObject("geometry");
                                 JSONArray coordenadas = jsonObj_geometry.getJSONArray("coordinates").getJSONArray(0);
-                                System.out.println(i);
-
-                                //String unidad = jsonObj_properties.getString("unidad");
-                                String codigo = jsonObj_properties.getString("codigo");
-                                Bloque bloque = new Bloque(codigo);
+                                Bloque bloque = new Bloque(identificador);
                                 bloque.construir_poligono(coordenadas, map, ctx);
                                 jsonObj = null;
                                 coordenadas = null;
-                                System.out.println(i);
                                 pDialog.dismiss();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(getApplicationContext(), "Error , try again ! ", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Error cargando datos...", Toast.LENGTH_LONG).show();
                             pDialog.dismiss();
                         }
                         finally {
@@ -212,14 +198,56 @@ public class MainActivity extends Activity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("tag", "Error: " + error.getMessage());
-                        Toast.makeText(getApplicationContext(), "Error while loading ... ", Toast.LENGTH_SHORT).show();
-                        // hide the progress dialog
+                        Toast.makeText(getApplicationContext(), "Error HTTP...", Toast.LENGTH_SHORT).show();
                         pDialog.dismiss();
+
                     }
                 });
                 // Adding request to request queue
             AppController.getInstance(this).addToRequestQueue(jsonObjReq);
         }
+    }
+
+    public HashMap<String, ArrayList<String>> obtenerNombres(String webservice_url, MapView map,
+                                                             Context ctx){
+        HashMap<String, ArrayList<String>> nombres = new HashMap<>();
+
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Espera mientras cargan los nombres...");
+        pDialog.setCancelable(false);
+        if (!isNetworkAvailable(this)) {
+            Toast.makeText(this, "No se pueden obtener los nombres, revisa tu conexion a Internet...", Toast.LENGTH_LONG).show();
+        } else {
+            pDialog.show();
+            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                    nombresAlternativo_ws, null,  new Response.Listener<JSONObject>() {
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        JSONArray features = response.getJSONArray("features");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "Error cargando datos...", Toast.LENGTH_LONG).show();
+                        pDialog.dismiss();
+                    }
+                    finally {
+                        System.gc();
+                    }
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.d("tag", "Error: " + error.getMessage());
+                    Toast.makeText(getApplicationContext(), "Error HTTP...", Toast.LENGTH_SHORT).show();
+                    pDialog.dismiss();
+                }
+            });
+            // Adding request to request queue
+            AppController.getInstance(this).addToRequestQueue(jsonObjReq);
+        }
+        return nombres;
     }
 
 
