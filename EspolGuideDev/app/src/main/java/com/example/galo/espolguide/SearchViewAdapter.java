@@ -97,7 +97,8 @@ public class SearchViewAdapter extends BaseAdapter {
         charText = charText.toLowerCase(Locale.getDefault());
         pois_lista.clear();
         if (charText.length() == 0) {
-            pois_lista.addAll(arraylist);
+            //pois_lista.addAll(arraylist);
+            pois_lista.clear();
         }
         else
         {
