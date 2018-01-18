@@ -10,6 +10,7 @@ import com.example.galo.espolguide.pois.Bloque;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -65,12 +66,14 @@ public class MainActivity extends Activity {
     JSONObject jsonObj;
     ProgressDialog pDialog;
 
-    String IP_LAB_SOFT = "172.19.66.151:8000";
+    final ArrayList<String> nombres_pois = new ArrayList<>();
+
+    String IP_LAB_SOFT = "172.19.66.151:8000";  //eduroam
     String IP_GALO = "192.168.0.13:8000";
     String IP_TAWS = "192.168.0.126:8000";
 
-    String obtenerBloques_ws = "http://" + IP_TAWS + "/obtenerBloques/";
-    String nombresAlternativo_ws = "http://" + IP_TAWS + "/nombresAlternativo/";
+    String obtenerBloques_ws = "http://" + IP_GALO + "/obtenerBloques/";
+    String nombresAlternativo_ws = "http://" + IP_GALO + "/nombresAlternativo/";
     //String geocampus_webserviceURL = "http://sigeo.espol.edu.ec/geoapi/geocampus/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geocampus:BLOQUES&srsName=EPSG:4326&outputFormat=application%2Fjson";
 
     @Override
@@ -110,6 +113,10 @@ public class MainActivity extends Activity {
         GeoPoint espol_central_point = new GeoPoint(ESPOL_CENTRAL_LAT, ESPOL_CENTRAL_LONG);
         map_controller.setCenter(espol_central_point);
         final ListView search_poi_sv = (ListView) findViewById(R.id.listview);
+
+        obtenerNombres(nombresAlternativo_ws, map, ctx);
+
+
         /*
         map.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,9 +187,14 @@ public class MainActivity extends Activity {
                                 JSONArray coordenadas = jsonObj_geometry.getJSONArray("coordinates").getJSONArray(0);
                                 Bloque bloque = new Bloque(identificador);
                                 bloque.construir_poligono(coordenadas, map, ctx);
+                                bloque = null;
                                 jsonObj = null;
                                 coordenadas = null;
                                 pDialog.dismiss();
+                            }
+
+                            for (int o = 0; o<nombres_pois.size(); o++){
+                                System.out.println(nombres_pois.get(o));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -206,33 +218,45 @@ public class MainActivity extends Activity {
                 // Adding request to request queue
             AppController.getInstance(this).addToRequestQueue(jsonObjReq);
         }
+
     }
 
-    public HashMap<String, ArrayList<String>> obtenerNombres(String webservice_url, MapView map,
-                                                             Context ctx){
-        HashMap<String, ArrayList<String>> nombres = new HashMap<>();
+    public void obtenerNombres(String webservice_url,
+                                            MapView map, Context ctx){
 
-        pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Espera mientras cargan los nombres...");
-        pDialog.setCancelable(false);
+        //pDialog = new ProgressDialog(this);
+       // pDialog.setMessage("Espera mientras cargan los nombres...");
+        //pDialog.setCancelable(false);
         if (!isNetworkAvailable(this)) {
             Toast.makeText(this, "No se pueden obtener los nombres, revisa tu conexion a Internet...", Toast.LENGTH_LONG).show();
         } else {
-            pDialog.show();
+          //  pDialog.show();
             JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                     nombresAlternativo_ws, null,  new Response.Listener<JSONObject>() {
 
                 @Override
                 public void onResponse(JSONObject response) {
-                    try {
-                        JSONArray features = response.getJSONArray("features");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Toast.makeText(getApplicationContext(), "Error cargando datos...", Toast.LENGTH_LONG).show();
-                        pDialog.dismiss();
-                    }
-                    finally {
-                        System.gc();
+                    Iterator<String> iter = response.keys();
+                    while (iter.hasNext()) {
+                        String identificador = iter.next();
+                        try {
+                            String bloque_str = "";
+
+                            JSONObject info_bloque = (JSONObject) response.get(identificador);
+                            String nombre_oficial = (String) info_bloque.getString("NombreOficial");
+                            JSONArray nombres_alternativos = info_bloque.getJSONArray("NombresAlternativos");
+                            int total_alternativos = nombres_alternativos.length();
+                            String cadena_alternativos = "";
+                            for (int i=0; i<total_alternativos; i++) {
+                                String alternativo = (String) nombres_alternativos.get(i);
+                                cadena_alternativos = cadena_alternativos + "|" + alternativo;
+                            }
+                            bloque_str = identificador +
+                                    ";" + nombre_oficial + ";" + cadena_alternativos;
+                            nombres_pois.add(bloque_str);  //
+                        } catch (JSONException e) {
+                            continue;
+                        }
                     }
                 }
             }, new Response.ErrorListener() {
@@ -241,13 +265,11 @@ public class MainActivity extends Activity {
                 public void onErrorResponse(VolleyError error) {
                     VolleyLog.d("tag", "Error: " + error.getMessage());
                     Toast.makeText(getApplicationContext(), "Error HTTP...", Toast.LENGTH_SHORT).show();
-                    pDialog.dismiss();
+            //        pDialog.dismiss();
                 }
             });
-            // Adding request to request queue
             AppController.getInstance(this).addToRequestQueue(jsonObjReq);
         }
-        return nombres;
     }
 
 
