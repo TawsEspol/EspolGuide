@@ -7,48 +7,26 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.galo.espolguide.pois.AppController;
 import com.example.galo.espolguide.pois.Bloque;
-
 import java.util.ArrayList;
 import java.util.Locale;
-
 import android.app.Activity;
-import android.app.Dialog;
-
-import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
-import android.text.Layout;
 import android.text.TextWatcher;
-import android.util.TypedValue;
-import android.view.View;
-
-
 import org.json.JSONArray;
 import org.osmdroid.config.Configuration;
-
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-
 import android.content.Context;
-import android.widget.Adapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.AutoCompleteTextView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 import org.osmdroid.api.IMapController;
-
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -58,7 +36,8 @@ import org.json.JSONObject;
  */
 
 public class MainActivity extends Activity {
-    //String[] rank;
+
+    ListView search_poi_sv;
     EditText editsearch;
     ArrayList<String> country;
     SearchViewAdapter adapter;
@@ -74,7 +53,6 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        //rank = new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
 
         country = new ArrayList<String>();
         country.add("China,Hola");
@@ -87,9 +65,6 @@ public class MainActivity extends Activity {
         country.add("Bangladesh,Jugo");
         country.add("Russia,Fabricio");
         country.add("Japan,Mabe");
-
-
-
 
         double ESPOL_CENTRAL_LONG = -79.96575;
         double ESPOL_CENTRAL_LAT = -2.14630;
@@ -111,17 +86,7 @@ public class MainActivity extends Activity {
         map_controller.setZoom(START_ZOOM);
         GeoPoint espol_central_point = new GeoPoint(ESPOL_CENTRAL_LAT, ESPOL_CENTRAL_LONG);
         map_controller.setCenter(espol_central_point);
-        final ListView search_poi_sv = (ListView) findViewById(R.id.listview);
-        /*
-        map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                search_poi_sv.setVisibility(View.INVISIBLE);
-            }
-        });*/
-        //(search_poi_sv, SEARCH_POI_FONTSIZE);
-
-        // Locate the ListView in listview_main.xml
+        search_poi_sv = (ListView) findViewById(R.id.listview);
 
         // Pass results to ListViewAdapter Class
 
@@ -227,7 +192,7 @@ public class MainActivity extends Activity {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }
-    
+
 
     public void onResume(){
         super.onResume();
