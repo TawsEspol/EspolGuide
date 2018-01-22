@@ -250,14 +250,10 @@ public class MainActivity extends Activity {
             });
 
             AppController.getInstance(context).addToRequestQueue(jsonObjReq);
-            System.out.println("TAMNO"+items_nombres);
+
             return items_nombres;
         }
 
-        protected void onPostExecute(ArrayList result) {
-
-
-        }
 
     }
 
@@ -278,91 +274,3 @@ public class MainActivity extends Activity {
     }
 }
 
-
-
-/*AsyncHttpClient client = new AsyncHttpClient();
-
-        client.get(nombresAlternativo_ws, null, new JsonHttpResponseHandler() {
-            JSONObject data ;
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
-                // Handle resulting parsed JSON response here
-
-                Iterator<String> iter = response.keys();
-
-                while (iter.hasNext()) {
-                    String identificador = iter.next();
-                    try {
-                        String bloque_str = "";
-
-                        JSONObject info_bloque = (JSONObject) response.get(identificador);
-                        String nombre_oficial = (String) info_bloque.getString("NombreOficial");
-                        JSONArray nombres_alternativos = info_bloque.getJSONArray("NombresAlternativos");
-                       int total_alternativos = nombres_alternativos.length();
-                        String cadena_alternativos = "";
-                        for (int i = 0; i < total_alternativos; i++) {
-                            String alternativo = (String) nombres_alternativos.get(i);
-                            cadena_alternativos = cadena_alternativos + "|" + alternativo;
-                        }
-                        bloque_str = identificador +
-                                ";" + nombre_oficial + ";" + cadena_alternativos;
-                        items_nombres.add(bloque_str);
-
-                    } catch (JSONException e) {
-                        continue;
-                    }
-                }
-                          // Handle resulting parsed JSON response here
-
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                VolleyLog.d("tag", "Error: " + t.getMessage());
-                Toast.makeText(getApplicationContext(), "Error HTTP", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onRetry(int retryNo) {
-
-            // called when request is retried
-                System.out.println("entro chch x2");
-                search_poi_sv = (ListView) findViewById(R.id.listview);
-                adapter = new SearchViewAdapter(ctx, items_nombres);
-                System.out.println("TAMANO"+items_nombres.size());
-                // Binds the Adapter to the ListView
-                search_poi_sv.setAdapter(adapter);
-                // Locate the EditText in listview_main.xml
-                editsearch = (EditText) findViewById(R.id.search);
-                // Capture Text in EditText
-                editsearch.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void afterTextChanged(Editable arg0) {
-                        // TODO Auto-generated method stub
-
-                        String text = editsearch.getText().toString().toLowerCase(Locale.getDefault());
-                        System.out.println(text);
-                        adapter.filter(text);
-                    }
-
-                    @Override
-                    public void beforeTextChanged(CharSequence arg0, int arg1,
-                                                  int arg2, int arg3) {
-                        // TODO Auto-generated method stub
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-                                              int arg3) {
-                        // TODO Auto-generated method stub
-                        search_poi_sv.setVisibility(View.VISIBLE);
-                    }
-                });
-
-                System.out.println("YEIH!");
-            }
-        });
-*/
