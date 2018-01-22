@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.view.MotionEvent;
 import android.view.View;
 
 import android.graphics.Color;
@@ -32,7 +33,7 @@ public abstract class Poi implements View.OnClickListener {
     private String descripcion;
     private String tipo;
     private ArrayList<String> nombres_alternativos;
-    private Polygon poligono;
+    private Poligono poligono;
 
     public Poi(String id){
         this. id = id;
@@ -128,18 +129,20 @@ public abstract class Poi implements View.OnClickListener {
             geoPoints.clear();
         }catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(ctx, "Error trazando bloques...", Toast.LENGTH_LONG).show();
+            Toast.makeText(ctx, "Error trazando bloque.", Toast.LENGTH_LONG).show();
             pDialog.dismiss();
         }
     }
 
+
     public void mapear_poligono(MapView map, ArrayList<GeoPoint> geoPoints){
-        Polygon polygon = new Polygon();
+        Poligono polygon = new Poligono();
         polygon.setFillColor(Color.argb(30, 0,0,220));
         polygon.setPoints(geoPoints);
         polygon.setStrokeColor(Color.BLUE);
         polygon.setStrokeWidth(0.7F);
         polygon.setTitle("A sample polygon");
+        //polygon.onTouch(map);
         this.setPoligono(polygon);
         map.getOverlayManager().add(this.getPoligono());
     }
@@ -152,11 +155,11 @@ public abstract class Poi implements View.OnClickListener {
         this.tipo = tipo;
     }
 
-    public Polygon getPoligono() {
+    public Poligono getPoligono() {
         return poligono;
     }
 
-    public void setPoligono(Polygon poligono) {
+    public void setPoligono(Poligono poligono) {
         this.poligono = poligono;
     }
     @Override

@@ -67,9 +67,12 @@ public class MainActivity extends Activity {
     String IP_TAWS = "192.168.0.126:8000";
     String IP_FAB = "192.168.0.112:8000";
     String IP_FAB_CASAGALO = "192.168.0.15:8000";
+    String IP_LAB_SOFT_FAB = "172.19.15.215:8000";  //eduroam
 
-    String obtenerBloques_ws = "http://" + IP_GALO + "/obtenerBloques/";
-    String nombresAlternativo_ws = "http://" + IP_GALO + "/nombresAlternativo/";
+
+    String obtenerBloques_ws = "http://" + "172." + "/obtenerBloques/";
+    String nombresAlternativo_ws = "http://" + "" + "/nombresAlternativo/";
+
     //String geocampus_webserviceURL = "http://sigeo.espol.edu.ec/geoapi/geocampus/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geocampus:BLOQUES&srsName=EPSG:4326&outputFormat=application%2Fjson";
 
     @Override
@@ -132,65 +135,84 @@ public class MainActivity extends Activity {
         map.setMaxZoomLevel(ZOOM_MAX);
         //new RetrieveDataTask().execute(ctx);
 
-        pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Cargando...");
-        pDialog.setCancelable(false);
-        if (!isNetworkAvailable(this)) {
-            Toast.makeText(this, "Conexión no disponible", Toast.LENGTH_LONG).show();
-        } else {
-            pDialog.show();
-            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                    obtenerBloques_ws, null, new Response.Listener<JSONObject>() {
 
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        JSONArray features = response.getJSONArray("features");
-                        int total_features = features.length();
-                        response = null;
-                        for (int i = 0; i < total_features; i++) {
-                            JSONObject jsonObj = (JSONObject) features.get(i);
-                            String identificador = jsonObj.getString("identificador");
-                            JSONObject jsonObj_geometry = jsonObj.getJSONObject("geometry");
-                            JSONArray coordenadas = jsonObj_geometry.getJSONArray("coordinates").getJSONArray(0);
-                            Bloque bloque = new Bloque(identificador);
-                            bloque.construir_poligono(coordenadas, map, ctx);
-                            bloque = null;
-                            jsonObj = null;
-                            coordenadas = null;
-                            pDialog.dismiss();
-                        }
+        new Drawer().execute(new DrawingTools(this,map));
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Toast.makeText(getApplicationContext(), "Error cargando datos...", Toast.LENGTH_LONG).show();
-                        pDialog.dismiss();
-                    } finally {
-                        System.gc();
-                    }
-                }
-            }, new Response.ErrorListener() {
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyLog.d("tag", "Error: " + error.getMessage());
-                    Toast.makeText(getApplicationContext(), "Error HTTP", Toast.LENGTH_SHORT).show();
-                    //pDialog.dismiss();
-
-                }
-            });
-            // Adding request to request queue
-            AppController.getInstance(this).addToRequestQueue(jsonObjReq);
-        }
-
-
-        new RetrieveDataTask().execute(ctx);
+        new Nombres().execute(ctx);
 
     }
 
+    private class DrawingTools {
+        Context context;
+        MapView map;
 
+        public DrawingTools(Context ctx, MapView map){
+            this.context = ctx;
+            this.map = map;
+        }
+    }
 
-    private class RetrieveDataTask extends AsyncTask<Context, Void, ArrayList> {
+    private class Drawer extends AsyncTask<DrawingTools, Void, Void>{
+        DrawingTools actual ;
+        ProgressDialog dialog;
+        @Override
+        protected Void doInBackground(DrawingTools... dts) {
+            actual = dts[0];
+            dialog = new ProgressDialog(actual.context);
+            dialog.setMessage("Cargando...");
+            dialog.setCancelable(false);
+            if (!isNetworkAvailable(actual.context)) {
+                Toast.makeText(actual.context, "Conexión no disponible", Toast.LENGTH_LONG).show();
+            } else {
+                dialog.show();
+                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                        obtenerBloques_ws, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray features = response.getJSONArray("features");
+                            int total_features = features.length();
+                            response = null;
+                            for (int i = 0; i < total_features; i++) {
+                                JSONObject jsonObj = (JSONObject) features.get(i);
+                                String identificador = jsonObj.getString("identificador");
+                                JSONObject jsonObj_geometry = jsonObj.getJSONObject("geometry");
+                                JSONArray coordenadas = jsonObj_geometry.getJSONArray("coordinates").getJSONArray(0);
+                                Bloque bloque = new Bloque(identificador);
+                                bloque.construir_poligono(coordenadas, actual.map, actual.context);
+                                bloque = null;
+                                jsonObj = null;
+                                coordenadas = null;
+                                dialog.dismiss();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "Error cargando datos...", Toast.LENGTH_LONG).show();
+                            dialog.dismiss();
+                        } finally {
+                            System.gc();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("tag", "Error: " + error.getMessage());
+                        Toast.makeText(getApplicationContext(), "Error HTTP", Toast.LENGTH_SHORT).show();
+                        //pDialog.dismiss();
+
+                    }
+                });
+                // Adding request to request queue
+                AppController.getInstance(actual.context).addToRequestQueue(jsonObjReq);
+            }
+            return null;
+        }
+    }
+
+    private class Nombres extends AsyncTask<Context, Void, ArrayList> {
         Context context;
         @Override
         protected ArrayList doInBackground(Context... contexts) {
@@ -266,17 +288,9 @@ public class MainActivity extends Activity {
                     //        pDialog.dismiss();
                 }
             });
-
             AppController.getInstance(context).addToRequestQueue(jsonObjReq);
-            System.out.println("TAMNO"+items_nombres);
             return items_nombres;
         }
-
-        protected void onPostExecute(ArrayList result) {
-
-
-        }
-
     }
 
 
@@ -296,91 +310,3 @@ public class MainActivity extends Activity {
     }
 }
 
-
-
-/*AsyncHttpClient client = new AsyncHttpClient();
-
-        client.get(nombresAlternativo_ws, null, new JsonHttpResponseHandler() {
-            JSONObject data ;
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
-                // Handle resulting parsed JSON response here
-
-                Iterator<String> iter = response.keys();
-
-                while (iter.hasNext()) {
-                    String identificador = iter.next();
-                    try {
-                        String bloque_str = "";
-
-                        JSONObject info_bloque = (JSONObject) response.get(identificador);
-                        String nombre_oficial = (String) info_bloque.getString("NombreOficial");
-                        JSONArray nombres_alternativos = info_bloque.getJSONArray("NombresAlternativos");
-                       int total_alternativos = nombres_alternativos.length();
-                        String cadena_alternativos = "";
-                        for (int i = 0; i < total_alternativos; i++) {
-                            String alternativo = (String) nombres_alternativos.get(i);
-                            cadena_alternativos = cadena_alternativos + "|" + alternativo;
-                        }
-                        bloque_str = identificador +
-                                ";" + nombre_oficial + ";" + cadena_alternativos;
-                        items_nombres.add(bloque_str);
-
-                    } catch (JSONException e) {
-                        continue;
-                    }
-                }
-                          // Handle resulting parsed JSON response here
-
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                VolleyLog.d("tag", "Error: " + t.getMessage());
-                Toast.makeText(getApplicationContext(), "Error HTTP", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onRetry(int retryNo) {
-
-            // called when request is retried
-                System.out.println("entro chch x2");
-                search_poi_sv = (ListView) findViewById(R.id.listview);
-                adapter = new SearchViewAdapter(ctx, items_nombres);
-                System.out.println("TAMANO"+items_nombres.size());
-                // Binds the Adapter to the ListView
-                search_poi_sv.setAdapter(adapter);
-                // Locate the EditText in listview_main.xml
-                editsearch = (EditText) findViewById(R.id.search);
-                // Capture Text in EditText
-                editsearch.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void afterTextChanged(Editable arg0) {
-                        // TODO Auto-generated method stub
-
-                        String text = editsearch.getText().toString().toLowerCase(Locale.getDefault());
-                        System.out.println(text);
-                        adapter.filter(text);
-                    }
-
-                    @Override
-                    public void beforeTextChanged(CharSequence arg0, int arg1,
-                                                  int arg2, int arg3) {
-                        // TODO Auto-generated method stub
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-                                              int arg3) {
-                        // TODO Auto-generated method stub
-                        search_poi_sv.setVisibility(View.VISIBLE);
-                    }
-                });
-
-                System.out.println("YEIH!");
-            }
-        });
-*/
