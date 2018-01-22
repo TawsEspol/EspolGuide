@@ -27,6 +27,7 @@ import android.text.Editable;
 import android.text.Layout;
 import android.text.TextWatcher;
 import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
 
 import org.json.JSONArray;
@@ -117,21 +118,37 @@ public class MainActivity extends Activity {
         obtenerNombres(nombresAlternativo_ws, map, ctx);
 
 
-        final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
-        map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                search_poi_sv.setVisibility(View.INVISIBLE);
-                info.setVisibility(View.GONE);
-            }
-        });
+
+
         Button boton = (Button) findViewById(R.id.boton);
         boton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
                 info.setVisibility(View.VISIBLE);
+                System.out.println("Capturo click en boton");
             }
         });
+
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
+                info.setVisibility(View.GONE);
+                System.out.println("Capturo click en mapa");
+            }
+        });
+
+
+/**        map.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                info.setVisibility(View.GONE);
+            return true;
+            }
+        });**/
+
+
         //(search_poi_sv, SEARCH_POI_FONTSIZE);
 
         // Locate the ListView in listview_main.xml
