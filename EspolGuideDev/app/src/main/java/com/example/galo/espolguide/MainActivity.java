@@ -67,9 +67,10 @@ public class MainActivity extends Activity {
     String IP_TAWS = "192.168.0.126:8000";
     String IP_FAB = "192.168.0.112:8000";
     String IP_FAB_CASAGALO = "192.168.0.15:8000";
+    String IP_LAB_SOFT_FAB = "172.19.15.215:8000";  //eduroam
 
-    String obtenerBloques_ws = "http://" + IP_FAB + "/obtenerBloques/";
-    String nombresAlternativo_ws = "http://" + IP_FAB + "/nombresAlternativo/";
+    String obtenerBloques_ws = "http://" + IP_LAB_SOFT_FAB + "/obtenerBloques/";
+    String nombresAlternativo_ws = "http://" + IP_LAB_SOFT_FAB+ "/nombresAlternativo/";
     //String geocampus_webserviceURL = "http://sigeo.espol.edu.ec/geoapi/geocampus/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geocampus:BLOQUES&srsName=EPSG:4326&outputFormat=application%2Fjson";
 
     @Override
@@ -140,65 +141,84 @@ public class MainActivity extends Activity {
         map.setMaxZoomLevel(ZOOM_MAX);
         //new RetrieveDataTask().execute(ctx);
 
-        pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Cargando...");
-        pDialog.setCancelable(false);
-        if (!isNetworkAvailable(this)) {
-            Toast.makeText(this, "Conexión no disponible", Toast.LENGTH_LONG).show();
-        } else {
-            pDialog.show();
-            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                    obtenerBloques_ws, null, new Response.Listener<JSONObject>() {
 
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        JSONArray features = response.getJSONArray("features");
-                        int total_features = features.length();
-                        response = null;
-                        for (int i = 0; i < total_features; i++) {
-                            JSONObject jsonObj = (JSONObject) features.get(i);
-                            String identificador = jsonObj.getString("identificador");
-                            JSONObject jsonObj_geometry = jsonObj.getJSONObject("geometry");
-                            JSONArray coordenadas = jsonObj_geometry.getJSONArray("coordinates").getJSONArray(0);
-                            Bloque bloque = new Bloque(identificador);
-                            bloque.construir_poligono(coordenadas, map, ctx);
-                            bloque = null;
-                            jsonObj = null;
-                            coordenadas = null;
-                            pDialog.dismiss();
-                        }
+        new Drawer().execute(new DrawingTools(this,map));
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Toast.makeText(getApplicationContext(), "Error cargando datos...", Toast.LENGTH_LONG).show();
-                        pDialog.dismiss();
-                    } finally {
-                        System.gc();
-                    }
-                }
-            }, new Response.ErrorListener() {
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyLog.d("tag", "Error: " + error.getMessage());
-                    Toast.makeText(getApplicationContext(), "Error HTTP", Toast.LENGTH_SHORT).show();
-                    //pDialog.dismiss();
-
-                }
-            });
-            // Adding request to request queue
-            AppController.getInstance(this).addToRequestQueue(jsonObjReq);
-        }
-
-
-        new RetrieveDataTask().execute(ctx);
+        new Nombres().execute(ctx);
 
     }
 
+    private class DrawingTools {
+        Context context;
+        MapView map;
 
+        public DrawingTools(Context ctx, MapView map){
+            this.context = ctx;
+            this.map = map;
+        }
+    }
 
-    private class RetrieveDataTask extends AsyncTask<Context, Void, ArrayList> {
+    private class Drawer extends AsyncTask<DrawingTools, Void, Void>{
+        DrawingTools actual ;
+        ProgressDialog dialog;
+        @Override
+        protected Void doInBackground(DrawingTools... dts) {
+            actual = dts[0];
+            dialog = new ProgressDialog(actual.context);
+            dialog.setMessage("Cargando...");
+            dialog.setCancelable(false);
+            if (!isNetworkAvailable(actual.context)) {
+                Toast.makeText(actual.context, "Conexión no disponible", Toast.LENGTH_LONG).show();
+            } else {
+                dialog.show();
+                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                        obtenerBloques_ws, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray features = response.getJSONArray("features");
+                            int total_features = features.length();
+                            response = null;
+                            for (int i = 0; i < total_features; i++) {
+                                JSONObject jsonObj = (JSONObject) features.get(i);
+                                String identificador = jsonObj.getString("identificador");
+                                JSONObject jsonObj_geometry = jsonObj.getJSONObject("geometry");
+                                JSONArray coordenadas = jsonObj_geometry.getJSONArray("coordinates").getJSONArray(0);
+                                Bloque bloque = new Bloque(identificador);
+                                bloque.construir_poligono(coordenadas, actual.map, actual.context);
+                                bloque = null;
+                                jsonObj = null;
+                                coordenadas = null;
+                                dialog.dismiss();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "Error cargando datos...", Toast.LENGTH_LONG).show();
+                            dialog.dismiss();
+                        } finally {
+                            System.gc();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("tag", "Error: " + error.getMessage());
+                        Toast.makeText(getApplicationContext(), "Error HTTP", Toast.LENGTH_SHORT).show();
+                        //pDialog.dismiss();
+
+                    }
+                });
+                // Adding request to request queue
+                AppController.getInstance(actual.context).addToRequestQueue(jsonObjReq);
+            }
+            return null;
+        }
+    }
+
+    private class Nombres extends AsyncTask<Context, Void, ArrayList> {
         Context context;
         @Override
         protected ArrayList doInBackground(Context... contexts) {
@@ -274,13 +294,9 @@ public class MainActivity extends Activity {
                     //        pDialog.dismiss();
                 }
             });
-
             AppController.getInstance(context).addToRequestQueue(jsonObjReq);
-
             return items_nombres;
         }
-
-
     }
 
 
