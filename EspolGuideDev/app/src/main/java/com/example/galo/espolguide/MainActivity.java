@@ -81,12 +81,12 @@ public class MainActivity extends Activity {
         //rank = new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
 
         country = new ArrayList<String>();
-        country.add("China,Hola");
-        country.add("India,Tracy");
-        country.add("United States,Rezar");
-        country.add("Indonesia,Apu");
-        country.add("Brazil,Marmando");
-        country.add("Pakistan,Chounli");
+        country.add("Edificio 24-A,Fiec Vieja");
+        country.add("Edificio 15-A,Fiec Nueva");
+        country.add("Edificio 31-B,Celex");
+        country.add("Edificio 32-A,Basico viejo");
+        country.add("Edificio 16-C,Fiec Nueva");
+        country.add("Edificio 27-A,Laboratorios de Fisica");
         country.add("Nigeria,Galo");
         country.add("Bangladesh,Jugo");
         country.add("Russia,Fabricio");
@@ -117,13 +117,21 @@ public class MainActivity extends Activity {
         obtenerNombres(nombresAlternativo_ws, map, ctx);
 
 
-        /*
+        final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
         map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 search_poi_sv.setVisibility(View.INVISIBLE);
+                info.setVisibility(View.GONE);
             }
-        });*/
+        });
+        Button boton = (Button) findViewById(R.id.boton);
+        boton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                info.setVisibility(View.VISIBLE);
+            }
+        });
         //(search_poi_sv, SEARCH_POI_FONTSIZE);
 
         // Locate the ListView in listview_main.xml

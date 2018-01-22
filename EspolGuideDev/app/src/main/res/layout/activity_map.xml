@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -10,24 +10,39 @@
         android:layout_height="fill_parent"
         android:clickable="true" />
 
-
-    <EditText
-        android:id="@+id/search"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+    <!--Contenedor de barra de busqueda y sugerencias-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        style="@style/barra_busqueda_pois"
         >
-        <requestFocus />
-    </EditText>
+        <!--Ingreso de texto en barra de busqueda-->
+        <EditText
+            android:id="@+id/search"
+            style="@style/input_barra_pois"
+            >
+            <requestFocus />
+        </EditText>
 
-    <ListView
-        android:id="@+id/listview"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/search"
-        android:visibility="gone"
-        android:background="#FF0000"/>
+        <!--Lista de pois sugeridos en barra de busqueda-->
+        <ListView
+            android:id="@+id/listview"
+            style="@style/lista_sugerencias_barra"
+            />
+        <Button
+            android:id="@+id/boton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ver Bloque">
+        </Button>
+    </LinearLayout>
 
+    <!--Layout de la informacion del POI-->
     <LinearLayout android:id="@+id/overlay"
+        android:layout_marginTop="45dip"
+        android:layout_marginRight="25dip"
+        android:layout_marginLeft="25dip"
+        android:layout_marginBottom="30dip"
+
+
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -51,11 +66,6 @@
             android:layout_marginTop="20dp"
             android:layout_centerHorizontal="true" />
 
-
-        <EditText android:id="@+id/edittext"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_margin="50dp" />
     </LinearLayout>
 
-</RelativeLayout>
+</FrameLayout>
