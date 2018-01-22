@@ -15,6 +15,7 @@ public class SingleItemView extends Activity {
     TextView txt_alter_name;
     String name;
     String alter_name;
+    String id;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -6,6 +6,7 @@
     android:paddingLeft="15dip"
     android:paddingBottom="5dip"
     >
+
     <TextView
         android:id="@+id/name"
         style="@style/nombre_principal_lista"
