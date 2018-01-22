@@ -32,7 +32,9 @@ import org.osmdroid.views.MapView;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import org.osmdroid.api.IMapController;
@@ -68,6 +70,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+
         double ESPOL_CENTRAL_LONG = -79.96575;
         double ESPOL_CENTRAL_LAT = -2.14630;
         int START_ZOOM = 18;
@@ -88,6 +91,25 @@ public class MainActivity extends Activity {
         map_controller.setZoom(START_ZOOM);
         GeoPoint espol_central_point = new GeoPoint(ESPOL_CENTRAL_LAT, ESPOL_CENTRAL_LONG);
         map_controller.setCenter(espol_central_point);
+
+
+
+        final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                search_poi_sv.setVisibility(View.INVISIBLE);
+                info.setVisibility(View.GONE);
+            }
+        });
+        Button boton = (Button) findViewById(R.id.boton);
+        boton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                info.setVisibility(View.VISIBLE);
+            }
+        });
+
 
         map.setMaxZoomLevel(ZOOM_MAX);
         //new RetrieveDataTask().execute(ctx);
