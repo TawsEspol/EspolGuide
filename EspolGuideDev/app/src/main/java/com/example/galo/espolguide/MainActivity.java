@@ -68,8 +68,8 @@ public class MainActivity extends Activity {
     String IP_FAB = "192.168.0.112:8000";
     String IP_FAB_CASAGALO = "192.168.0.15:8000";
 
-    String obtenerBloques_ws = "http://" + IP_FAB + "/obtenerBloques/";
-    String nombresAlternativo_ws = "http://" + IP_FAB + "/nombresAlternativo/";
+    String obtenerBloques_ws = "http://" + IP_GALO + "/obtenerBloques/";
+    String nombresAlternativo_ws = "http://" + IP_GALO + "/nombresAlternativo/";
     //String geocampus_webserviceURL = "http://sigeo.espol.edu.ec/geoapi/geocampus/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geocampus:BLOQUES&srsName=EPSG:4326&outputFormat=application%2Fjson";
 
     @Override
@@ -109,8 +109,8 @@ public class MainActivity extends Activity {
                 System.out.println("Capturo click en boton");
             }
         });
-
-        map.setOnClickListener(new View.OnClickListener() {
+        LinearLayout contenedor_mapa = (LinearLayout) findViewById(R.id.contenedor_mapa);
+        contenedor_mapa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
@@ -120,14 +120,6 @@ public class MainActivity extends Activity {
         });
 
 
-
-/**        map.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                info.setVisibility(View.GONE);
-            return true;
-            }
-        });**/
 
 
         //(search_poi_sv, SEARCH_POI_FONTSIZE);
