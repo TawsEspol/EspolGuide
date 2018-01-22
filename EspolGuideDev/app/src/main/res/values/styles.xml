@@ -10,4 +10,13 @@
     <style name="AppSearchView" parent="Widget.AppCompat.SearchView" >
         <item name="android:textSize">60sp</item>
     </style>
+
+    <!--Campo de texto-->
+    <style name="EditText" parent="AppTheme">
+        <!-- cursor y línea normal-->
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <!-- cursor y línea con foco-->
+        <item name="colorControlActivated">@color/colorSearchBar</item>
+    </style>
+
 </resources>

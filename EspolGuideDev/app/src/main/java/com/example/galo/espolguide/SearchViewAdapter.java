@@ -23,6 +23,7 @@ public class SearchViewAdapter extends BaseAdapter {
     private ArrayList<String> arraylist;
 
     public class ViewHolder {
+        String id;
         TextView nombre;
         TextView nombre_alternativo;
     }
@@ -31,6 +32,7 @@ public class SearchViewAdapter extends BaseAdapter {
         mContext = context;
         this.pois_lista = pois_lista;
         inflater = LayoutInflater.from(mContext);
+
         this.arraylist = new ArrayList<String>();
         this.arraylist.addAll(pois_lista);
     }
@@ -65,12 +67,14 @@ public class SearchViewAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
         String data = pois_lista.get(i);
-        String[] parts = data.split(",");
-        final String name1 = parts[0]; // 004
-        final String name2 = parts[1];
+        String[] parts = data.split(";");
+        System.out.println("hola");
+        final String name1 = parts[1]; // 004
+        final String name2 = parts[2];
         // Set the results into TextViews
         holder.nombre.setText(name1);
         holder.nombre_alternativo.setText(name2);
+        holder.id = parts[0];
 
         // Listen for ListView Item Click
         view.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +83,7 @@ public class SearchViewAdapter extends BaseAdapter {
             public void onClick(View arg0) {
                 // Send single item click data to SingleItemView Class
                 Intent intent = new Intent(mContext, SingleItemView.class);
+                //intent.putExtra("id",name1);
                 // Pass all data rank
                 intent.putExtra("name",name1);
                 // Pass all data country
@@ -86,6 +91,7 @@ public class SearchViewAdapter extends BaseAdapter {
                 // Pass all data population
                 // Pass all data flag
                 // Start SingleItemView Class
+                System.out.println(name1);
                 mContext.startActivity(intent);
             }
         });
@@ -97,7 +103,8 @@ public class SearchViewAdapter extends BaseAdapter {
         charText = charText.toLowerCase(Locale.getDefault());
         pois_lista.clear();
         if (charText.length() == 0) {
-            pois_lista.addAll(arraylist);
+            //pois_lista.addAll(arraylist);
+            pois_lista.clear();
         }
         else
         {

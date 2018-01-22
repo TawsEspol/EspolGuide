@@ -115,7 +115,7 @@ public abstract class Poi implements View.OnClickListener {
     public void construir_poligono(JSONArray coordenadas, MapView map, Context ctx){
         ProgressDialog pDialog = new ProgressDialog(ctx);
         try{
-            System.out.println("ENTRAAAA");
+            System.out.println("Poligono trazado.");
             ArrayList<GeoPoint> geoPoints = new ArrayList<>();
             for(int j=0; j<coordenadas.length(); j++){
                 JSONArray point_coord = coordenadas.getJSONArray(j);
@@ -128,7 +128,7 @@ public abstract class Poi implements View.OnClickListener {
             geoPoints.clear();
         }catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(ctx, "Error , try again ! ", Toast.LENGTH_LONG).show();
+            Toast.makeText(ctx, "Error trazando bloques...", Toast.LENGTH_LONG).show();
             pDialog.dismiss();
         }
     }
