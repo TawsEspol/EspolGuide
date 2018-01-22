@@ -70,8 +70,8 @@ public class MainActivity extends Activity {
     String IP_LAB_SOFT_FAB = "172.19.15.215:8000";  //eduroam
 
 
-    String obtenerBloques_ws = "http://" + "172." + "/obtenerBloques/";
-    String nombresAlternativo_ws = "http://" + "" + "/nombresAlternativo/";
+    String obtenerBloques_ws = "http://" + "172.19.15.155:8000" + "/obtenerBloques/";
+    String nombresAlternativo_ws = "http://" + "172.19.15.155:8000" + "/nombresAlternativo/";
 
     //String geocampus_webserviceURL = "http://sigeo.espol.edu.ec/geoapi/geocampus/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geocampus:BLOQUES&srsName=EPSG:4326&outputFormat=application%2Fjson";
 
@@ -135,7 +135,7 @@ public class MainActivity extends Activity {
         map.setMaxZoomLevel(ZOOM_MAX);
         //new RetrieveDataTask().execute(ctx);
 
-
+        System.out.println("ANTES DE HILOS");
         new Drawer().execute(new DrawingTools(this,map));
 
         new Nombres().execute(ctx);
@@ -171,6 +171,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            System.out.println("INTENTO GRAFICAR");
                             JSONArray features = response.getJSONArray("features");
                             int total_features = features.length();
                             response = null;
@@ -188,6 +189,7 @@ public class MainActivity extends Activity {
                             }
 
                         } catch (JSONException e) {
+                            System.out.println("NO GRAFIQUE");
                             e.printStackTrace();
                             Toast.makeText(getApplicationContext(), "Error cargando datos...", Toast.LENGTH_LONG).show();
                             dialog.dismiss();
