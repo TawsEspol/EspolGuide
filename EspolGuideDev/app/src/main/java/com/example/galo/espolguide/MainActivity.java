@@ -60,7 +60,7 @@ public class MainActivity extends Activity {
     EditText editsearch;
 
     SearchViewAdapter adapter;
-
+    MapView mapView;
 
     JSONObject jsonObj;
 
@@ -68,6 +68,7 @@ public class MainActivity extends Activity {
 
     String obtenerBloques_ws = "http://" +IP_TAWS_FAB+ "/obtenerBloques/";
     String nombresAlternativo_ws = "http://" + IP_TAWS_FAB + "/nombresAlternativo/";
+
 
 
     //String geocampus_webserviceURL = "http://sigeo.espol.edu.ec/geoapi/geocampus/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geocampus:BLOQUES&srsName=EPSG:4326&outputFormat=application%2Fjson";
@@ -95,16 +96,6 @@ public class MainActivity extends Activity {
         GeoPoint espol_central_point = new GeoPoint(ESPOL_CENTRAL_LAT, ESPOL_CENTRAL_LONG);
         map_controller.setCenter(espol_central_point);
 
-        Button boton = (Button) findViewById(R.id.boton);
-        boton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
-                info.setVisibility(View.VISIBLE);
-                System.out.println("Capturo click en boton");
-            }
-        });
-
         Button close_poi_button = (Button) findViewById(R.id.close_poi_info_button);
         close_poi_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,10 +108,16 @@ public class MainActivity extends Activity {
 
         map.setMaxZoomLevel(ZOOM_MAX);
 
+        this.mapView = map;
         new Drawer().execute(new DrawingTools(this,map,info));
         new Nombres().execute(ctx);
 
     }
+
+    public MapView getMapView(){
+        return this.mapView;
+    }
+
     private class DrawingTools {
         Context context;
         MapView map;
@@ -217,8 +214,10 @@ public class MainActivity extends Activity {
 
                     search_poi_sv = (ListView) findViewById(R.id.listview);
                     adapter = new SearchViewAdapter(context, items_nombres);
+                    adapter.setMapView(getMapView());
                     // Binds the Adapter to the ListView
                     search_poi_sv.setAdapter(adapter);
+
                     // Locate the EditText in listview_main.xml
                     editsearch = (EditText) findViewById(R.id.search);
                     // Capture Text in EditText
