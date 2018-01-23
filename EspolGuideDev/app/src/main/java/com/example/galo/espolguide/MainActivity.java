@@ -47,6 +47,9 @@ import org.json.JSONObject;
 import com.loopj.android.http.*;
 import cz.msebera.android.httpclient.Header;
 
+import static espolguide.helpers.constants.Constantes.IP_FAB;
+import static espolguide.helpers.constants.Constantes.IP_TAWS_FAB;
+
 /**
  * Created by galo on 29/12/17.
  */
@@ -61,17 +64,10 @@ public class MainActivity extends Activity {
 
     JSONObject jsonObj;
 
-    String IP_LAB_SOFT = "172.19.66.151:8000";  //eduroam
-    String IP_GALO = "192.168.0.13:8000";
-    String IP_TAWS = "192.168.0.126:8000";
-    String IP_FAB = "192.168.0.112:8000";
-    String IP_FAB_CASAGALO = "192.168.0.15:8000";
-    String IP_LAB_SOFT_FAB = "172.19.15.215:8000";  //eduroam
 
 
-
-    String obtenerBloques_ws = "http://" +IP_FAB+ "/obtenerBloques/";
-    String nombresAlternativo_ws = "http://" + IP_FAB + "/nombresAlternativo/";
+    String obtenerBloques_ws = "http://" +IP_TAWS_FAB+ "/obtenerBloques/";
+    String nombresAlternativo_ws = "http://" + IP_TAWS_FAB + "/nombresAlternativo/";
 
 
     //String geocampus_webserviceURL = "http://sigeo.espol.edu.ec/geoapi/geocampus/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geocampus:BLOQUES&srsName=EPSG:4326&outputFormat=application%2Fjson";
@@ -90,7 +86,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_map);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         final MapView map = (MapView) findViewById(R.id.mapview);
-
+        final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
         map.setClickable(true);
         map.setTileSource(TileSourceFactory.MAPNIK);
         map.setMultiTouchControls(true);
@@ -121,17 +117,20 @@ public class MainActivity extends Activity {
 
         map.setMaxZoomLevel(ZOOM_MAX);
 
-        new Drawer().execute(new DrawingTools(this,map));
+        new Drawer().execute(new DrawingTools(this,map,info));
         new Nombres().execute(ctx);
 
     }
     private class DrawingTools {
         Context context;
         MapView map;
+        View info;
 
-        public DrawingTools(Context ctx, MapView map){
+
+        public DrawingTools(Context ctx, MapView map, View info){
             this.context = ctx;
             this.map = map;
+            this.info = info;
         }
     }
 
@@ -149,7 +148,6 @@ public class MainActivity extends Activity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            System.out.println("INTENTO GRAFICAR");
                             JSONArray features = response.getJSONArray("features");
                             int total_features = features.length();
                             response = null;
@@ -159,13 +157,12 @@ public class MainActivity extends Activity {
                                 JSONObject jsonObj_geometry = jsonObj.getJSONObject("geometry");
                                 JSONArray coordenadas = jsonObj_geometry.getJSONArray("coordinates").getJSONArray(0);
                                 Bloque bloque = new Bloque(identificador);
-                                bloque.construir_poligono(coordenadas, actual.map, actual.context);
+                                bloque.construir_poligono(coordenadas, actual.map, actual.context, actual.info);
                                 bloque = null;
                                 jsonObj = null;
                                 coordenadas = null;
                             }
                         } catch (JSONException e) {
-                            System.out.println("NO GRAFIQUE");
                             e.printStackTrace();
                             Toast.makeText(getApplicationContext(), "Error cargando datos...", Toast.LENGTH_LONG).show();
                         } finally {
@@ -231,7 +228,6 @@ public class MainActivity extends Activity {
                             // TODO Auto-generated method stub
 
                             String text = editsearch.getText().toString().toLowerCase(Locale.getDefault());
-                            System.out.println(text);
                             adapter.filter(text);
                         }
 
@@ -248,7 +244,6 @@ public class MainActivity extends Activity {
                             search_poi_sv.setVisibility(View.VISIBLE);
                         }
                     });
-                    System.out.println("YEIH!");
                 }
             }, new Response.ErrorListener() {
 

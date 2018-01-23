@@ -113,7 +113,7 @@ public abstract class Poi implements View.OnClickListener {
     }
 
 
-    public void construir_poligono(JSONArray coordenadas, MapView map, Context ctx){
+    public void construir_poligono(JSONArray coordenadas, MapView map, Context ctx, View info){
         ProgressDialog pDialog = new ProgressDialog(ctx);
         try{
             System.out.println("Poligono trazado.");
@@ -125,7 +125,7 @@ public abstract class Poi implements View.OnClickListener {
                 GeoPoint geotest = new GeoPoint(lat, lon);
                 geoPoints.add(geotest);
             }
-            mapear_poligono(map, geoPoints);
+            mapear_poligono(map, geoPoints, ctx, info);
             geoPoints.clear();
         }catch (JSONException e) {
             e.printStackTrace();
@@ -135,8 +135,8 @@ public abstract class Poi implements View.OnClickListener {
     }
 
 
-    public void mapear_poligono(MapView map, ArrayList<GeoPoint> geoPoints){
-        Poligono polygon = new Poligono(this.id);
+    public void mapear_poligono(MapView map, ArrayList<GeoPoint> geoPoints, Context ctx, View info){
+        Poligono polygon = new Poligono(this.id,ctx, info);
         polygon.setFillColor(Color.argb(30, 0,0,220));
         polygon.setPoints(geoPoints);
         polygon.setStrokeColor(Color.BLUE);
