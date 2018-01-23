@@ -60,7 +60,6 @@ public class MainActivity extends Activity {
 
 
     JSONObject jsonObj;
-    ProgressDialog pDialog;
 
     String IP_LAB_SOFT = "172.19.66.151:8000";  //eduroam
     String IP_GALO = "192.168.0.13:8000";
@@ -70,8 +69,10 @@ public class MainActivity extends Activity {
     String IP_LAB_SOFT_FAB = "172.19.15.215:8000";  //eduroam
 
 
+
     String obtenerBloques_ws = "http://" +IP_FAB+ "/obtenerBloques/";
     String nombresAlternativo_ws = "http://" + IP_FAB + "/nombresAlternativo/";
+
 
     //String geocampus_webserviceURL = "http://sigeo.espol.edu.ec/geoapi/geocampus/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geocampus:BLOQUES&srsName=EPSG:4326&outputFormat=application%2Fjson";
 
@@ -82,7 +83,6 @@ public class MainActivity extends Activity {
         double ESPOL_CENTRAL_LAT = -2.14630;
         int START_ZOOM = 18;
         int ZOOM_MAX = 20;
-        int SEARCH_POI_FONTSIZE = 15;
 
         super.onCreate(savedInstanceState);
         final Context ctx = getApplicationContext();
@@ -99,10 +99,6 @@ public class MainActivity extends Activity {
         GeoPoint espol_central_point = new GeoPoint(ESPOL_CENTRAL_LAT, ESPOL_CENTRAL_LONG);
         map_controller.setCenter(espol_central_point);
 
-
-
-
-
         Button boton = (Button) findViewById(R.id.boton);
         boton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,36 +108,23 @@ public class MainActivity extends Activity {
                 System.out.println("Capturo click en boton");
             }
         });
-        LinearLayout contenedor_mapa = (LinearLayout) findViewById(R.id.contenedor_mapa);
-        contenedor_mapa.setOnClickListener(new View.OnClickListener() {
+
+        Button close_poi_button = (Button) findViewById(R.id.close_poi_info_button);
+        close_poi_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
                 info.setVisibility(View.GONE);
-                System.out.println("Capturo click en mapa");
+                System.out.println("Capturo click en boton de cerrar");
             }
         });
 
-
-
-
-        //(search_poi_sv, SEARCH_POI_FONTSIZE);
-
-        // Locate the ListView in listview_main.xml
-
-        // Pass results to ListViewAdapter Class
-
-
         map.setMaxZoomLevel(ZOOM_MAX);
-        //new RetrieveDataTask().execute(ctx);
-
 
         new Drawer().execute(new DrawingTools(this,map));
-
         new Nombres().execute(ctx);
 
     }
-
     private class DrawingTools {
         Context context;
         MapView map;
@@ -154,23 +137,19 @@ public class MainActivity extends Activity {
 
     private class Drawer extends AsyncTask<DrawingTools, Void, Void>{
         DrawingTools actual ;
-        ProgressDialog dialog;
         @Override
         protected Void doInBackground(DrawingTools... dts) {
             actual = dts[0];
-            dialog = new ProgressDialog(actual.context);
-            dialog.setMessage("Cargando...");
-            dialog.setCancelable(false);
             if (!isNetworkAvailable(actual.context)) {
                 Toast.makeText(actual.context, "Conexión no disponible", Toast.LENGTH_LONG).show();
             } else {
-                dialog.show();
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                         obtenerBloques_ws, null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            System.out.println("INTENTO GRAFICAR");
                             JSONArray features = response.getJSONArray("features");
                             int total_features = features.length();
                             response = null;
@@ -184,13 +163,11 @@ public class MainActivity extends Activity {
                                 bloque = null;
                                 jsonObj = null;
                                 coordenadas = null;
-                                dialog.dismiss();
                             }
-
                         } catch (JSONException e) {
+                            System.out.println("NO GRAFIQUE");
                             e.printStackTrace();
                             Toast.makeText(getApplicationContext(), "Error cargando datos...", Toast.LENGTH_LONG).show();
-                            dialog.dismiss();
                         } finally {
                             System.gc();
                         }
@@ -201,11 +178,8 @@ public class MainActivity extends Activity {
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("tag", "Error: " + error.getMessage());
                         Toast.makeText(getApplicationContext(), "Error HTTP", Toast.LENGTH_SHORT).show();
-                        //pDialog.dismiss();
-
                     }
                 });
-                // Adding request to request queue
                 AppController.getInstance(actual.context).addToRequestQueue(jsonObjReq);
             }
             return null;
@@ -226,7 +200,6 @@ public class MainActivity extends Activity {
                         String identificador = iter.next();
                         try {
                             String bloque_str = "";
-
                             JSONObject info_bloque = (JSONObject) response.get(identificador);
                             String nombre_oficial = (String) info_bloque.getString("NombreOficial");
                             JSONArray nombres_alternativos = info_bloque.getJSONArray("NombresAlternativos");
@@ -275,9 +248,7 @@ public class MainActivity extends Activity {
                             search_poi_sv.setVisibility(View.VISIBLE);
                         }
                     });
-
                     System.out.println("YEIH!");
-
                 }
             }, new Response.ErrorListener() {
 
@@ -285,7 +256,6 @@ public class MainActivity extends Activity {
                 public void onErrorResponse(VolleyError error) {
                     VolleyLog.d("tag", "Error: " + error.getMessage());
                     Toast.makeText(getApplicationContext(), "Error HTTP", Toast.LENGTH_SHORT).show();
-                    //        pDialog.dismiss();
                 }
             });
             AppController.getInstance(context).addToRequestQueue(jsonObjReq);
@@ -293,19 +263,13 @@ public class MainActivity extends Activity {
         }
     }
 
-
     public boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 
-
     public void onResume(){
         super.onResume();
-        //this will refresh the osmdroid configuration on resuming.
-        //if you make changes to the configuration, use
-        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        //Configuration.getInstance().save(this, prefs);
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
     }
 }
