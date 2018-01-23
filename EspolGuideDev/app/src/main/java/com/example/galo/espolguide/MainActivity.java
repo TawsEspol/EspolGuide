@@ -68,7 +68,6 @@ public class MainActivity extends Activity {
     String IP_FAB_CASAGALO = "192.168.0.15:8000";
     String IP_LAB_SOFT_FAB = "172.19.15.215:8000";  //eduroam
 
-
     String obtenerBloques_ws = "http://" + IP_GALO + "/obtenerBloques/";
     String nombresAlternativo_ws = "http://" + IP_GALO + "/nombresAlternativo/";
 
@@ -106,15 +105,6 @@ public class MainActivity extends Activity {
                 System.out.println("Capturo click en boton");
             }
         });
-        LinearLayout contenedor_mapa = (LinearLayout) findViewById(R.id.contenedor_mapa);
-        contenedor_mapa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
-                info.setVisibility(View.GONE);
-                System.out.println("Capturo click en mapa");
-            }
-        });
 
         Button close_poi_button = (Button) findViewById(R.id.close_poi_info_button);
         close_poi_button.setOnClickListener(new View.OnClickListener() {
@@ -127,6 +117,7 @@ public class MainActivity extends Activity {
         });
 
         map.setMaxZoomLevel(ZOOM_MAX);
+
         new Drawer().execute(new DrawingTools(this,map));
         new Nombres().execute(ctx);
 
@@ -155,6 +146,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            System.out.println("INTENTO GRAFICAR");
                             JSONArray features = response.getJSONArray("features");
                             int total_features = features.length();
                             response = null;
@@ -170,6 +162,7 @@ public class MainActivity extends Activity {
                                 coordenadas = null;
                             }
                         } catch (JSONException e) {
+                            System.out.println("NO GRAFIQUE");
                             e.printStackTrace();
                             Toast.makeText(getApplicationContext(), "Error cargando datos...", Toast.LENGTH_LONG).show();
                         } finally {
