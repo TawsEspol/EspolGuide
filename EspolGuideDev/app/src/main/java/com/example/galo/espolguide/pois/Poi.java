@@ -136,7 +136,7 @@ public abstract class Poi implements View.OnClickListener {
 
 
     public void mapear_poligono(MapView map, ArrayList<GeoPoint> geoPoints){
-        Poligono polygon = new Poligono();
+        Poligono polygon = new Poligono(this.id);
         polygon.setFillColor(Color.argb(30, 0,0,220));
         polygon.setPoints(geoPoints);
         polygon.setStrokeColor(Color.BLUE);

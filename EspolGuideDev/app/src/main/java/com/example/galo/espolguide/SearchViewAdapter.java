@@ -68,13 +68,13 @@ public class SearchViewAdapter extends BaseAdapter {
         }
         String data = pois_lista.get(i);
         String[] parts = data.split(";");
-        System.out.println("hola");
         final String name1 = parts[1]; // 004
         final String name2 = parts[2];
         // Set the results into TextViews
         holder.nombre.setText(name1);
         holder.nombre_alternativo.setText(name2);
         holder.id = parts[0];
+        System.out.println(holder.id);
 
         // Listen for ListView Item Click
         view.setOnClickListener(new View.OnClickListener() {
