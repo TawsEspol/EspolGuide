@@ -70,8 +70,8 @@ public class MainActivity extends Activity {
     String IP_LAB_SOFT_FAB = "172.19.15.215:8000";  //eduroam
 
 
-    String obtenerBloques_ws = "http://" + "172." + "/obtenerBloques/";
-    String nombresAlternativo_ws = "http://" + "" + "/nombresAlternativo/";
+    String obtenerBloques_ws = "http://" +IP_FAB+ "/obtenerBloques/";
+    String nombresAlternativo_ws = "http://" + IP_FAB + "/nombresAlternativo/";
 
     //String geocampus_webserviceURL = "http://sigeo.espol.edu.ec/geoapi/geocampus/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geocampus:BLOQUES&srsName=EPSG:4326&outputFormat=application%2Fjson";
 
