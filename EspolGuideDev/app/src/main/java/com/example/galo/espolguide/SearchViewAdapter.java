@@ -29,6 +29,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static espolguide.helpers.constants.Constantes.IP_COMSOC;
+import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT_FAB;
+import static espolguide.helpers.constants.Constantes.IP_TAWS_FAB;
+
 /**
  * Created by fabricio on 14/01/18.
  */
@@ -125,10 +129,7 @@ public class SearchViewAdapter extends BaseAdapter {
 
             @Override
             public void onClick(View arg0) {
-
-
-                String IP_GALO = "192.168.0.13:8000";
-                String info_poi_ws = "http://" + IP_GALO + "/infoBloque/";
+                String info_poi_ws = "http://" + IP_TAWS_FAB + "/infoBloque/";
                 if (!isNetworkAvailable(getmContext())) {
                     Toast.makeText(getmContext(), "Conexión no disponible", Toast.LENGTH_LONG).show();
                 } else {
@@ -138,7 +139,6 @@ public class SearchViewAdapter extends BaseAdapter {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                System.out.println("INTENTO TRAER INFO");
                                 JSONArray features = response.getJSONArray("features");
                                 response = null;
                                 JSONObject jsonObj = (JSONObject) features.get(0);
@@ -152,10 +152,8 @@ public class SearchViewAdapter extends BaseAdapter {
                                 IMapController map_controller = getMapView().getController();
                                 map_controller.setZoom(19);
                                 map_controller.setCenter(central_point);
-                                System.out.println("GRAFIQUEEEEEEEEEE");
 
                             } catch (JSONException e) {
-                                System.out.println("NO GRAFIQUE");
                                 e.printStackTrace();
                                 Toast.makeText(getmContext(), "Error cargando datos...", Toast.LENGTH_LONG).show();
                             } finally {

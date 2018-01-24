@@ -58,7 +58,7 @@ public class POI_vista {
     private int favoritos_count;
     private String descripcion;
     private ArrayList<String> nombres_alternativos = new ArrayList<String>();
-    String infoBloque = "http://" + Constantes.IP_TAWS_FAB + "/infoBloque/";
+    String infoBloque = "http://" + Constantes.IP_TAWS_FAB+ "/infoBloque/";
 
     public POI_vista(Poi poi){
         codigo = poi.getCodigo();
@@ -148,7 +148,9 @@ public class POI_vista {
                                 JSONObject properties = jsonObj.getJSONObject("properties");
                                 JSONObject jsonObj_geometry = jsonObj.getJSONObject("geometry");
                                 JSONArray coordenadas = jsonObj_geometry.getJSONArray("coordinates").getJSONArray(0);
+                                data.setCodigo(properties.getString("codigo"));
                                 data.setUnidad(properties.getString("unidad"));
+                                data.setDescripcion(properties.getString("descripcio"));
 
                             }
                         } catch (JSONException e) {
@@ -181,9 +183,13 @@ public class POI_vista {
 
     public void show() {
             ViewGroup nextChild = (ViewGroup) ((ViewGroup)view).getChildAt(0);
-            nextChild = (ViewGroup) nextChild.getChildAt(0);
-            TextView titulo = (TextView) nextChild.getChildAt(1);
-            titulo.setText(this.getUnidad());
+            ViewGroup linear = (ViewGroup) nextChild.getChildAt(2);
+            TextView codigo= (TextView) linear.getChildAt(0);
+            codigo.setText(this.getCodigo());
+            TextView facultad = (TextView) linear.getChildAt(1);
+            facultad.setText(this.getUnidad());
+            TextView descripcion = (TextView) nextChild.getChildAt(3);
+            descripcion.setText(this.getDescripcion());
             view.setVisibility(View.VISIBLE);
 
         }

@@ -7,9 +7,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.galo.espolguide.pois.AppController;
 import com.example.galo.espolguide.pois.Bloque;
-import com.loopj.android.http.AsyncHttpClient;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
@@ -47,7 +45,9 @@ import org.json.JSONObject;
 import com.loopj.android.http.*;
 import cz.msebera.android.httpclient.Header;
 
+import static espolguide.helpers.constants.Constantes.IP_COMSOC;
 import static espolguide.helpers.constants.Constantes.IP_FAB;
+import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT_FAB;
 import static espolguide.helpers.constants.Constantes.IP_TAWS_FAB;
 
 /**
