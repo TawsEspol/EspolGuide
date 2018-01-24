@@ -13,7 +13,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -223,25 +222,11 @@ public class MainActivity extends Activity {
                     editsearch = (EditText) findViewById(R.id.search);
                     // Capture Text in EditText
                     editsearch.addTextChangedListener(new TextWatcher() {
-
-                        private final Pattern sPattern
-                                = Pattern.compile("^([1-9][0-9]{0,2})?(\\.[0-9]?)?$");
-
-                        private CharSequence mText;
-
-                        private boolean isValid(CharSequence s) {
-                            return sPattern.matcher(s).matches();
-                        }
-
-
                         @Override
                         public void afterTextChanged(Editable arg0) {
                             // TODO Auto-generated method stub
 
                             String text = editsearch.getText().toString().toLowerCase(Locale.getDefault());
-                            int length = text.length();
-
-
                             adapter.filter(text);
                         }
 
