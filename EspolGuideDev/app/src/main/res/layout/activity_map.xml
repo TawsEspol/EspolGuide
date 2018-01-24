@@ -23,6 +23,7 @@
         <EditText
             android:id="@+id/search"
             style="@style/input_barra_pois"
+            android:digits="qwertyuiopasdfghjklñzxcvbnm-0123456789 "
             >
             <requestFocus />
         </EditText>

@@ -79,6 +79,7 @@ public class SearchViewAdapter extends BaseAdapter {
 
         this.arraylist = new ArrayList<String>();
         this.arraylist.addAll(pois_lista);
+
     }
 
 
@@ -127,7 +128,7 @@ public class SearchViewAdapter extends BaseAdapter {
             public void onClick(View arg0) {
 
 
-                String IP_GALO = "192.168.0.13:8000";
+                String IP_GALO = "192.168.0.126:8000";
                 String info_poi_ws = "http://" + IP_GALO + "/infoBloque/";
                 if (!isNetworkAvailable(getmContext())) {
                     Toast.makeText(getmContext(), "Conexión no disponible", Toast.LENGTH_LONG).show();

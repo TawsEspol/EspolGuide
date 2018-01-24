@@ -58,7 +58,7 @@ public class POI_vista {
     private int favoritos_count;
     private String descripcion;
     private ArrayList<String> nombres_alternativos = new ArrayList<String>();
-    String infoBloque = "http://" + Constantes.IP_TAWS_FAB + "/infoBloque/";
+    String infoBloque = "http://" + "192.168.0.126:8000" + "/infoBloque/";
 
     public POI_vista(Poi poi){
         codigo = poi.getCodigo();
