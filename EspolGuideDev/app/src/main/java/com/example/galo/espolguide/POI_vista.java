@@ -41,6 +41,8 @@ import java.util.Locale;
 
 import espolguide.helpers.constants.Constantes;
 
+import static espolguide.helpers.constants.Constantes.IP_FAB;
+import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT_FAB;
 import static espolguide.helpers.constants.Constantes.isNetworkAvailable;
 
 /**
@@ -58,7 +60,8 @@ public class POI_vista {
     private int favoritos_count;
     private String descripcion;
     private ArrayList<String> nombres_alternativos = new ArrayList<String>();
-    String infoBloque = "http://" + Constantes.IP_TAWS_FAB+ "/infoBloque/";
+    String infoBloque = "http://" + IP_FAB + "/infoBloque/";
+
 
     public POI_vista(Poi poi){
         codigo = poi.getCodigo();
@@ -69,7 +72,7 @@ public class POI_vista {
     }
 
     public POI_vista(String id, Context ctx, View view){
-        this.codigo = id.split("Bloque")[1];
+        this.codigo = String.valueOf(Integer.parseInt(id.split("Bloque")[1]) % 69);
         this.ctx = ctx;
         this.view = view;
         new Info().execute(this);
@@ -148,6 +151,8 @@ public class POI_vista {
                                 JSONObject properties = jsonObj.getJSONObject("properties");
                                 JSONObject jsonObj_geometry = jsonObj.getJSONObject("geometry");
                                 JSONArray coordenadas = jsonObj_geometry.getJSONArray("coordinates").getJSONArray(0);
+                                System.out.println(properties);
+
                                 data.setCodigo(properties.getString("codigo"));
                                 data.setUnidad(properties.getString("unidad"));
                                 data.setDescripcion(properties.getString("descripcio"));

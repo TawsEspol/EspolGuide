@@ -47,6 +47,7 @@ import cz.msebera.android.httpclient.Header;
 
 import static espolguide.helpers.constants.Constantes.IP_COMSOC;
 import static espolguide.helpers.constants.Constantes.IP_FAB;
+import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT;
 import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT_FAB;
 import static espolguide.helpers.constants.Constantes.IP_TAWS_FAB;
 
@@ -66,8 +67,8 @@ public class MainActivity extends Activity {
 
 
 
-    String obtenerBloques_ws = "http://" +IP_TAWS_FAB+ "/obtenerBloques/";
-    String nombresAlternativo_ws = "http://" + IP_TAWS_FAB + "/nombresAlternativo/";
+    String obtenerBloques_ws = "http://" + IP_FAB + "/obtenerBloques/";
+    String nombresAlternativo_ws = "http://" + IP_FAB + "/nombresAlternativo/";
 
 
 
@@ -122,7 +123,6 @@ public class MainActivity extends Activity {
         Context context;
         MapView map;
         View info;
-
 
         public DrawingTools(Context ctx, MapView map, View info){
             this.context = ctx;
@@ -192,6 +192,10 @@ public class MainActivity extends Activity {
                     Iterator<String> iter = response.keys();
                     while (iter.hasNext()) {
                         String identificador = iter.next();
+                        Integer identificador_num = Integer.getInteger(identificador.substring(6));
+                        //System.out.println(identificador_num);
+                        if (identificador_num == null || identificador_num <= 69){
+
                         try {
                             String bloque_str = "";
                             JSONObject info_bloque = (JSONObject) response.get(identificador);
@@ -209,14 +213,9 @@ public class MainActivity extends Activity {
 
                         } catch (JSONException e) {
                             continue;
-                        }
+                        }}
                     }
 
-                    search_poi_sv = (ListView) findViewById(R.id.listview);
-                    adapter = new SearchViewAdapter(context, items_nombres);
-                    adapter.setMapView(getMapView());
-                    // Binds the Adapter to the ListView
-                    search_poi_sv.setAdapter(adapter);
 
                     // Locate the EditText in listview_main.xml
                     editsearch = (EditText) findViewById(R.id.search);
@@ -231,8 +230,7 @@ public class MainActivity extends Activity {
                         }
 
                         @Override
-                        public void beforeTextChanged(CharSequence arg0, int arg1,
-                                                      int arg2, int arg3) {
+                        public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
                             // TODO Auto-generated method stub
                         }
 
@@ -243,6 +241,11 @@ public class MainActivity extends Activity {
                             search_poi_sv.setVisibility(View.VISIBLE);
                         }
                     });
+                    search_poi_sv = (ListView) findViewById(R.id.listview);
+                    adapter = new SearchViewAdapter(context,mapView, items_nombres,editsearch);
+                    adapter.setMapView(getMapView());
+                    // Binds the Adapter to the ListView
+                    search_poi_sv.setAdapter(adapter);
                 }
             }, new Response.ErrorListener() {
 

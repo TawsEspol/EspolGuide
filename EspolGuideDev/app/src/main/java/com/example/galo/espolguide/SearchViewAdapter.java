@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import static espolguide.helpers.constants.Constantes.IP_COMSOC;
+import static espolguide.helpers.constants.Constantes.IP_FAB;
+import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT;
 import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT_FAB;
 import static espolguide.helpers.constants.Constantes.IP_TAWS_FAB;
 
@@ -44,6 +47,8 @@ public class SearchViewAdapter extends BaseAdapter {
     private ArrayList<String> arraylist;
     private MapView mapView;
     private ViewHolder viewHolder;
+    private View barra;
+    private MapView map;
 
     public class ViewHolder {
         String id;
@@ -52,6 +57,7 @@ public class SearchViewAdapter extends BaseAdapter {
 
         public String get_idNumber(){
             String id_number = this.id.substring(6);
+            System.out.println(id_number);
             return id_number;
         }
 
@@ -76,13 +82,15 @@ public class SearchViewAdapter extends BaseAdapter {
         this.viewHolder = viewHolder;
     }
 
-    public SearchViewAdapter(Context context, List<String> pois_lista) {
+    public SearchViewAdapter(Context context, MapView map,List<String> pois_lista,View barra) {
+        this.barra = barra;
         mContext = context;
         this.pois_lista = pois_lista;
         inflater = LayoutInflater.from(mContext);
-
+        this.map = map;
         this.arraylist = new ArrayList<String>();
         this.arraylist.addAll(pois_lista);
+
     }
 
 
@@ -123,13 +131,16 @@ public class SearchViewAdapter extends BaseAdapter {
         holder.nombre.setText(name1);
         holder.nombre_alternativo.setText(name2);
         holder.id = parts[0];
+        System.out.println(parts[0]);
 
         // Listen for ListView Item Click
         view.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
-                String info_poi_ws = "http://" + IP_TAWS_FAB + "/infoBloque/";
+
+                String info_poi_ws = "http://" + IP_FAB+ "/infoBloque/";
+
                 if (!isNetworkAvailable(getmContext())) {
                     Toast.makeText(getmContext(), "Conexión no disponible", Toast.LENGTH_LONG).show();
                 } else {
@@ -147,7 +158,9 @@ public class SearchViewAdapter extends BaseAdapter {
                                 JSONArray point_coord = coordenadas1.getJSONArray(0);
                                 double lat = point_coord.getDouble(0);
                                 double lon = point_coord.getDouble(1);
-
+                                map.getController().setZoom(1000);
+                                TextView f = (TextView) barra;
+                                f.setText("");
                                 GeoPoint central_point = new GeoPoint(lat, lon);
                                 IMapController map_controller = getMapView().getController();
                                 map_controller.setZoom(19);
@@ -171,19 +184,6 @@ public class SearchViewAdapter extends BaseAdapter {
                     AppController.getInstance(getmContext()).addToRequestQueue(jsonObjReq);
                 }
 
-                /**
-                // Send single item click data to SingleItemView Class
-                Intent intent = new Intent(mContext, SingleItemView.class);
-                //intent.putExtra("id",name1);
-                // Pass all data rank
-                intent.putExtra("name",name1);
-                // Pass all data country
-                intent.putExtra("alter_name",name2);
-                // Pass all data population
-                // Pass all data flag
-                // Start SingleItemView Class
-                System.out.println(name1);
-                mContext.startActivity(intent);**/
             }
         });
 
