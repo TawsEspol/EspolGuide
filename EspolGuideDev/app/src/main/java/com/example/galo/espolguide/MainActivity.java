@@ -45,6 +45,7 @@ import org.json.JSONObject;
 import com.loopj.android.http.*;
 import cz.msebera.android.httpclient.Header;
 
+import static espolguide.helpers.constants.Constantes.IP;
 import static espolguide.helpers.constants.Constantes.IP_COMSOC;
 import static espolguide.helpers.constants.Constantes.IP_FAB;
 import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT;
@@ -67,8 +68,8 @@ public class MainActivity extends Activity {
 
 
 
-    String obtenerBloques_ws = "http://" + IP_FAB + "/obtenerBloques/";
-    String nombresAlternativo_ws = "http://" + IP_FAB + "/nombresAlternativo/";
+    String obtenerBloques_ws = "http://" + IP + "/obtenerBloques/";
+    String nombresAlternativo_ws = "http://" + IP + "/nombresAlternativo/";
 
 
 

@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static espolguide.helpers.constants.Constantes.IP;
 import static espolguide.helpers.constants.Constantes.IP_COMSOC;
 import static espolguide.helpers.constants.Constantes.IP_FAB;
 import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT;
@@ -139,7 +141,7 @@ public class SearchViewAdapter extends BaseAdapter {
             @Override
             public void onClick(View arg0) {
 
-                String info_poi_ws = "http://" + IP_FAB+ "/infoBloque/";
+                String info_poi_ws = "http://" + IP+ "/infoBloque/";
 
                 if (!isNetworkAvailable(getmContext())) {
                     Toast.makeText(getmContext(), "Conexión no disponible", Toast.LENGTH_LONG).show();
@@ -158,13 +160,19 @@ public class SearchViewAdapter extends BaseAdapter {
                                 JSONArray point_coord = coordenadas1.getJSONArray(0);
                                 double lat = point_coord.getDouble(0);
                                 double lon = point_coord.getDouble(1);
-                                map.getController().setZoom(1000);
+                                map.getController().setZoom(22);
+                                Marker startMarker = new Marker(map);
+                                startMarker.setPosition(new GeoPoint(lat,lon));
+                                startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                                map.getOverlays().add(startMarker);
+
                                 TextView f = (TextView) barra;
                                 f.setText("");
                                 GeoPoint central_point = new GeoPoint(lat, lon);
                                 IMapController map_controller = getMapView().getController();
-                                map_controller.setZoom(19);
+                                map_controller.setZoom(22);
                                 map_controller.setCenter(central_point);
+
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
