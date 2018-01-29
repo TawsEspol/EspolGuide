@@ -8,6 +8,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.galo.espolguide.pois.AppController;
 import com.example.galo.espolguide.pois.Bloque;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
@@ -42,6 +43,8 @@ import android.widget.Toast;
 import org.osmdroid.api.IMapController;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.osmdroid.views.overlay.Marker;
+
 import com.loopj.android.http.*;
 import cz.msebera.android.httpclient.Header;
 
@@ -50,6 +53,7 @@ import static espolguide.helpers.constants.Constantes.IP_COMSOC;
 import static espolguide.helpers.constants.Constantes.IP_FAB;
 import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT;
 import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT_FAB;
+import static espolguide.helpers.constants.Constantes.IP_TAWS;
 import static espolguide.helpers.constants.Constantes.IP_TAWS_FAB;
 
 /**
@@ -60,7 +64,7 @@ public class MainActivity extends Activity {
     final ArrayList<String> items_nombres = new ArrayList<>();
     ListView search_poi_sv;
     EditText editsearch;
-
+    final ArrayList<Marker> markerList = new ArrayList<>();
     SearchViewAdapter adapter;
     MapView mapView;
 
@@ -68,8 +72,8 @@ public class MainActivity extends Activity {
 
 
 
-    String obtenerBloques_ws = "http://" + IP + "/obtenerBloques/";
-    String nombresAlternativo_ws = "http://" + IP + "/nombresAlternativo/";
+    String obtenerBloques_ws = "http://" + IP_TAWS + "/obtenerBloques/";
+    String nombresAlternativo_ws = "http://" + IP_TAWS + "/nombresAlternativo/";
 
 
 
@@ -130,6 +134,10 @@ public class MainActivity extends Activity {
             this.map = map;
             this.info = info;
         }
+    }
+
+    public ArrayList<Marker> getMarkerList(){
+        return this.markerList;
     }
 
     private class Drawer extends AsyncTask<DrawingTools, Void, Void>{
@@ -243,7 +251,8 @@ public class MainActivity extends Activity {
                         }
                     });
                     search_poi_sv = (ListView) findViewById(R.id.listview);
-                    adapter = new SearchViewAdapter(context,mapView, items_nombres,editsearch);
+                    adapter = new SearchViewAdapter(context,mapView, items_nombres,editsearch,
+                            getMarkerList());
                     adapter.setMapView(getMapView());
                     // Binds the Adapter to the ListView
                     search_poi_sv.setAdapter(adapter);

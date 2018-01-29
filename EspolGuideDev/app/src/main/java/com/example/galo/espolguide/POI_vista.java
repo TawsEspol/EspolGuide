@@ -44,6 +44,7 @@ import espolguide.helpers.constants.Constantes;
 import static espolguide.helpers.constants.Constantes.IP;
 import static espolguide.helpers.constants.Constantes.IP_FAB;
 import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT_FAB;
+import static espolguide.helpers.constants.Constantes.IP_TAWS;
 import static espolguide.helpers.constants.Constantes.isNetworkAvailable;
 
 /**
@@ -61,7 +62,7 @@ public class POI_vista {
     private int favoritos_count;
     private String descripcion;
     private ArrayList<String> nombres_alternativos = new ArrayList<String>();
-    String infoBloque = "http://" + IP + "/infoBloque/";
+    String infoBloque = "http://" + IP_TAWS + "/infoBloque/";
 
 
     public POI_vista(Poi poi){

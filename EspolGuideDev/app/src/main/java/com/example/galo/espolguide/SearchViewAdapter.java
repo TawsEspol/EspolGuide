@@ -36,6 +36,7 @@ import static espolguide.helpers.constants.Constantes.IP_COMSOC;
 import static espolguide.helpers.constants.Constantes.IP_FAB;
 import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT;
 import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT_FAB;
+import static espolguide.helpers.constants.Constantes.IP_TAWS;
 import static espolguide.helpers.constants.Constantes.IP_TAWS_FAB;
 
 /**
@@ -51,6 +52,7 @@ public class SearchViewAdapter extends BaseAdapter {
     private ViewHolder viewHolder;
     private View barra;
     private MapView map;
+    private ArrayList<Marker> markerList;
 
     public class ViewHolder {
         String id;
@@ -84,7 +86,8 @@ public class SearchViewAdapter extends BaseAdapter {
         this.viewHolder = viewHolder;
     }
 
-    public SearchViewAdapter(Context context, MapView map,List<String> pois_lista,View barra) {
+    public SearchViewAdapter(Context context, MapView map,List<String> pois_lista,View barra,
+                             ArrayList<Marker> markerList) {
         this.barra = barra;
         mContext = context;
         this.pois_lista = pois_lista;
@@ -92,7 +95,7 @@ public class SearchViewAdapter extends BaseAdapter {
         this.map = map;
         this.arraylist = new ArrayList<String>();
         this.arraylist.addAll(pois_lista);
-
+        this.markerList = new ArrayList<>();
     }
 
 
@@ -141,7 +144,7 @@ public class SearchViewAdapter extends BaseAdapter {
             @Override
             public void onClick(View arg0) {
 
-                String info_poi_ws = "http://" + IP+ "/infoBloque/";
+                String info_poi_ws = "http://" + IP_TAWS + "/infoBloque/";
 
                 if (!isNetworkAvailable(getmContext())) {
                     Toast.makeText(getmContext(), "Conexión no disponible", Toast.LENGTH_LONG).show();
@@ -164,7 +167,21 @@ public class SearchViewAdapter extends BaseAdapter {
                                 Marker startMarker = new Marker(map);
                                 startMarker.setPosition(new GeoPoint(lat,lon));
                                 startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                                startMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener(){
+                                    @Override
+                                    public boolean onMarkerClick(Marker marker, MapView mapView) {
+                                        return false;
+                                    }
+                                });
                                 map.getOverlays().add(startMarker);
+                                for (Marker marker : markerList){
+                                    marker.remove(map);
+                                }
+                                markerList.clear();
+
+                                markerList.add(startMarker);
+
+
 
                                 TextView f = (TextView) barra;
                                 f.setText("");
