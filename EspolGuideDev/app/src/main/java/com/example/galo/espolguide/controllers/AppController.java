@@ -1,4 +1,4 @@
-package com.example.galo.espolguide.pois;
+package com.example.galo.espolguide.controllers;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

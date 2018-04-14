@@ -1,7 +1,6 @@
-package com.example.galo.espolguide;
+package com.example.galo.espolguide.controllers.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.galo.espolguide.pois.AppController;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,20 +22,14 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-import static espolguide.helpers.constants.Constantes.IP;
-import static espolguide.helpers.constants.Constantes.IP_COMSOC;
-import static espolguide.helpers.constants.Constantes.IP_FAB;
-import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT;
-import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT_FAB;
-import static espolguide.helpers.constants.Constantes.IP_TAWS;
-import static espolguide.helpers.constants.Constantes.IP_TAWS_FAB;
+import com.example.galo.espolguide.R;
+import com.example.galo.espolguide.controllers.AppController;
+import com.example.galo.espolguide.utils.Constants;
 
 /**
  * Created by fabricio on 14/01/18.
@@ -144,7 +136,7 @@ public class SearchViewAdapter extends BaseAdapter {
             @Override
             public void onClick(View arg0) {
 
-                String info_poi_ws = "http://" + IP_TAWS + "/infoBloque/";
+                String info_poi_ws = "http://" + Constants.IP_GALO + "/infoBloque/";
 
                 if (!isNetworkAvailable(getmContext())) {
                     Toast.makeText(getmContext(), "Conexión no disponible", Toast.LENGTH_LONG).show();

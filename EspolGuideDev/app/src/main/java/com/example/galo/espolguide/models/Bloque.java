@@ -1,9 +1,6 @@
-package com.example.galo.espolguide.pois;
+package com.example.galo.espolguide.models;
 
-import android.view.View;
 import android.widget.ImageView;
-
-import java.util.ArrayList;
 
 /**
  * Created by galo on 07/01/18.

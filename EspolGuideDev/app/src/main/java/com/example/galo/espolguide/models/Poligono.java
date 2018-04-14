@@ -1,14 +1,10 @@
-package com.example.galo.espolguide.pois;
+package com.example.galo.espolguide.models;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.example.galo.espolguide.POI_vista;
-import com.example.galo.espolguide.R;
 
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Polygon;

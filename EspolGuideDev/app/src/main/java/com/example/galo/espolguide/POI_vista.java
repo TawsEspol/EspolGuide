@@ -1,19 +1,9 @@
 package com.example.galo.espolguide;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,33 +12,21 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.galo.espolguide.pois.AppController;
-import com.example.galo.espolguide.pois.Bloque;
-import com.example.galo.espolguide.pois.Poi;
+import com.example.galo.espolguide.controllers.AppController;
+import com.example.galo.espolguide.models.Poi;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.osmdroid.api.IMapController;
-import org.osmdroid.config.Configuration;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
+
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Locale;
 
-import espolguide.helpers.constants.Constantes;
-
-import static espolguide.helpers.constants.Constantes.IP;
-import static espolguide.helpers.constants.Constantes.IP_FAB;
-import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT_FAB;
-import static espolguide.helpers.constants.Constantes.IP_TAWS;
-import static espolguide.helpers.constants.Constantes.isNetworkAvailable;
+import static com.example.galo.espolguide.utils.Constants.IP_GALO;
+import static com.example.galo.espolguide.utils.Constants.isNetworkAvailable;
 
 /**
- * Esta clase es auxiliar. Ayuda a modelar y visualizar la información de cada POI.
+ * Auxiliar class that helps to model and visualize the information of each POI.
  * Created by fabricio on 07/01/18.
  */
 
@@ -62,15 +40,15 @@ public class POI_vista {
     private int favoritos_count;
     private String descripcion;
     private ArrayList<String> nombres_alternativos = new ArrayList<String>();
-    String infoBloque = "http://" + IP_TAWS + "/infoBloque/";
+    String infoBloque = "http://" + IP_GALO + "/infoBloque/";
 
 
     public POI_vista(Poi poi){
-        codigo = poi.getCodigo();
-        nombre = poi.getNombre();
-        unidad = poi.getUnidad();
-        favoritos_count = poi.getFavoritos_count();
-        descripcion = poi.getDescripcion();
+        codigo = poi.getCode();
+        nombre = poi.getName();
+        unidad = poi.getacAdemicUnit();
+        favoritos_count = poi.getFavoritesCount();
+        descripcion = poi.getDescription();
     }
 
     public POI_vista(String id, Context ctx, View view){

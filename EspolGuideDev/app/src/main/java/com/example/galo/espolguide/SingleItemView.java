@@ -21,7 +21,7 @@ public class SingleItemView extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.singleitemview);
-        // Retrieve data from MainActivity on item click event
+        // Retrieve data from MapActivity on item click event
         Intent i = getIntent();
         // Get the results of rank
         name = i.getStringExtra("name");
