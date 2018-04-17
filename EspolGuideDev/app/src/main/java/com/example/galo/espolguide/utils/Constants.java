@@ -27,11 +27,11 @@ public class Constants {
         return SERVER_URL + "/nombresAlternativo/";
     }
 
-    public static String getBlocksShapes(){
+    public static String getBlocksShapesURL(){
         return SERVER_URL + "/obtenerBloques/";
     }
 
-    public static String getBlockInfo(){
+    public static String getBlockInfoURL(){
         return SERVER_URL + "/infoBloque/";
     }
 

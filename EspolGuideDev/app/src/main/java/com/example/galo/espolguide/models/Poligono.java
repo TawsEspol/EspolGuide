@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.example.galo.espolguide.POI_vista;
+import com.example.galo.espolguide.PoiInfo;
 
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Polygon;
@@ -27,9 +27,8 @@ public class Poligono extends Polygon {
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e, MapView mapView) {
         if (e.getAction() == MotionEvent.ACTION_DOWN && contains(e)) {
-            //System.out.println("reconoce");
             System.out.println(this.id);
-            POI_vista vista = new POI_vista(this.id, this.context, this.info);
+            PoiInfo view = new PoiInfo(this.id, this.context, this.info);
             return true;
         }
         return super.onSingleTapUp(e, mapView);

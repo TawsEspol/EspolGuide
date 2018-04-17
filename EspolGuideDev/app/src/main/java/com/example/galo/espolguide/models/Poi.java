@@ -7,7 +7,6 @@ import android.view.View;
 import android.graphics.Color;
 import android.widget.Toast;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.osmdroid.util.GeoPoint;
@@ -106,19 +105,19 @@ public abstract class Poi implements View.OnClickListener {
     }
 
 
-    public void construir_poligono(JSONArray coordenadas, MapView map, Context ctx, View info){
+    public void buildPolygon(JSONArray coordinates, MapView map, Context ctx, View info){
         ProgressDialog pDialog = new ProgressDialog(ctx);
         try{
             System.out.println("Poligono trazado.");
             ArrayList<GeoPoint> geoPoints = new ArrayList<>();
-            for(int j=0; j<coordenadas.length(); j++){
-                JSONArray point_coord = coordenadas.getJSONArray(j);
+            for(int j=0; j<coordinates.length(); j++){
+                JSONArray point_coord = coordinates.getJSONArray(j);
                 double lat = point_coord.getDouble(0);
                 double lon = point_coord.getDouble(1);
                 GeoPoint geotest = new GeoPoint(lat, lon);
                 geoPoints.add(geotest);
             }
-            mapear_poligono(map, geoPoints, ctx, info);
+            drawPolygon(map, geoPoints, ctx, info);
             geoPoints.clear();
         }catch (JSONException e) {
             e.printStackTrace();
@@ -127,15 +126,13 @@ public abstract class Poi implements View.OnClickListener {
         }
     }
 
-
-    public void mapear_poligono(MapView map, ArrayList<GeoPoint> geoPoints, Context ctx, View info){
+    public void drawPolygon(MapView map, ArrayList<GeoPoint> geoPoints, Context ctx, View info){
         Poligono polygon = new Poligono(this.id,ctx, info);
         polygon.setFillColor(Color.argb(30, 0,0,220));
         polygon.setPoints(geoPoints);
         polygon.setStrokeColor(Color.BLUE);
         polygon.setStrokeWidth(0.7F);
         polygon.setTitle("A sample polygon");
-        //polygon.onTouch(map);
         this.setPolygon(polygon);
         map.getOverlayManager().add(this.getPolygon());
     }
@@ -157,8 +154,6 @@ public abstract class Poi implements View.OnClickListener {
     }
     @Override
     public void onClick(View view) {
-
         view.setVisibility(View.VISIBLE);
     }
-
 }

@@ -15,7 +15,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.galo.espolguide.MapActivity;
 import com.example.galo.espolguide.controllers.AppController;
 import com.example.galo.espolguide.controllers.adapters.SearchViewAdapter;
-import com.example.galo.espolguide.models.Bloque;
+import com.example.galo.espolguide.models.Block;
 import com.example.galo.espolguide.utils.Constants;
 
 import org.json.JSONArray;
@@ -30,7 +30,7 @@ import java.util.Locale;
 import java.util.Observable;
 
 public class MapViewModel extends Observable{
-    final String GET_BLOCKS_SHAPES_WS = Constants.getBlocksShapes();
+    final String GET_BLOCKS_SHAPES_WS = Constants.getBlocksShapesURL();
     final String POIS_NAMES_WS = Constants.getAlternativeNamesURL();
     final ArrayList<Marker> markerList = new ArrayList<>();
     final ArrayList<String> namesItems = new ArrayList<>();
@@ -81,14 +81,14 @@ public class MapViewModel extends Observable{
                     public void onResponse(JSONObject response) {
                         try {
                             JSONArray features = response.getJSONArray("features");
-                            int total_features = features.length();
-                            for (int i = 0; i < total_features; i++) {
+                            int totalFeatures = features.length();
+                            for (int i = 0; i < totalFeatures; i++) {
                                 JSONObject jsonObj = (JSONObject) features.get(i);
-                                String identificador = jsonObj.getString("identificador");
-                                JSONObject jsonObj_geometry = jsonObj.getJSONObject("geometry");
-                                JSONArray coordenadas = jsonObj_geometry.getJSONArray("coordinates").getJSONArray(0);
-                                Bloque bloque = new Bloque(identificador);
-                                bloque.construir_poligono(coordenadas, actual.map, actual.context, actual.info);
+                                String identifier = jsonObj.getString("identificador");
+                                JSONObject jsonObjGeometry = jsonObj.getJSONObject("geometry");
+                                JSONArray coordinates = jsonObjGeometry.getJSONArray("coordinates").getJSONArray(0);
+                                Block block = new Block(identifier);
+                                block.buildPolygon(coordinates, actual.map, actual.context, actual.info);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -98,7 +98,6 @@ public class MapViewModel extends Observable{
                         }
                     }
                 }, new Response.ErrorListener() {
-
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("tag", "Error: " + error.getMessage());
@@ -122,23 +121,23 @@ public class MapViewModel extends Observable{
                 public void onResponse(JSONObject response) {
                     Iterator<String> iter = response.keys();
                     while (iter.hasNext()) {
-                        String identificador = iter.next();
-                        Integer identificador_num = Integer.getInteger(identificador.substring(6));
-                        if (identificador_num == null || identificador_num <= 69){
+                        String identifier = iter.next();
+                        Integer numIdentifier = Integer.getInteger(identifier.substring(6));
+                        if (numIdentifier == null || numIdentifier <= 69){
                             try {
-                                String bloque_str = "";
-                                JSONObject info_bloque = (JSONObject) response.get(identificador);
-                                String nombre_oficial = (String) info_bloque.getString("NombreOficial");
-                                JSONArray nombres_alternativos = info_bloque.getJSONArray("NombresAlternativos");
-                                int total_alternativos = nombres_alternativos.length();
-                                String cadena_alternativos = "";
-                                for (int i = 0; i < total_alternativos; i++) {
-                                    String alternativo = (String) nombres_alternativos.get(i);
-                                    cadena_alternativos = cadena_alternativos + "|" + alternativo;
+                                String blockString = "";
+                                JSONObject blockInfo = (JSONObject) response.get(identifier);
+                                String officialName = (String) blockInfo.getString("NombreOficial");
+                                JSONArray alternativeNames = blockInfo.getJSONArray("NombresAlternativos");
+                                int totalAlternatives = alternativeNames.length();
+                                String alternativeString = "";
+                                for (int i = 0; i < totalAlternatives; i++) {
+                                    String alternative = (String) alternativeNames.get(i);
+                                    alternativeString = alternativeString + "|" + alternative;
                                 }
-                                bloque_str = identificador +
-                                        ";" + nombre_oficial + ";" + cadena_alternativos;
-                                namesItems.add(bloque_str);
+                                blockString = identifier +
+                                        ";" + officialName + ";" + alternativeString;
+                                namesItems.add(blockString);
 
                             } catch (JSONException e) {
                                 continue;
