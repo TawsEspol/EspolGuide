@@ -146,7 +146,7 @@ public class SearchViewAdapter extends BaseAdapter {
                                 JSONArray point_coord = coordenadas1.getJSONArray(0);
                                 double lat = point_coord.getDouble(0);
                                 double lon = point_coord.getDouble(1);
-                                map.getController().setZoom(22);
+                                map.getController().setZoom(20);
                                 Marker startMarker = new Marker(map);
                                 startMarker.setPosition(new GeoPoint(lat,lon));
                                 startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);

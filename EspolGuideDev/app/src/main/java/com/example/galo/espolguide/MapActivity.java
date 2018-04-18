@@ -3,6 +3,7 @@ package com.example.galo.espolguide;
 import java.util.Observable;
 import java.util.Observer;
 
+import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,6 +19,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import org.osmdroid.api.IMapController;
 
 import com.example.galo.espolguide.utils.Constants;
@@ -94,6 +97,57 @@ public class MapActivity extends AppCompatActivity implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         String message = (String)arg;
+        if (message == viewModel.DRAW_REQUEST_STARTED) {
+
+        }
+        if (message == viewModel.DRAW_REQUEST_SUCCEED) {
+
+        }
+        if (message == viewModel.DRAW_REQUEST_FAILED_CONNECTION) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, "Conexión a Internet no disponible", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        if (message == viewModel.DRAW_REQUEST_FAILED_LOADING) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, "Error cargando bloques...", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        if (message == viewModel.DRAW_REQUEST_FAILED_HTTP) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, "Error HTTP", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        if (message == viewModel.NAMES_REQUEST_STARTED) {
+
+        }
+        if (message == viewModel.NAMES_REQUEST_FAILED_CONNECTION) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, "Conexión a Internet no disponible", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        if (message == viewModel.NAMES_REQUEST_FAILED_LOADING) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, "Error cargando nombres de sitios...", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        if (message == viewModel.NAMES_REQUEST_FAILED_HTTP) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, "Error HTTP", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     public void onResume(){

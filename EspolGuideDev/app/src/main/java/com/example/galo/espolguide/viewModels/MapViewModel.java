@@ -30,11 +30,22 @@ import java.util.Locale;
 import java.util.Observable;
 
 public class MapViewModel extends Observable{
-    final String GET_BLOCKS_SHAPES_WS = Constants.getBlocksShapesURL();
-    final String POIS_NAMES_WS = Constants.getAlternativeNamesURL();
-    final ArrayList<Marker> markerList = new ArrayList<>();
-    final ArrayList<String> namesItems = new ArrayList<>();
-    SearchViewAdapter adapter;
+    public static String DRAW_REQUEST_STARTED = "draw_request_started";
+    public static String DRAW_REQUEST_SUCCEED = "draw_request_succeed";
+    public static String DRAW_REQUEST_FAILED_CONNECTION = "draw_request_failed_connection";
+    public static String DRAW_REQUEST_FAILED_HTTP = "draw_request_failed_http";
+    public static String DRAW_REQUEST_FAILED_LOADING = "draw_request_failed_loading";
+    public static String NAMES_REQUEST_STARTED = "draw_request_started";
+    public static String NAMES_REQUEST_FAILED_CONNECTION = "draw_request_failed_connection";
+    public static String NAMES_REQUEST_FAILED_HTTP = "draw_request_failed_http";
+    public static String NAMES_REQUEST_FAILED_LOADING = "draw_request_failed_loading";
+
+
+    final private String GET_BLOCKS_SHAPES_WS = Constants.getBlocksShapesURL();
+    final private String POIS_NAMES_WS = Constants.getAlternativeNamesURL();
+    final private ArrayList<Marker> markerList = new ArrayList<>();
+    final private ArrayList<String> namesItems = new ArrayList<>();
+    private SearchViewAdapter adapter;
     private MapActivity activity;
 
     public MapViewModel(MapActivity activity) {
@@ -42,11 +53,15 @@ public class MapViewModel extends Observable{
     }
 
     public void makelBocksShapesRequest(){
+        setChanged();
+        notifyObservers(DRAW_REQUEST_STARTED);
         new Drawer().execute(new DrawingTools(activity, activity.getViewHolder().mapView,
                                                         activity.getViewHolder().info));
     }
 
     public void makeNamesRequest(){
+        setChanged();
+        notifyObservers(NAMES_REQUEST_STARTED);
         new Nombres().execute(activity);
     }
 
@@ -72,7 +87,8 @@ public class MapViewModel extends Observable{
         protected Void doInBackground(DrawingTools... dts) {
             actual = dts[0];
             if (!Constants.isNetworkAvailable(actual.context)) {
-                Toast.makeText(actual.context, "Conexión no disponible", Toast.LENGTH_LONG).show();
+                setChanged();
+                notifyObservers(DRAW_REQUEST_FAILED_CONNECTION);
             } else {
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                         GET_BLOCKS_SHAPES_WS, null, new Response.Listener<JSONObject>() {
@@ -90,9 +106,12 @@ public class MapViewModel extends Observable{
                                 Block block = new Block(identifier);
                                 block.buildPolygon(coordinates, actual.map, actual.context, actual.info);
                             }
+                            setChanged();
+                            notifyObservers(DRAW_REQUEST_SUCCEED);
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(activity.getApplicationContext(), "Error cargando datos...", Toast.LENGTH_LONG).show();
+                            setChanged();
+                            notifyObservers(DRAW_REQUEST_FAILED_LOADING);
                         } finally {
                             System.gc();
                         }
@@ -101,7 +120,8 @@ public class MapViewModel extends Observable{
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("tag", "Error: " + error.getMessage());
-                        Toast.makeText(activity.getApplicationContext(), "Error HTTP", Toast.LENGTH_SHORT).show();
+                        setChanged();
+                        notifyObservers(DRAW_REQUEST_FAILED_HTTP);
                     }
                 });
                 AppController.getInstance(actual.context).addToRequestQueue(jsonObjReq);
@@ -115,71 +135,77 @@ public class MapViewModel extends Observable{
         @Override
         protected ArrayList doInBackground(Context... contexts) {
             context = contexts[0];
-            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                    POIS_NAMES_WS, null,  new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Iterator<String> iter = response.keys();
-                    while (iter.hasNext()) {
-                        String identifier = iter.next();
-                        Integer numIdentifier = Integer.getInteger(identifier.substring(6));
-                        if (numIdentifier == null || numIdentifier <= 69){
-                            try {
-                                String blockString = "";
-                                JSONObject blockInfo = (JSONObject) response.get(identifier);
-                                String officialName = (String) blockInfo.getString("NombreOficial");
-                                JSONArray alternativeNames = blockInfo.getJSONArray("NombresAlternativos");
-                                int totalAlternatives = alternativeNames.length();
-                                String alternativeString = "";
-                                for (int i = 0; i < totalAlternatives; i++) {
-                                    String alternative = (String) alternativeNames.get(i);
-                                    alternativeString = alternativeString + "|" + alternative;
+            if (!Constants.isNetworkAvailable(context)) {
+                setChanged();
+                notifyObservers(NAMES_REQUEST_FAILED_CONNECTION);
+            }
+            else {
+                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                        POIS_NAMES_WS, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Iterator<String> iter = response.keys();
+                        while (iter.hasNext()) {
+                            String identifier = iter.next();
+                            Integer numIdentifier = Integer.getInteger(identifier.substring(6));
+                            if (numIdentifier == null || numIdentifier <= 69) {
+                                try {
+                                    String blockString = "";
+                                    JSONObject blockInfo = (JSONObject) response.get(identifier);
+                                    String officialName = (String) blockInfo.getString("NombreOficial");
+                                    JSONArray alternativeNames = blockInfo.getJSONArray("NombresAlternativos");
+                                    int totalAlternatives = alternativeNames.length();
+                                    String alternativeString = "";
+                                    for (int i = 0; i < totalAlternatives; i++) {
+                                        String alternative = (String) alternativeNames.get(i);
+                                        alternativeString = alternativeString + "|" + alternative;
+                                    }
+                                    blockString = identifier +
+                                            ";" + officialName + ";" + alternativeString;
+                                    namesItems.add(blockString);
+
+                                } catch (JSONException e) {
+                                    setChanged();
+                                    notifyObservers(NAMES_REQUEST_FAILED_LOADING);
+                                    continue;
                                 }
-                                blockString = identifier +
-                                        ";" + officialName + ";" + alternativeString;
-                                namesItems.add(blockString);
-
-                            } catch (JSONException e) {
-                                continue;
-                            }}
+                            }
+                        }
+                        activity.getViewHolder().editSearch.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void afterTextChanged(Editable arg0) {
+                                // TODO Auto-generated method stub
+                                String text = activity.getViewHolder().editSearch.getText().toString().toLowerCase(Locale.getDefault());
+                                adapter.filter(text);
+                            }
+                            @Override
+                            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+                                // TODO Auto-generated method stub
+                            }
+                            @Override
+                            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+                                                      int arg3) {
+                                // TODO Auto-generated method stub
+                                activity.getViewHolder().searchPoiLv.setVisibility(View.VISIBLE);
+                            }
+                        });
+                        adapter = new SearchViewAdapter(activity, activity.getViewHolder().mapView, namesItems, activity.getViewHolder().editSearch,
+                                getMarkerList());
+                        adapter.setMapView(activity.getViewHolder().mapView);
+                        activity.getViewHolder().searchPoiLv.setAdapter(adapter);
                     }
-                    activity.getViewHolder().editSearch.addTextChangedListener(new TextWatcher() {
-                        @Override
-                        public void afterTextChanged(Editable arg0) {
-                            // TODO Auto-generated method stub
+                }, new Response.ErrorListener() {
 
-                            String text = activity.getViewHolder().editSearch.getText().toString().toLowerCase(Locale.getDefault());
-                            adapter.filter(text);
-                        }
-
-                        @Override
-                        public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-                            // TODO Auto-generated method stub
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-                                                  int arg3) {
-                            // TODO Auto-generated method stub
-                            activity.getViewHolder().searchPoiLv.setVisibility(View.VISIBLE);
-                        }
-                    });
-                    adapter = new SearchViewAdapter(activity, activity.getViewHolder().mapView, namesItems, activity.getViewHolder().editSearch,
-                            getMarkerList());
-                    adapter.setMapView(activity.getViewHolder().mapView);
-                    // Binds the Adapter to the ListView
-                    activity.getViewHolder().searchPoiLv.setAdapter(adapter);
-                }
-            }, new Response.ErrorListener() {
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyLog.d("tag", "Error: " + error.getMessage());
-                    Toast.makeText(activity, "Error HTTP", Toast.LENGTH_SHORT).show();
-                }
-            });
-            AppController.getInstance(context).addToRequestQueue(jsonObjReq);
-            return namesItems;
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("tag", "Error: " + error.getMessage());
+                        setChanged();
+                        notifyObservers(NAMES_REQUEST_FAILED_HTTP);
+                    }
+                });
+                AppController.getInstance(context).addToRequestQueue(jsonObjReq);
+            }
+            return new ArrayList();
         }
     }
 }

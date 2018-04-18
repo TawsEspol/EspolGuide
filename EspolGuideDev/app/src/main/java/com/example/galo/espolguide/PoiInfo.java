@@ -1,18 +1,23 @@
 package com.example.galo.espolguide;
 
+import android.app.Activity;
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.galo.espolguide.viewModels.PoiInfoViewModel;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Auxiliar class that helps to model and visualize the information of each POI.
  * Created by fabricio on 07/01/18.
  */
 
-public class PoiInfo {
+public class PoiInfo extends AppCompatActivity implements Observer {
     private Context ctx;
     private View view;
     private String code;
@@ -28,7 +33,43 @@ public class PoiInfo {
         this.ctx = ctx;
         this.view = view;
         viewModel = new PoiInfoViewModel(this);
+        viewModel.addObserver(this);
         viewModel.makePoiInfoRequest();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        String message = (String)arg;
+        if (message == viewModel.POI_INFO_REQUEST_STARTED) {
+
+        }
+        if (message == viewModel.POI_INFO_REQUEST_SUCCEED) {
+
+        }
+        if (message == viewModel.POI_INFO_REQUEST_FAILED_CONNECTION) {
+            Activity activityTemp = (Activity) getCtx();
+            activityTemp.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(getCtx(), "Conexión a Internet no disponible", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        if (message == viewModel.POI_INFO_REQUEST_FAILED_LOADING) {
+            Activity activityTemp = (Activity) getCtx();
+            activityTemp.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(getCtx(), "Error cargando datos...", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        if (message == viewModel.POI_INFO_REQUEST_FAILED_HTTP) {
+            Activity activityTemp = (Activity) getCtx();
+            activityTemp.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(getCtx(), "Error HTTP", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     public Context getCtx(){

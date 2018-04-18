@@ -20,11 +20,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Observable;
 
 import static com.example.galo.espolguide.utils.Constants.getBlockInfoURL;
 import static com.example.galo.espolguide.utils.Constants.isNetworkAvailable;
 
-public class PoiInfoViewModel {
+public class PoiInfoViewModel extends Observable {
+    public static String POI_INFO_REQUEST_STARTED = "poi_info_request_started";
+    public static String POI_INFO_REQUEST_SUCCEED = "poi_info_request_succeed";
+    public static String POI_INFO_REQUEST_FAILED_CONNECTION = "poi_info_request_failed_connection";
+    public static String POI_INFO_REQUEST_FAILED_HTTP = "poi_info_request_failed_http";
+    public static String POI_INFO_REQUEST_FAILED_LOADING = "poi_info_request_failed_loading";
+
     final String BLOCK_INFO_WS = getBlockInfoURL();
     private PoiInfo activity;
 
@@ -33,6 +40,8 @@ public class PoiInfoViewModel {
     }
 
     public void makePoiInfoRequest(){
+        setChanged();
+        notifyObservers(POI_INFO_REQUEST_STARTED);
         new Info().execute(activity);
     }
 
@@ -41,7 +50,8 @@ public class PoiInfoViewModel {
         protected ArrayList doInBackground(PoiInfo... pois) {
             activity = pois[0];
             if (!isNetworkAvailable(activity.getCtx())) {
-                Toast.makeText(activity.getCtx(), "Conexión no disponible", Toast.LENGTH_LONG).show();
+                setChanged();
+                notifyObservers(POI_INFO_REQUEST_FAILED_CONNECTION);
             } else {
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                         BLOCK_INFO_WS + activity.getCode(), null, new Response.Listener<JSONObject>() {
@@ -58,9 +68,12 @@ public class PoiInfoViewModel {
                                 activity.setAcademicUnit(properties.getString("unidad"));
                                 activity.setDescription(properties.getString("descripcio"));
                             }
+                            setChanged();
+                            notifyObservers(POI_INFO_REQUEST_SUCCEED);
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(activity.getCtx(), "Error cargando datos...", Toast.LENGTH_LONG).show();
+                            setChanged();
+                            notifyObservers(POI_INFO_REQUEST_FAILED_LOADING);
                         } finally {
                             System.gc();
                         }
@@ -72,7 +85,8 @@ public class PoiInfoViewModel {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("tag", "Error: " + error.getMessage());
-                        Toast.makeText(activity.getCtx(), "Error HTTP", Toast.LENGTH_SHORT).show();
+                        setChanged();
+                        notifyObservers(POI_INFO_REQUEST_FAILED_HTTP);
                     }
                 });
                 AppController.getInstance(activity.getCtx()).addToRequestQueue(jsonObjReq);
