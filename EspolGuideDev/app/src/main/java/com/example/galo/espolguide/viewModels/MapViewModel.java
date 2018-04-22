@@ -40,7 +40,6 @@ public class MapViewModel extends Observable{
     public static String NAMES_REQUEST_FAILED_HTTP = "draw_request_failed_http";
     public static String NAMES_REQUEST_FAILED_LOADING = "draw_request_failed_loading";
 
-
     final private String GET_BLOCKS_SHAPES_WS = Constants.getBlocksShapesURL();
     final private String POIS_NAMES_WS = Constants.getAlternativeNamesURL();
     final private ArrayList<Marker> markerList = new ArrayList<>();

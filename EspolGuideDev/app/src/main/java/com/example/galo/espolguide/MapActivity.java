@@ -73,7 +73,6 @@ public class MapActivity extends AppCompatActivity implements Observer {
                 public void onClick(View view) {
                     final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
                     info.setVisibility(View.GONE);
-                    System.out.println("Capturo click en boton de cerrar");
                 }
             });
         }
@@ -106,21 +105,24 @@ public class MapActivity extends AppCompatActivity implements Observer {
         if (message == viewModel.DRAW_REQUEST_FAILED_CONNECTION) {
             MapActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(MapActivity.this, "Conexión a Internet no disponible", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
+                            Toast.LENGTH_LONG).show();
                 }
             });
         }
         if (message == viewModel.DRAW_REQUEST_FAILED_LOADING) {
             MapActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(MapActivity.this, "Error cargando bloques...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_blocks_shapes_error_msg),
+                            Toast.LENGTH_LONG).show();
                 }
             });
         }
         if (message == viewModel.DRAW_REQUEST_FAILED_HTTP) {
             MapActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(MapActivity.this, "Error HTTP", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.http_error_msg),
+                            Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -130,21 +132,24 @@ public class MapActivity extends AppCompatActivity implements Observer {
         if (message == viewModel.NAMES_REQUEST_FAILED_CONNECTION) {
             MapActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(MapActivity.this, "Conexión a Internet no disponible", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
+                            Toast.LENGTH_LONG).show();
                 }
             });
         }
         if (message == viewModel.NAMES_REQUEST_FAILED_LOADING) {
             MapActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(MapActivity.this, "Error cargando nombres de sitios...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_pois_names_error_msg),
+                            Toast.LENGTH_LONG).show();
                 }
             });
         }
         if (message == viewModel.NAMES_REQUEST_FAILED_HTTP) {
             MapActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(MapActivity.this, "Error HTTP", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.http_error_msg),
+                            Toast.LENGTH_SHORT).show();
                 }
             });
         }

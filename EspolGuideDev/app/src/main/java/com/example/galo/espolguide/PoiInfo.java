@@ -50,7 +50,8 @@ public class PoiInfo extends AppCompatActivity implements Observer {
             Activity activityTemp = (Activity) getCtx();
             activityTemp.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(getCtx(), "Conexión a Internet no disponible", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getCtx(), getResources().getString(R.string.failed_connection_msg),
+                            Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -58,7 +59,8 @@ public class PoiInfo extends AppCompatActivity implements Observer {
             Activity activityTemp = (Activity) getCtx();
             activityTemp.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(getCtx(), "Error cargando datos...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getCtx(), getResources().getString(R.string.loading_poi_info_error_msg),
+                            Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -66,7 +68,8 @@ public class PoiInfo extends AppCompatActivity implements Observer {
             Activity activityTemp = (Activity) getCtx();
             activityTemp.runOnUiThread(new Runnable() {
                 public void run() {
-                    Toast.makeText(getCtx(), "Error HTTP", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getCtx(), getResources().getString(R.string.http_error_msg),
+                            Toast.LENGTH_SHORT).show();
                 }
             });
         }
