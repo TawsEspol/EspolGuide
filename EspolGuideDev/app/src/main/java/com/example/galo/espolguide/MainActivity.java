@@ -68,8 +68,8 @@ public class MainActivity extends Activity {
 
 
 
-    String obtenerBloques_ws = "http://" + "192.168.0.126:8000" + "/obtenerBloques/";
-    String nombresAlternativo_ws = "http://" + "192.168.0.126:8000" + "/nombresAlternativo/";
+    String obtenerBloques_ws = "http://" + "192.168.0.5:8000" + "/obtenerBloques/";
+    String nombresAlternativo_ws = "http://" + "192.168.0.5:8000" + "/nombresAlternativo/";
 
 
     //String geocampus_webserviceURL = "http://sigeo.espol.edu.ec/geoapi/geocampus/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geocampus:BLOQUES&srsName=EPSG:4326&outputFormat=application%2Fjson";

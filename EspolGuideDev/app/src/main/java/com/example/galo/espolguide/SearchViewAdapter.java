@@ -139,7 +139,7 @@ public class SearchViewAdapter extends BaseAdapter {
             @Override
             public void onClick(View arg0) {
 
-                String info_poi_ws = "http://" + IP_FAB+ "/infoBloque/";
+                String info_poi_ws = "http://" + "192.168.0.5:8000" + "/infoBloque/";
 
                 if (!isNetworkAvailable(getmContext())) {
                     Toast.makeText(getmContext(), "Conexión no disponible", Toast.LENGTH_LONG).show();
