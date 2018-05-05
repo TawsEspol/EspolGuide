@@ -15,6 +15,8 @@ public class Constantes {
     public final static String IP_FAB_CASAGALO = "192.168.0.15:8000";
     public final static String IP_LAB_SOFT_FAB = "172.19.15.215:8000";  //eduroam
     public final static String IP_TAWS_FAB = "192.168.0.124:8000";  //eduroam
+    public final static String IP_COMSOC = "192.168.1.54:8000";  //eduroam
+
 
 
     public static boolean isNetworkAvailable(final Context context) {
