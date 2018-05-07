@@ -1,4 +1,4 @@
-package com.example.galo.espolguide
+package espol.edu.ec.espolguide
 
 import org.junit.Test
 

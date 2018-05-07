@@ -1,4 +1,4 @@
-package com.example.galo.espolguide;
+package espol.edu.ec.espolguide;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.galo.espolguide.viewModels.PoiInfoViewModel;
+import espol.edu.ec.espolguide.viewModels.PoiInfoViewModel;
 
 import java.util.ArrayList;
 import java.util.Observable;

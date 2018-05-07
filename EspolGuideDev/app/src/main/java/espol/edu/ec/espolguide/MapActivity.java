@@ -1,5 +1,5 @@
 
-package com.example.galo.espolguide;
+package espol.edu.ec.espolguide;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -28,8 +28,8 @@ import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
 
-import com.example.galo.espolguide.utils.Constants;
-import com.example.galo.espolguide.viewModels.MapViewModel;
+import espol.edu.ec.espolguide.utils.Constants;
+import espol.edu.ec.espolguide.viewModels.MapViewModel;
 
 /**
 * Created by galo on 29/12/17.

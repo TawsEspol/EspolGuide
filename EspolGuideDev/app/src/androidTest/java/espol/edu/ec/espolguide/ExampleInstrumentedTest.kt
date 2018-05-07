@@ -1,4 +1,4 @@
-package com.example.galo.espolguide
+package espol.edu.ec.espolguide
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4

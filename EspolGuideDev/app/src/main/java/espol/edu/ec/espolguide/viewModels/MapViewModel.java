@@ -1,4 +1,4 @@
-package com.example.galo.espolguide.viewModels;
+package espol.edu.ec.espolguide.viewModels;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -12,11 +12,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.galo.espolguide.MapActivity;
-import com.example.galo.espolguide.controllers.AppController;
-import com.example.galo.espolguide.controllers.adapters.SearchViewAdapter;
-import com.example.galo.espolguide.models.Block;
-import com.example.galo.espolguide.utils.Constants;
+import espol.edu.ec.espolguide.MapActivity;
+import espol.edu.ec.espolguide.controllers.AppController;
+import espol.edu.ec.espolguide.controllers.adapters.SearchViewAdapter;
+import espol.edu.ec.espolguide.models.Block;
+import espol.edu.ec.espolguide.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;

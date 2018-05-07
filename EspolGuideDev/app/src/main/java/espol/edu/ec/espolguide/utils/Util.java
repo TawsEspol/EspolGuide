@@ -1,4 +1,4 @@
-package com.example.galo.espolguide.utils;
+package espol.edu.ec.espolguide.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
-import com.example.galo.espolguide.R;
+import espol.edu.ec.espolguide.R;
 
 public class Util {
 

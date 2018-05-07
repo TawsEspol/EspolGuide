@@ -1,4 +1,4 @@
-package com.example.galo.espolguide.models;
+package espol.edu.ec.espolguide.models;
 
 import android.widget.ImageView;
 

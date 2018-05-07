@@ -1,10 +1,10 @@
-package com.example.galo.espolguide.models;
+package espol.edu.ec.espolguide.models;
 
 import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.example.galo.espolguide.PoiInfo;
+import espol.edu.ec.espolguide.PoiInfo;
 
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Polygon;

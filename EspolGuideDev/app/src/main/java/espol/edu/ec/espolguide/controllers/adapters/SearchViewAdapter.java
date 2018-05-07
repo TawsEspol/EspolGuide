@@ -1,4 +1,4 @@
-package com.example.galo.espolguide.controllers.adapters;
+package espol.edu.ec.espolguide.controllers.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import com.example.galo.espolguide.R;
-import com.example.galo.espolguide.controllers.AppController;
-import com.example.galo.espolguide.utils.Constants;
-import com.example.galo.espolguide.utils.Util;
+import espol.edu.ec.espolguide.R;
+import espol.edu.ec.espolguide.controllers.AppController;
+import espol.edu.ec.espolguide.utils.Constants;
+import espol.edu.ec.espolguide.utils.Util;
 
 /**
  * Created by fabricio on 14/01/18.

@@ -1,4 +1,4 @@
-package com.example.galo.espolguide.viewModels;
+package espol.edu.ec.espolguide.viewModels;
 
 import android.os.AsyncTask;
 import android.view.View;
@@ -11,9 +11,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.galo.espolguide.PoiInfo;
-import com.example.galo.espolguide.controllers.AppController;
-import com.example.galo.espolguide.utils.Util;
+import espol.edu.ec.espolguide.PoiInfo;
+import espol.edu.ec.espolguide.controllers.AppController;
+import espol.edu.ec.espolguide.utils.Util;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,8 +22,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Observable;
 
-import static com.example.galo.espolguide.utils.Constants.getBlockInfoURL;
-import static com.example.galo.espolguide.utils.Constants.isNetworkAvailable;
+import static espol.edu.ec.espolguide.utils.Constants.getBlockInfoURL;
+import static espol.edu.ec.espolguide.utils.Constants.isNetworkAvailable;
 
 public class PoiInfoViewModel extends Observable {
     public static String POI_INFO_REQUEST_STARTED = "poi_info_request_started";
