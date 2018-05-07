@@ -1,8 +1,6 @@
-package com.example.galo.espolguide;
+package com.example.galo.espolguide.controllers.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +13,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.galo.espolguide.pois.AppController;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,37 +20,37 @@ import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.w3c.dom.Text;
+import org.osmdroid.views.overlay.Marker;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-import static espolguide.helpers.constants.Constantes.IP_COMSOC;
-import static espolguide.helpers.constants.Constantes.IP_FAB;
-import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT;
-import static espolguide.helpers.constants.Constantes.IP_LAB_SOFT_FAB;
-import static espolguide.helpers.constants.Constantes.IP_TAWS_FAB;
+import com.example.galo.espolguide.R;
+import com.example.galo.espolguide.controllers.AppController;
+import com.example.galo.espolguide.utils.Constants;
+import com.example.galo.espolguide.utils.Util;
 
 /**
  * Created by fabricio on 14/01/18.
  */
 
 public class SearchViewAdapter extends BaseAdapter {
+    final String BLOCK_INFO_WS = Constants.getBlockInfoURL();
     Context mContext;
     LayoutInflater inflater;
-    private List<String> pois_lista = null;
+    private List<String> pois = null;
     private ArrayList<String> arraylist;
     private MapView mapView;
     private ViewHolder viewHolder;
-    private View barra;
+    private View bar;
     private MapView map;
+    private ArrayList<Marker> markers;
 
     public class ViewHolder {
         String id;
-        TextView nombre;
-        TextView nombre_alternativo;
+        TextView name;
+        TextView alternativeName;
 
         public String get_idNumber(){
             String id_number = this.id.substring(6);
@@ -82,26 +79,27 @@ public class SearchViewAdapter extends BaseAdapter {
         this.viewHolder = viewHolder;
     }
 
-    public SearchViewAdapter(Context context, MapView map,List<String> pois_lista,View barra) {
-        this.barra = barra;
+    public SearchViewAdapter(Context context, MapView map,List<String> pois,View bar,
+                             ArrayList<Marker> markers) {
+        this.bar = bar;
         mContext = context;
-        this.pois_lista = pois_lista;
+        this.pois = pois;
         inflater = LayoutInflater.from(mContext);
         this.map = map;
         this.arraylist = new ArrayList<String>();
-        this.arraylist.addAll(pois_lista);
-
+        this.arraylist.addAll(pois);
+        this.markers = new ArrayList<>();
     }
 
 
     @Override
     public int getCount() {
-        return pois_lista.size();
+        return pois.size();
     }
 
     @Override
     public String getItem(int i) {
-        return pois_lista.get(i);
+        return pois.get(i);
     }
 
     @Override
@@ -115,57 +113,61 @@ public class SearchViewAdapter extends BaseAdapter {
         if (view == null) {
             holder = new ViewHolder();
             view = inflater.inflate(R.layout.searchview_item, null);
-            // Locate the TextViews in listview_item.xml
-            holder.nombre = (TextView) view.findViewById(R.id.name);
-            holder.nombre_alternativo = (TextView) view.findViewById(R.id.alter_name);
+            holder.name = (TextView) view.findViewById(R.id.name);
+            holder.alternativeName = (TextView) view.findViewById(R.id.alter_name);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
         }
-        String data = pois_lista.get(i);
+        String data = pois.get(i);
         String[] parts = data.split(";");
-        String name1 = parts[1]; // 004
+        String name1 = parts[1];
         String name2 = parts[2];
-
-        // Set the results into TextViews
-        holder.nombre.setText(name1);
-        holder.nombre_alternativo.setText(name2);
+        holder.name.setText(name1);
+        holder.alternativeName.setText(name2);
         holder.id = parts[0];
         System.out.println(parts[0]);
-
-        // Listen for ListView Item Click
         view.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View arg0) {
-
-                String info_poi_ws = "http://" + "192.168.0.5:8000" + "/infoBloque/";
-
-                if (!isNetworkAvailable(getmContext())) {
+                Util.closeKeyboard(mContext);
+                if (!Constants.isNetworkAvailable(getmContext())) {
                     Toast.makeText(getmContext(), "Conexión no disponible", Toast.LENGTH_LONG).show();
                 } else {
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                            info_poi_ws + holder.get_idNumber(), null, new Response.Listener<JSONObject>() {
-
+                            BLOCK_INFO_WS + holder.get_idNumber(), null, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
                                 JSONArray features = response.getJSONArray("features");
-                                response = null;
                                 JSONObject jsonObj = (JSONObject) features.get(0);
                                 JSONObject jsonObj_geometry = jsonObj.getJSONObject("geometry");
                                 JSONArray coordenadas1 = jsonObj_geometry.getJSONArray("coordinates").getJSONArray(0);
                                 JSONArray point_coord = coordenadas1.getJSONArray(0);
                                 double lat = point_coord.getDouble(0);
                                 double lon = point_coord.getDouble(1);
-                                map.getController().setZoom(1000);
-                                TextView f = (TextView) barra;
+                                map.getController().setZoom(20);
+                                Marker startMarker = new Marker(map);
+                                startMarker.setPosition(new GeoPoint(lat,lon));
+                                startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                                startMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener(){
+                                    @Override
+                                    public boolean onMarkerClick(Marker marker, MapView mapView) {
+                                        return false;
+                                    }
+                                });
+                                map.getOverlays().add(startMarker);
+                                for (Marker marker : markers){
+                                    marker.remove(map);
+                                }
+                                markers.clear();
+                                markers.add(startMarker);
+                                TextView f = (TextView) bar;
                                 f.setText("");
                                 GeoPoint central_point = new GeoPoint(lat, lon);
                                 IMapController map_controller = getMapView().getController();
-                                map_controller.setZoom(19);
+                                map_controller.setZoom(22);
                                 map_controller.setCenter(central_point);
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Toast.makeText(getmContext(), "Error cargando datos...", Toast.LENGTH_LONG).show();
@@ -174,7 +176,6 @@ public class SearchViewAdapter extends BaseAdapter {
                             }
                         }
                     }, new Response.ErrorListener() {
-
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             VolleyLog.d("tag", "Error: " + error.getMessage());
@@ -183,24 +184,16 @@ public class SearchViewAdapter extends BaseAdapter {
                     });
                     AppController.getInstance(getmContext()).addToRequestQueue(jsonObjReq);
                 }
-
             }
         });
-
         return view;
-    }
-
-    public boolean isNetworkAvailable(final Context context) {
-        final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
-        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 
     public void filter(String charText) {
         charText = charText.toLowerCase(Locale.getDefault());
-        pois_lista.clear();
+        pois.clear();
         if (charText.length() == 0) {
-            //pois_lista.addAll(arraylist);
-            pois_lista.clear();
+            pois.clear();
         }
         else
         {
@@ -208,7 +201,7 @@ public class SearchViewAdapter extends BaseAdapter {
             {
                 if (wp.toLowerCase(Locale.getDefault()).contains(charText))
                 {
-                    pois_lista.add(wp);
+                    pois.add(wp);
                 }
             }
         }

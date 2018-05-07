@@ -1,4 +1,4 @@
-package com.example.galo.espolguide.pois;
+package com.example.galo.espolguide.controllers;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -12,7 +12,6 @@ import com.android.volley.toolbox.Volley;
  */
 
 public class AppController {
-
     private static AppController mInstance;
     private static Context mCtx;
     private RequestQueue mRequestQueue;
