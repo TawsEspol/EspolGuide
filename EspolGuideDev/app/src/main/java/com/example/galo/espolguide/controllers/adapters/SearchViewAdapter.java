@@ -52,7 +52,7 @@ public class SearchViewAdapter extends BaseAdapter {
         TextView name;
         TextView alternativeName;
 
-        public String get_idNumber(){
+        public String getIdNumber(){
             String id_number = this.id.substring(6);
             System.out.println(id_number);
             return id_number;
@@ -90,7 +90,6 @@ public class SearchViewAdapter extends BaseAdapter {
         this.arraylist.addAll(pois);
         this.markers = new ArrayList<>();
     }
-
 
     @Override
     public int getCount() {
@@ -132,20 +131,21 @@ public class SearchViewAdapter extends BaseAdapter {
             public void onClick(View arg0) {
                 Util.closeKeyboard(mContext);
                 if (!Constants.isNetworkAvailable(getmContext())) {
-                    Toast.makeText(getmContext(), "Conexión no disponible", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getmContext(), map.getResources().getString(R.string.failed_connection_msg),
+                            Toast.LENGTH_LONG).show();
                 } else {
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                            BLOCK_INFO_WS + holder.get_idNumber(), null, new Response.Listener<JSONObject>() {
+                            BLOCK_INFO_WS + holder.getIdNumber(), null, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
                                 JSONArray features = response.getJSONArray("features");
                                 JSONObject jsonObj = (JSONObject) features.get(0);
-                                JSONObject jsonObj_geometry = jsonObj.getJSONObject("geometry");
-                                JSONArray coordenadas1 = jsonObj_geometry.getJSONArray("coordinates").getJSONArray(0);
-                                JSONArray point_coord = coordenadas1.getJSONArray(0);
-                                double lat = point_coord.getDouble(0);
-                                double lon = point_coord.getDouble(1);
+                                JSONObject jsonObjGeometry = jsonObj.getJSONObject("geometry");
+                                JSONArray coordinate1 = jsonObjGeometry.getJSONArray("coordinates").getJSONArray(0);
+                                JSONArray pointCoord = coordinate1.getJSONArray(0);
+                                double lat = pointCoord.getDouble(0);
+                                double lon = pointCoord.getDouble(1);
                                 map.getController().setZoom(20);
                                 Marker startMarker = new Marker(map);
                                 startMarker.setPosition(new GeoPoint(lat,lon));
@@ -164,13 +164,14 @@ public class SearchViewAdapter extends BaseAdapter {
                                 markers.add(startMarker);
                                 TextView f = (TextView) bar;
                                 f.setText("");
-                                GeoPoint central_point = new GeoPoint(lat, lon);
+                                GeoPoint centralPoint = new GeoPoint(lat, lon);
                                 IMapController map_controller = getMapView().getController();
                                 map_controller.setZoom(22);
-                                map_controller.setCenter(central_point);
+                                map_controller.setCenter(centralPoint);
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                Toast.makeText(getmContext(), "Error cargando datos...", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getmContext(), map.getResources().getString(R.string.loading_poi_info_error_msg),
+                                        Toast.LENGTH_LONG).show();
                             } finally {
                                 System.gc();
                             }
@@ -179,7 +180,8 @@ public class SearchViewAdapter extends BaseAdapter {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             VolleyLog.d("tag", "Error: " + error.getMessage());
-                            Toast.makeText(getmContext(), "Error HTTP", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getmContext(), map.getResources().getString(R.string.http_error_msg),
+                                    Toast.LENGTH_SHORT).show();
                         }
                     });
                     AppController.getInstance(getmContext()).addToRequestQueue(jsonObjReq);

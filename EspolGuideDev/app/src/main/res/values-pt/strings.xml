@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">EspolGuide</string>
+    <string name="university_name">ESPOL</string>
+    <string name="search_poi_hint">Procurar em ESPOL</string>
+
+    <string name="failed_connection_msg">Ligação à Internet não disponível</string>
+    <string name="http_error_msg">Erro do servidor</string>
+    <string name="loading_pois_names_error_msg">Erro ao carregar nomes de lugares...</string>
+    <string name="loading_blocks_shapes_error_msg">Erro ao carregar blocos...</string>
+    <string name="loading_poi_info_error_msg">Erro ao carregar informações do local...</string>
+</resources>
