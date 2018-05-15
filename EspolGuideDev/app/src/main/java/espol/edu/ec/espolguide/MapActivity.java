@@ -5,7 +5,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -71,7 +70,7 @@ public class MapActivity extends AppCompatActivity implements Observer {
             mapView = (MapView) findViewById(R.id.mapview);
             info = (LinearLayout) findViewById(R.id.overlay);
             closePoiInfoBtn = (Button) findViewById(R.id.close_poi_info_button);
-            editSearch = (EditText) findViewById(R.id.search);
+            editSearch = (EditText) findViewById(R.id.search_destiny);
             searchPoiLv = (ListView) findViewById(R.id.listview);
         }
 
