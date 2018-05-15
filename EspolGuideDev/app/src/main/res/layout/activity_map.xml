@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -8,11 +9,15 @@
         android:id="@+id/contenedor_mapa"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <org.osmdroid.views.MapView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/mapview"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:clickable="true" />
+        <com.mapbox.mapboxsdk.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            mapbox:mapbox_cameraTargetLat="-2.14630"
+            mapbox:mapbox_cameraTargetLng="-79.96575"
+            mapbox:mapbox_styleUrl="mapbox://styles/mguarand/cjgty8tqc000n2ss2p69lu0re"
+            mapbox:mapbox_cameraZoom="15" />
+        />
     </LinearLayout>
 
     <!--Contenedor de barra de busqueda y sugerencias-->

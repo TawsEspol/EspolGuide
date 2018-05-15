@@ -21,8 +21,8 @@ import espol.edu.ec.espolguide.utils.Constants;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Marker;
+//import org.osmdroid.views.MapView;
+//import org.osmdroid.views.overlay.Marker;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -42,7 +42,7 @@ public class MapViewModel extends Observable{
 
     final private String GET_BLOCKS_SHAPES_WS = Constants.getBlocksShapesURL();
     final private String POIS_NAMES_WS = Constants.getAlternativeNamesURL();
-    final private ArrayList<Marker> markerList = new ArrayList<>();
+//    final private ArrayList<Marker> markerList = new ArrayList<>();
     final private ArrayList<String> namesItems = new ArrayList<>();
     private SearchViewAdapter adapter;
     private MapActivity activity;
@@ -51,12 +51,12 @@ public class MapViewModel extends Observable{
         this.activity = activity;
     }
 
-    public void makelBocksShapesRequest(){
+/**    public void makelBocksShapesRequest(){
         setChanged();
         notifyObservers(DRAW_REQUEST_STARTED);
         new Drawer().execute(new DrawingTools(activity, activity.getViewHolder().mapView,
                                                         activity.getViewHolder().info));
-    }
+    }*/
 
     public void makeNamesRequest(){
         setChanged();
@@ -64,11 +64,11 @@ public class MapViewModel extends Observable{
         new Nombres().execute(activity);
     }
 
-    public ArrayList<Marker> getMarkerList(){
+/**    public ArrayList<Marker> getMarkerList(){
         return this.markerList;
-    }
+    }*/
 
-    private class DrawingTools {
+/**    private class DrawingTools {
         Context context;
         MapView map;
         View info;
@@ -78,9 +78,9 @@ public class MapViewModel extends Observable{
             this.map = map;
             this.info = info;
         }
-    }
+    }*/
 
-    private class Drawer extends AsyncTask<DrawingTools, Void, Void> {
+/**    private class Drawer extends AsyncTask<DrawingTools, Void, Void> {
         DrawingTools actual ;
         @Override
         protected Void doInBackground(DrawingTools... dts) {
@@ -127,7 +127,7 @@ public class MapViewModel extends Observable{
             }
             return null;
         }
-    }
+    }*/
 
     private class Nombres extends AsyncTask<Context, Void, ArrayList> {
         Context context;
@@ -188,10 +188,10 @@ public class MapViewModel extends Observable{
                                 activity.getViewHolder().searchPoiLv.setVisibility(View.VISIBLE);
                             }
                         });
-                        adapter = new SearchViewAdapter(activity, activity.getViewHolder().mapView, namesItems, activity.getViewHolder().editSearch,
-                                getMarkerList());
-                        adapter.setMapView(activity.getViewHolder().mapView);
-                        activity.getViewHolder().searchPoiLv.setAdapter(adapter);
+//                        adapter = new SearchViewAdapter(activity, activity.getViewHolder().mapView, namesItems, activity.getViewHolder().editSearch,
+//                                getMarkerList());
+//                        adapter.setMapView(activity.getViewHolder().mapView);
+//                        activity.getViewHolder().searchPoiLv.setAdapter(adapter);
                     }
                 }, new Response.ErrorListener() {
 

@@ -17,10 +17,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.osmdroid.api.IMapController;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Marker;
+//import org.osmdroid.api.IMapController;
+//import org.osmdroid.util.GeoPoint;
+//import org.osmdroid.views.MapView;
+//import org.osmdroid.views.overlay.Marker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +41,11 @@ public class SearchViewAdapter extends BaseAdapter {
     LayoutInflater inflater;
     private List<String> pois = null;
     private ArrayList<String> arraylist;
-    private MapView mapView;
+//    private MapView mapView;
     private ViewHolder viewHolder;
     private View bar;
-    private MapView map;
-    private ArrayList<Marker> markers;
+//    private MapView map;
+//    private ArrayList<Marker> markers;
 
     public class ViewHolder {
         String id;
@@ -63,13 +63,13 @@ public class SearchViewAdapter extends BaseAdapter {
         }
     }
 
-    public MapView getMapView(){
+/**    public MapView getMapView(){
         return this.mapView;
     }
 
     public void setMapView(MapView mapView){
         this.mapView = mapView;
-    }
+    }*/
 
     public Context getmContext(){
         return this.mContext;
@@ -79,16 +79,16 @@ public class SearchViewAdapter extends BaseAdapter {
         this.viewHolder = viewHolder;
     }
 
-    public SearchViewAdapter(Context context, MapView map,List<String> pois,View bar,
-                             ArrayList<Marker> markers) {
+    public SearchViewAdapter(Context context/**, MapView map*/,List<String> pois,View bar/**,
+                             ArrayList<Marker> markers*/) {
         this.bar = bar;
         mContext = context;
         this.pois = pois;
         inflater = LayoutInflater.from(mContext);
-        this.map = map;
+//        this.map = map;
         this.arraylist = new ArrayList<String>();
         this.arraylist.addAll(pois);
-        this.markers = new ArrayList<>();
+//        this.markers = new ArrayList<>();
     }
 
     @Override
@@ -131,8 +131,8 @@ public class SearchViewAdapter extends BaseAdapter {
             public void onClick(View arg0) {
                 Util.closeKeyboard(mContext);
                 if (!Constants.isNetworkAvailable(getmContext())) {
-                    Toast.makeText(getmContext(), map.getResources().getString(R.string.failed_connection_msg),
-                            Toast.LENGTH_LONG).show();
+/**                    Toast.makeText(getmContext(), map.getResources().getString(R.string.failed_connection_msg),
+                            Toast.LENGTH_LONG).show();*/
                 } else {
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                             BLOCK_INFO_WS + holder.getIdNumber(), null, new Response.Listener<JSONObject>() {
@@ -140,7 +140,7 @@ public class SearchViewAdapter extends BaseAdapter {
                         public void onResponse(JSONObject response) {
                             try {
                                 JSONArray features = response.getJSONArray("features");
-                                JSONObject jsonObj = (JSONObject) features.get(0);
+/**                                JSONObject jsonObj = (JSONObject) features.get(0);
                                 JSONObject jsonObjGeometry = jsonObj.getJSONObject("geometry");
                                 JSONArray coordinate1 = jsonObjGeometry.getJSONArray("coordinates").getJSONArray(0);
                                 JSONArray pointCoord = coordinate1.getJSONArray(0);
@@ -167,11 +167,11 @@ public class SearchViewAdapter extends BaseAdapter {
                                 GeoPoint centralPoint = new GeoPoint(lat, lon);
                                 IMapController map_controller = getMapView().getController();
                                 map_controller.setZoom(22);
-                                map_controller.setCenter(centralPoint);
+                                map_controller.setCenter(centralPoint);*/
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                Toast.makeText(getmContext(), map.getResources().getString(R.string.loading_poi_info_error_msg),
-                                        Toast.LENGTH_LONG).show();
+/**                                Toast.makeText(getmContext(), map.getResources().getString(R.string.loading_poi_info_error_msg),
+                                        Toast.LENGTH_LONG).show();*/
                             } finally {
                                 System.gc();
                             }
@@ -179,9 +179,9 @@ public class SearchViewAdapter extends BaseAdapter {
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            VolleyLog.d("tag", "Error: " + error.getMessage());
+/**                            VolleyLog.d("tag", "Error: " + error.getMessage());
                             Toast.makeText(getmContext(), map.getResources().getString(R.string.http_error_msg),
-                                    Toast.LENGTH_SHORT).show();
+                                    Toast.LENGTH_SHORT).show();*/
                         }
                     });
                     AppController.getInstance(getmContext()).addToRequestQueue(jsonObjReq);
