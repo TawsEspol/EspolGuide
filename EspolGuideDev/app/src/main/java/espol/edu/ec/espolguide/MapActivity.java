@@ -20,9 +20,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.view.View;
 
-
-
-//import org.osmdroid.views.MapView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -30,28 +27,27 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
-import espol.edu.ec.espolguide.utils.Constants;
-import espol.edu.ec.espolguide.viewModels.MapViewModel;
-
-import com.google.gson.JsonElement;
-import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.maps.MapView;
-
-import com.mapbox.mapboxsdk.annotations.Marker;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.services.commons.geojson.Feature;
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.Marker;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.MapView;
+import com.google.gson.JsonElement;
+import com.mapbox.geojson.Feature;
+
+import espol.edu.ec.espolguide.utils.Constants;
+import espol.edu.ec.espolguide.viewModels.MapViewModel;
 
 /**
 * Created by galo on 29/12/17.
 */
 
-public class MapActivity extends AppCompatActivity implements Observer {
+public class MapActivity extends AppCompatActivity implements Observer,
+        OnMapReadyCallback, MapboxMap.OnMapClickListener{
     ViewHolder viewHolder;
     MapViewModel viewModel;
-
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -60,13 +56,63 @@ public class MapActivity extends AppCompatActivity implements Observer {
         setContentView(R.layout.activity_map);
         validateWritingPermission();
         this.viewHolder = new ViewHolder();
-        this.viewHolder.setMapInitialState();
+//        this.viewHolder.setMapInitialState();
+        this.viewHolder.mapView.getMapAsync(this);
 //        this.viewModel = new MapViewModel(this);
 //        this.viewModel.addObserver(this);
 //        this.viewModel.makelBocksShapesRequest();
 //        this.viewModel.makeNamesRequest();
     }
 
+    @Override
+    public void onMapReady(MapboxMap mapboxMap) {
+        MapActivity.this.viewHolder.mapboxMap = mapboxMap;
+        mapboxMap.addOnMapClickListener(this);
+    }
+
+    @Override
+    public void onMapClick(@NonNull LatLng point) {
+        if (this.viewHolder.featureMarker != null) {
+            this.viewHolder.mapboxMap.removeMarker(this.viewHolder.featureMarker);
+        }
+
+        final PointF pixel = this.viewHolder.mapboxMap.getProjection().toScreenLocation(point);
+        List<Feature> features = this.viewHolder.mapboxMap.queryRenderedFeatures(pixel);
+        if (features.size() > 0) {
+            Feature feature = features.get(0);
+
+            String property;
+
+            StringBuilder stringBuilder = new StringBuilder();
+            if (feature.properties() != null) {
+                for (Map.Entry<String, JsonElement> entry : feature.properties().entrySet()) {
+                    System.out.print(entry.getKey() + "||");
+                    System.out.println(entry.getValue());
+                    stringBuilder.append(String.format("%s - %s", entry.getKey(), entry.getValue()));
+                    stringBuilder.append(System.getProperty("line.separator"));
+                }
+
+                this.viewHolder.featureMarker = this.viewHolder.mapboxMap.addMarker(new MarkerOptions()
+                        .position(point)
+                        .title("TITULO")
+                        .snippet(stringBuilder.toString())
+                );
+
+            } else {
+//                property = getString(R.string.query_feature_marker_snippet);
+                this.viewHolder.featureMarker = this.viewHolder.mapboxMap.addMarker(new MarkerOptions()
+                        .position(point)
+//                        .snippet(property)
+                );
+            }
+        } else {
+            this.viewHolder.featureMarker = this.viewHolder.mapboxMap.addMarker(new MarkerOptions()
+                    .position(point)
+//                    .snippet(getString(R.string.query_feature_marker_snippet))
+            );
+        }
+        this.viewHolder.mapboxMap.selectMarker(this.viewHolder.featureMarker);
+    }
 
     public class ViewHolder{
         public ListView searchPoiLv;
@@ -75,7 +121,7 @@ public class MapActivity extends AppCompatActivity implements Observer {
         public LinearLayout info;
         public Button closePoiInfoBtn;
         private Marker featureMarker;
-        private MapboxMap map;
+        private MapboxMap mapboxMap;
 
 
         public ViewHolder(){
@@ -103,7 +149,8 @@ public class MapActivity extends AppCompatActivity implements Observer {
             });
         }
 
-        private void setMapInitialState(){
+
+/**        private void setMapInitialState(){
             mapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(final MapboxMap mapboxMap) {
@@ -162,7 +209,7 @@ public class MapActivity extends AppCompatActivity implements Observer {
 
                 }  ;
                 });
-        }
+        }*/
     }
 
     public void validateWritingPermission (){
@@ -242,8 +289,48 @@ public class MapActivity extends AppCompatActivity implements Observer {
         }
     }
 
-    public void onResume(){
+    @Override
+    public void onResume() {
         super.onResume();
-//        Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
+        this.viewHolder.mapView.onResume();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        this.viewHolder.mapView.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.viewHolder.mapView.onStop();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        this.viewHolder.mapView.onPause();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        this.viewHolder.mapView.onLowMemory();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (this.viewHolder.mapboxMap != null) {
+            this.viewHolder.mapboxMap.removeOnMapClickListener(this);
+        }
+        this.viewHolder.mapView.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        this.viewHolder.mapView.onSaveInstanceState(outState);
     }
 }
