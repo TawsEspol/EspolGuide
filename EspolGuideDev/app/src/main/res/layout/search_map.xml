@@ -8,6 +8,7 @@
         android:id="@+id/contenedor_mapa"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <org.osmdroid.views.MapView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/mapview"
             android:layout_width="fill_parent"
@@ -15,11 +16,14 @@
             android:clickable="true" />
     </LinearLayout>
 
-    <!--Contenedor de barra de busqueda y sugerencias-->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <!--Contenedor de barra de busqueda y botones de busqueda-->
+
+
+    <LinearLayout
         style="@style/barra_busqueda_pois"
-        >
+        android:layout_height="match_parent">
         <!--Ingreso de texto en barra de busqueda-->
+
         <TextView
             android:id="@+id/origin_tv"
             android:layout_width="match_parent"
@@ -51,18 +55,35 @@
         <EditText
             android:id="@+id/search_destiny"
             style="@style/input_barra_pois"
-            android:digits="qwertyuiopasdfghjklñzxcvbnm-0123456789 "
-            >
+            android:digits="qwertyuiopasdfghjklñzxcvbnm-0123456789 ">
+
             <requestFocus />
         </EditText>
 
         <!--Lista de pois sugeridos en barra de busqueda-->
 
         <ListView
-            android:id="@+id/listview"
-            style="@style/lista_sugerencias_barra"
-            />
+            android:id="@+id/listview2"
+            style="@style/lista_sugerencias_barra" />
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Buscar" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ruta" />
+        </LinearLayout>
     </LinearLayout>
 
     <!--Layout de fondo de información del POI-->
