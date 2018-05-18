@@ -16,30 +16,27 @@
             mapbox:mapbox_cameraTargetLat="-2.14630"
             mapbox:mapbox_cameraTargetLng="-79.96575"
             mapbox:mapbox_styleUrl="mapbox://styles/mguarand/cjgty8tqc000n2ss2p69lu0re"
-            mapbox:mapbox_cameraZoom="15" />
+            mapbox:mapbox_cameraZoom="16" />
         />
     </LinearLayout>
 
-    <!--Contenedor de barra de busqueda y sugerencias-->
+    <!--Search bar and suggestions container-->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         style="@style/barra_busqueda_pois"
         >
-        <!--Ingreso de texto en barra de busqueda-->
         <EditText
             android:id="@+id/search"
             style="@style/input_barra_pois"
-            android:digits="qwertyuiopasdfghjklñzxcvbnm-0123456789 "
+            android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
             >
             <requestFocus />
         </EditText>
-
         <!--Lista de pois sugeridos en barra de busqueda-->
         <ListView
             android:id="@+id/listview"
             style="@style/lista_sugerencias_barra"
             />
     </LinearLayout>
-
     <!--Layout de fondo de información del POI-->
     <LinearLayout
         android:id="@+id/overlay"
@@ -62,7 +59,6 @@
             android:clickable="true"
             android:orientation="vertical"
             >
-
             <Button
                 android:id="@+id/close_poi_info_button"
                 android:layout_width="30dip"
@@ -75,7 +71,6 @@
                 android:textColor="#ffffff"
                 android:textSize="16dip"
                 />
-
             <ImageView
                 android:id="@+id/flag"
                 android:layout_width="fill_parent"
@@ -93,14 +88,14 @@
                 android:orientation="horizontal"
                 android:layout_margin="10dp">
                 <TextView
-                    android:id="@+id/codigo"
+                    android:id="@+id/name_poi"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:layout_margin="15dp"
                     android:layout_gravity="center"
-                    android:layout_below="@+id/codigo"
+                    android:layout_below="@+id/name_poi"
                     style="@style/info"
                     />
                 <TextView
@@ -114,7 +109,6 @@
                     android:layout_gravity="center"
                     />
             </LinearLayout>
-
             <TextView
                 android:id="@+id/descripcion"
                 android:layout_width="wrap_content"

@@ -13,14 +13,18 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.annotations.Marker;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-//import org.osmdroid.api.IMapController;
-//import org.osmdroid.util.GeoPoint;
-//import org.osmdroid.views.MapView;
-//import org.osmdroid.views.overlay.Marker;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +45,11 @@ public class SearchViewAdapter extends BaseAdapter {
     LayoutInflater inflater;
     private List<String> pois = null;
     private ArrayList<String> arraylist;
-//    private MapView mapView;
+    private MapView mapView;
     private ViewHolder viewHolder;
     private View bar;
-//    private MapView map;
-//    private ArrayList<Marker> markers;
+    private MapboxMap mapboxMap;
+    Marker featureMarker;
 
     public class ViewHolder {
         String id;
@@ -63,13 +67,13 @@ public class SearchViewAdapter extends BaseAdapter {
         }
     }
 
-/**    public MapView getMapView(){
+    public MapView getMapView(){
         return this.mapView;
     }
 
     public void setMapView(MapView mapView){
         this.mapView = mapView;
-    }*/
+    }
 
     public Context getmContext(){
         return this.mContext;
@@ -79,16 +83,16 @@ public class SearchViewAdapter extends BaseAdapter {
         this.viewHolder = viewHolder;
     }
 
-    public SearchViewAdapter(Context context/**, MapView map*/,List<String> pois,View bar/**,
-                             ArrayList<Marker> markers*/) {
+    public SearchViewAdapter(Context context, MapboxMap mapboxMap, List<String> pois, View bar,
+                             Marker featureMarker) {
         this.bar = bar;
         mContext = context;
         this.pois = pois;
         inflater = LayoutInflater.from(mContext);
-//        this.map = map;
+        this.mapboxMap = mapboxMap;
         this.arraylist = new ArrayList<String>();
         this.arraylist.addAll(pois);
-//        this.markers = new ArrayList<>();
+        this.featureMarker = featureMarker;
     }
 
     @Override
@@ -125,14 +129,13 @@ public class SearchViewAdapter extends BaseAdapter {
         holder.name.setText(name1);
         holder.alternativeName.setText(name2);
         holder.id = parts[0];
-        System.out.println(parts[0]);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 Util.closeKeyboard(mContext);
                 if (!Constants.isNetworkAvailable(getmContext())) {
-/**                    Toast.makeText(getmContext(), map.getResources().getString(R.string.failed_connection_msg),
-                            Toast.LENGTH_LONG).show();*/
+                    Toast.makeText(getmContext(), mContext.getResources().getString(R.string.failed_connection_msg),
+                            Toast.LENGTH_LONG).show();
                 } else {
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                             BLOCK_INFO_WS + holder.getIdNumber(), null, new Response.Listener<JSONObject>() {
@@ -140,38 +143,37 @@ public class SearchViewAdapter extends BaseAdapter {
                         public void onResponse(JSONObject response) {
                             try {
                                 JSONArray features = response.getJSONArray("features");
-/**                                JSONObject jsonObj = (JSONObject) features.get(0);
+                                JSONObject jsonObj = (JSONObject) features.get(0);
                                 JSONObject jsonObjGeometry = jsonObj.getJSONObject("geometry");
                                 JSONArray coordinate1 = jsonObjGeometry.getJSONArray("coordinates").getJSONArray(0);
                                 JSONArray pointCoord = coordinate1.getJSONArray(0);
+                                System.out.println("=========ID: " + holder.getIdNumber() + " ========");
+                                System.out.println("***********Name: " + name1 + " ********");
                                 double lat = pointCoord.getDouble(0);
                                 double lon = pointCoord.getDouble(1);
-                                map.getController().setZoom(20);
-                                Marker startMarker = new Marker(map);
-                                startMarker.setPosition(new GeoPoint(lat,lon));
-                                startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                                startMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener(){
-                                    @Override
-                                    public boolean onMarkerClick(Marker marker, MapView mapView) {
-                                        return false;
-                                    }
-                                });
-                                map.getOverlays().add(startMarker);
-                                for (Marker marker : markers){
-                                    marker.remove(map);
-                                }
-                                markers.clear();
-                                markers.add(startMarker);
+                                LatLng point = new LatLng(lat, lon);
+                                System.out.println(point.toString() + " --------------------");
                                 TextView f = (TextView) bar;
                                 f.setText("");
-                                GeoPoint centralPoint = new GeoPoint(lat, lon);
-                                IMapController map_controller = getMapView().getController();
-                                map_controller.setZoom(22);
-                                map_controller.setCenter(centralPoint);*/
-                            } catch (JSONException e) {
+                                mapView.getMapAsync(new OnMapReadyCallback() {
+                                    @Override
+                                    public void onMapReady(MapboxMap mapboxMap) {
+                                        if (featureMarker != null) {
+                                            mapboxMap.removeMarker(featureMarker);
+                                        }
+                                        featureMarker = mapboxMap.addMarker(new MarkerOptions()
+                                                .position(point)
+                                        );
+                                        mapboxMap.setCameraPosition(new CameraPosition.Builder()
+                                                .target(point)
+                                                .zoom(18)
+                                                .build());
+                                    }
+                                });
+                            } catch (Exception e) {
                                 e.printStackTrace();
-/**                                Toast.makeText(getmContext(), map.getResources().getString(R.string.loading_poi_info_error_msg),
-                                        Toast.LENGTH_LONG).show();*/
+                                Toast.makeText(getmContext(), mContext.getResources().getString(R.string.loading_poi_info_error_msg),
+                                        Toast.LENGTH_LONG).show();
                             } finally {
                                 System.gc();
                             }
@@ -179,9 +181,9 @@ public class SearchViewAdapter extends BaseAdapter {
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-/**                            VolleyLog.d("tag", "Error: " + error.getMessage());
-                            Toast.makeText(getmContext(), map.getResources().getString(R.string.http_error_msg),
-                                    Toast.LENGTH_SHORT).show();*/
+                            VolleyLog.d("tag", "Error: " + error.getMessage());
+                            Toast.makeText(getmContext(), mContext.getResources().getString(R.string.http_error_msg),
+                                    Toast.LENGTH_SHORT).show();
                         }
                     });
                     AppController.getInstance(getmContext()).addToRequestQueue(jsonObjReq);
