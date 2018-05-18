@@ -3,7 +3,6 @@ package espol.edu.ec.espolguide;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-
 import android.content.pm.ActivityInfo;
 import android.graphics.PointF;
 import android.os.Bundle;
@@ -69,7 +68,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             mapView = (MapView) findViewById(R.id.mapView);
             info = (LinearLayout) findViewById(R.id.overlay);
             closePoiInfoBtn = (Button) findViewById(R.id.close_poi_info_button);
-            editSearch = (EditText) findViewById(R.id.search);
+            editSearch = (EditText) findViewById(R.id.search_destiny);
             searchPoiLv = (ListView) findViewById(R.id.listview);
         }
 
