@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">EspolGuide</string>
+    <string name="access_token"></string>
+
     <string name="university_name">ESPOL</string>
     <string name="search_poi_hint">Search in ESPOL</string>
 

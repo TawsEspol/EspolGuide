@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import espol.edu.ec.espolguide.viewModels.PoiInfoViewModel;
@@ -28,13 +30,14 @@ public class PoiInfo extends AppCompatActivity implements Observer {
     private ArrayList<String> alternativeNames = new ArrayList<String>();
     private PoiInfoViewModel viewModel;
 
-    public PoiInfo(String id, Context ctx, View view){
-        this.code = String.valueOf(Integer.parseInt(id.split("Bloque")[1]) % 69);
+    public PoiInfo(String blockName, String academicUnit, String description, Context ctx, View view){
         this.ctx = ctx;
         this.view = view;
         viewModel = new PoiInfoViewModel(this);
         viewModel.addObserver(this);
-        viewModel.makePoiInfoRequest();
+        setName(blockName);
+        setAcademicUnit(academicUnit);
+        setDescription(description);
     }
 
     @Override
