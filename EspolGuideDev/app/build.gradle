@@ -11,7 +11,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.galo.espolguide"
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -56,6 +56,8 @@ dependencies {
 
 
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.1.1'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.12.0'
+
 }
 
 

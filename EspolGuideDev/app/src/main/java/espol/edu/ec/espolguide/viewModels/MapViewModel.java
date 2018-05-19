@@ -14,6 +14,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.controllers.AppController;
+import espol.edu.ec.espolguide.controllers.adapters.RouteAdapter;
 import espol.edu.ec.espolguide.controllers.adapters.SearchViewAdapter;
 import espol.edu.ec.espolguide.models.Block;
 import espol.edu.ec.espolguide.utils.Constants;
@@ -41,6 +42,9 @@ public class MapViewModel extends Observable{
     final private ArrayList<String> namesItems = new ArrayList<>();
     private SearchViewAdapter adapter;
     private MapActivity activity;
+
+    private RouteAdapter originAdapter;
+    private RouteAdapter destinationAdapter;
 
     public MapViewModel(MapActivity activity) {
         this.activity = activity;
@@ -96,6 +100,21 @@ public class MapViewModel extends Observable{
                                 }
                             }
                         }
+
+                        adapter = new SearchViewAdapter(activity, activity.getViewHolder().mapboxMap, namesItems, activity.getViewHolder().editSearch,
+                                activity.getViewHolder().featureMarker);
+                        adapter.setMapView(activity.getViewHolder().mapView);
+
+                        originAdapter = new RouteAdapter(activity, activity.getViewHolder().mapboxMap, namesItems, activity.getViewHolder().editSearch,
+                                activity.getViewHolder().featureMarker, Constants.ORIGIN_ADAPTER);
+                        destinationAdapter = new RouteAdapter(activity, activity.getViewHolder().mapboxMap, namesItems, activity.getViewHolder().editSearch,
+                                activity.getViewHolder().featureMarker, Constants.DESTINATION_ADAPTER);
+
+                        activity.getViewHolder().searchPoiLv.setAdapter(adapter);
+                        activity.getViewHolder().originLv.setAdapter(originAdapter);
+                        activity.getViewHolder().destinationLv.setAdapter(destinationAdapter);
+
+
                         activity.getViewHolder().editOrigin.addTextChangedListener(new TextWatcher() {
                             @Override
                             public void afterTextChanged(Editable arg0) {
@@ -134,15 +153,6 @@ public class MapViewModel extends Observable{
                             }
                         });
 
-
-
-
-
-
-
-
-
-
                         activity.getViewHolder().editSearch.addTextChangedListener(new TextWatcher() {
                             @Override
                             public void afterTextChanged(Editable arg0) {
@@ -161,17 +171,7 @@ public class MapViewModel extends Observable{
                                 activity.getViewHolder().searchPoiLv.setVisibility(View.VISIBLE);
                             }
                         });
-                        adapter = new SearchViewAdapter(activity, activity.getViewHolder().mapboxMap, namesItems, activity.getViewHolder().editSearch,
-                                activity.getViewHolder().featureMarker);
-                        adapter.setMapView(activity.getViewHolder().mapView);
-                        activity.getViewHolder().searchPoiLv.setAdapter(adapter);
 
-
-
-
-
-                        activity.getViewHolder().destinationLv.setAdapter(adapter);
-                        activity.getViewHolder().originLv.setAdapter(adapter);
                     }
                 }, new Response.ErrorListener() {
                     @Override

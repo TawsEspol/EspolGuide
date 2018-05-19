@@ -33,6 +33,39 @@ import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.Util;
 
+
+// classes to calculate a route
+//import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
+import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
+import com.mapbox.api.directions.v5.models.DirectionsResponse;
+import com.mapbox.api.directions.v5.models.DirectionsRoute;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+//import retrofit2.Response;
+
+
+// classes needed to add location layer
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+
+import android.location.Location;
+
+import com.mapbox.mapboxsdk.geometry.LatLng;
+
+import android.support.annotation.NonNull;
+
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+//import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
+//import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
+import com.mapbox.services.android.location.LostLocationEngine;
+import com.mapbox.android.core.location.LocationEngine;
+import com.mapbox.android.core.location.LocationEngineListener;
+import com.mapbox.android.core.location.LocationEnginePriority;
+import com.mapbox.android.core.permissions.PermissionsListener;
+import com.mapbox.android.core.permissions.PermissionsManager;
+
 public class RouteAdapter extends BaseAdapter {
     final String BLOCK_INFO_WS = Constants.getBlockInfoURL();
     Context mContext;
@@ -45,8 +78,10 @@ public class RouteAdapter extends BaseAdapter {
     private MapboxMap mapboxMap;
     Marker featureMarker;
 
-    private LatLng latLngSelected;
+
+    private LatLng selectedCoordinate;
     RouteAdapter routeAdapter;
+    private String adapterType;
 
     public class ViewHolder {
         String id;
@@ -62,6 +97,30 @@ public class RouteAdapter extends BaseAdapter {
         public String getId(){
             return this.id;
         }
+    }
+
+    public String getAdapterType(){
+        return this.adapterType;
+    }
+
+    public void setAdapterType(String adapterType){
+        this.adapterType = adapterType;
+    }
+
+    public RouteAdapter getRouteAdapter(){
+        return this.routeAdapter;
+    }
+
+    public void setRouteAdapter(RouteAdapter routeAdapter){
+        this.routeAdapter = routeAdapter;
+    }
+
+    public LatLng getSelectedCoordinate(){
+        return this.selectedCoordinate;
+    }
+
+    public void setSelectedCoordinate(LatLng selectedCoordinate){
+        this.selectedCoordinate = selectedCoordinate;
     }
 
     public MapView getMapView(){
@@ -81,7 +140,7 @@ public class RouteAdapter extends BaseAdapter {
     }
 
     public RouteAdapter(Context context, MapboxMap mapboxMap, List<String> pois, View bar,
-                             Marker featureMarker) {
+                             Marker featureMarker, String adapterType) {
         this.bar = bar;
         mContext = context;
         this.pois = pois;
@@ -90,6 +149,7 @@ public class RouteAdapter extends BaseAdapter {
         this.arraylist = new ArrayList<String>();
         this.arraylist.addAll(pois);
         this.featureMarker = featureMarker;
+        this.adapterType = adapterType;
     }
 
     @Override
@@ -150,9 +210,10 @@ public class RouteAdapter extends BaseAdapter {
                                 double lat = pointCoord.getDouble(0);
                                 double lon = pointCoord.getDouble(1);
                                 LatLng point = new LatLng(lat, lon);
+                                setSelectedCoordinate(point);
+
                                 System.out.println(point.toString() + " --------------------");
-                                TextView f = (TextView) bar;
-                                f.setText("");
+                                pois.clear();
                                 mapView.getMapAsync(new OnMapReadyCallback() {
                                     @Override
                                     public void onMapReady(MapboxMap mapboxMap) {
