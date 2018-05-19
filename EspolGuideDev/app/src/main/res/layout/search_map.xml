@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -9,11 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <org.osmdroid.views.MapView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/mapview"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:clickable="true" />
+        <com.mapbox.mapboxsdk.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            mapbox:mapbox_cameraTargetLat="-2.14630"
+            mapbox:mapbox_cameraTargetLng="-79.96575"
+            mapbox:mapbox_styleUrl="mapbox://styles/mguarand/cjgty8tqc000n2ss2p69lu0re"
+            mapbox:mapbox_cameraZoom="16" />
     </LinearLayout>
 
     <!--Contenedor de barra de busqueda y botones de busqueda-->
@@ -116,7 +120,7 @@
                 android:layout_gravity="right"
                 android:layout_margin="3dip"
                 android:layout_alignParentRight="true"
-                android:background="@drawable/boton_redondo"
+                android:background="@drawable/close_poi_round_button"
                 android:text="X"
                 android:textColor="#ffffff"
                 android:textSize="16dip"

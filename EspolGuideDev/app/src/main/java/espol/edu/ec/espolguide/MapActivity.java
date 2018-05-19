@@ -102,7 +102,6 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         List<Feature> features = this.viewHolder.mapboxMap.queryRenderedFeatures(pixel);
         if (features.size() > 0) {
             Feature feature = features.get(0);
-            StringBuilder stringBuilder = new StringBuilder();
             String blockName = "";
             String academicUnit = "";
             String description = "";

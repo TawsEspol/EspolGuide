@@ -20,13 +20,77 @@
         />
     </LinearLayout>
 
-    <!--Search bar and suggestions container-->
+    <!--Draw route bars-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#7f7f7f"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="5dp">
+            <EditText
+                android:id="@+id/search_origin"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:lines="1"
+                android:singleLine="true"
+                android:background="@android:color/white"
+                android:textSize="15dp"
+                android:hint="Buscar origen"
+                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                android:paddingTop="10dp"
+                android:paddingLeft="15dp"
+                android:paddingBottom="10dp"
+                android:layout_marginTop="10dp"
+                >
+                <requestFocus />
+            </EditText>
+            <ListView
+                android:id="@+id/origin_results"
+                style="@style/lista_sugerencias_barra"
+                android:layout_below="@id/search_origin"
+                />
+            <EditText
+                android:id="@+id/search_destination"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:lines="1"
+                android:singleLine="true"
+                android:background="@android:color/white"
+                android:textSize="15dp"
+                android:hint="Buscar destino"
+                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                android:paddingTop="10dp"
+                android:paddingLeft="15dp"
+                android:paddingBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+
+                >
+                <requestFocus />
+            </EditText>
+            <ListView
+                android:id="@+id/destination_results"
+                style="@style/lista_sugerencias_barra"
+                android:layout_below="@id/search_destination"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--Search a POI bar-->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         style="@style/barra_busqueda_pois"
         >
         <EditText
             android:id="@+id/search_destiny"
             style="@style/input_barra_pois"
+            android:visibility="gone"
             android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
             >
             <requestFocus />
@@ -35,6 +99,7 @@
         <ListView
             android:id="@+id/listview"
             style="@style/lista_sugerencias_barra"
+            android:layout_below="@id/search_destiny"
             />
     </LinearLayout>
     <!--Layout de fondo de información del POI-->
@@ -66,7 +131,7 @@
                 android:layout_gravity="right"
                 android:layout_margin="3dip"
                 android:layout_alignParentRight="true"
-                android:background="@drawable/boton_redondo"
+                android:background="@drawable/close_poi_round_button"
                 android:text="X"
                 android:textColor="#ffffff"
                 android:textSize="16dip"
@@ -119,6 +184,27 @@
                 style="@style/info"
                 />
         </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/route_button_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
+        android:layout_marginRight="40dp"
+        android:layout_gravity="right|bottom"
+        android:visibility="visible">
+        <Button
+            android:id="@+id/route_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/route_round_button"
+            android:text="Ver\nRuta"
+            android:textColor="#ffffff"
+            android:textAllCaps="false"
+            android:textSize="16dp"
+            />
     </LinearLayout>
 
 </FrameLayout>

@@ -8,7 +8,7 @@ import android.net.ConnectivityManager;
  */
 
 public class Constants {
-    public final static String IP_ = "";
+    public final static String IP_ = "192.168.0.8:8080";
 
     public final static String SERVER_URL = "http://" + IP_;
 
