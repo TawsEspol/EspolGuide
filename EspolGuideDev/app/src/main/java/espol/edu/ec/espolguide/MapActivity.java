@@ -58,9 +58,19 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         public Marker featureMarker;
         public MapboxMap mapboxMap;
 
+        public EditText editOrigin;
+        public EditText editDestination;
+        public ListView originLv;
+        public ListView destinationLv;
+        public LinearLayout placesBox;
+        public Button routeBtn;
+
+
         public ViewHolder(){
             findViews();
             setClosePoiButtonListener();
+            setDrawRouteButtonListener();
+            setEditSearchOnFocusListener();
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
@@ -70,6 +80,15 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             closePoiInfoBtn = (Button) findViewById(R.id.close_poi_info_button);
             editSearch = (EditText) findViewById(R.id.search_destiny);
             searchPoiLv = (ListView) findViewById(R.id.listview);
+
+            editOrigin = (EditText) findViewById(R.id.search_origin);
+            editDestination = (EditText) findViewById(R.id.search_destination);
+            originLv = (ListView) findViewById(R.id.origin_results);
+            destinationLv = (ListView) findViewById(R.id.destination_results);
+
+            placesBox = (LinearLayout) findViewById(R.id.places_box);
+            routeBtn = (Button) findViewById(R.id.route_btn);
+
         }
 
         private void setClosePoiButtonListener(){
@@ -78,6 +97,28 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                 public void onClick(View view) {
                     final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
                     info.setVisibility(View.GONE);
+                }
+            });
+        }
+
+        private void setDrawRouteButtonListener(){
+            this.routeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    editSearch.setVisibility(View.GONE);
+                    placesBox.setVisibility(View.VISIBLE);
+                    routeBtn.setVisibility(View.GONE);
+                }
+            });
+        }
+
+        private void setEditSearchOnFocusListener(){
+            this.editSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if(hasFocus){
+                        routeBtn.setVisibility(View.GONE);
+                    }
                 }
             });
         }

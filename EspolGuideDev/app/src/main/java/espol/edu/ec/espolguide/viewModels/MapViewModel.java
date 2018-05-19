@@ -96,6 +96,53 @@ public class MapViewModel extends Observable{
                                 }
                             }
                         }
+                        activity.getViewHolder().editOrigin.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void afterTextChanged(Editable arg0) {
+                                // TODO Auto-generated method stub
+                                String text = activity.getViewHolder().editOrigin.getText().toString().toLowerCase(Locale.getDefault());
+                                adapter.filter(text);
+                            }
+                            @Override
+                            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+                                // TODO Auto-generated method stub
+                            }
+                            @Override
+                            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+                                                      int arg3) {
+                                // TODO Auto-generated method stub
+                                activity.getViewHolder().originLv.setVisibility(View.VISIBLE);
+                            }
+                        });
+
+                        activity.getViewHolder().editDestination.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void afterTextChanged(Editable arg0) {
+                                // TODO Auto-generated method stub
+                                String text = activity.getViewHolder().editDestination.getText().toString().toLowerCase(Locale.getDefault());
+                                adapter.filter(text);
+                            }
+                            @Override
+                            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+                                // TODO Auto-generated method stub
+                            }
+                            @Override
+                            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+                                                      int arg3) {
+                                // TODO Auto-generated method stub
+                                activity.getViewHolder().destinationLv.setVisibility(View.VISIBLE);
+                            }
+                        });
+
+
+
+
+
+
+
+
+
+
                         activity.getViewHolder().editSearch.addTextChangedListener(new TextWatcher() {
                             @Override
                             public void afterTextChanged(Editable arg0) {
@@ -118,6 +165,13 @@ public class MapViewModel extends Observable{
                                 activity.getViewHolder().featureMarker);
                         adapter.setMapView(activity.getViewHolder().mapView);
                         activity.getViewHolder().searchPoiLv.setAdapter(adapter);
+
+
+
+
+
+                        activity.getViewHolder().destinationLv.setAdapter(adapter);
+                        activity.getViewHolder().originLv.setAdapter(adapter);
                     }
                 }, new Response.ErrorListener() {
                     @Override

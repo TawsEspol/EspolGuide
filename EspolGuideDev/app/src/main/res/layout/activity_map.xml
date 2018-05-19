@@ -28,58 +28,74 @@
         android:background="#7f7f7f"
         >
         <LinearLayout
+            android:id="@+id/places_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginHorizontal="5dp">
-            <EditText
-                android:id="@+id/search_origin"
-                android:layout_width="fill_parent"
+            android:layout_marginHorizontal="5dp"
+            android:visibility="gone"
+            >
+            <LinearLayout
+                android:id="@+id/origin_box"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:lines="1"
-                android:singleLine="true"
-                android:background="@android:color/white"
-                android:textSize="15dp"
-                android:hint="Buscar origen"
-                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
-                android:paddingTop="10dp"
-                android:paddingLeft="15dp"
-                android:paddingBottom="10dp"
-                android:layout_marginTop="10dp"
-                >
-                <requestFocus />
-            </EditText>
-            <ListView
-                android:id="@+id/origin_results"
-                style="@style/lista_sugerencias_barra"
-                android:layout_below="@id/search_origin"
-                />
-            <EditText
-                android:id="@+id/search_destination"
-                android:layout_width="fill_parent"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="5dp"
+                android:layout_marginTop="10dp">
+                <EditText
+                    android:id="@+id/search_origin"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:singleLine="true"
+                    android:background="@android:color/white"
+                    android:textSize="15dp"
+                    android:hint="Buscar origen"
+                    android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                    android:paddingTop="10dp"
+                    android:paddingLeft="15dp"
+                    android:paddingBottom="10dp"
+                    >
+                    <requestFocus />
+                </EditText>
+                <ListView
+                    android:id="@+id/origin_results"
+                    style="@style/lista_sugerencias_barra"
+                    android:layout_below="@id/search_origin"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/destination_box"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:lines="1"
-                android:singleLine="true"
-                android:background="@android:color/white"
-                android:textSize="15dp"
-                android:hint="Buscar destino"
-                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
-                android:paddingTop="10dp"
-                android:paddingLeft="15dp"
-                android:paddingBottom="10dp"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="5dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-
-                >
-                <requestFocus />
-            </EditText>
-            <ListView
-                android:id="@+id/destination_results"
-                style="@style/lista_sugerencias_barra"
-                android:layout_below="@id/search_destination"
-                />
+                android:layout_marginBottom="5dp">
+                <EditText
+                    android:id="@+id/search_destination"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:singleLine="true"
+                    android:background="@android:color/white"
+                    android:textSize="15dp"
+                    android:hint="Buscar destino"
+                    android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                    android:paddingTop="10dp"
+                    android:paddingLeft="15dp"
+                    android:paddingBottom="10dp"
+                    >
+                    <requestFocus />
+                </EditText>
+                <ListView
+                    android:id="@+id/destination_results"
+                    style="@style/lista_sugerencias_barra"
+                    android:layout_below="@id/search_destination"
+                    />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
@@ -90,7 +106,6 @@
         <EditText
             android:id="@+id/search_destiny"
             style="@style/input_barra_pois"
-            android:visibility="gone"
             android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
             >
             <requestFocus />
@@ -204,6 +219,7 @@
             android:textColor="#ffffff"
             android:textAllCaps="false"
             android:textSize="16dp"
+            android:visibility="gone"
             />
     </LinearLayout>
 

@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,8 +13,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.Marker;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
@@ -23,25 +22,18 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.Util;
 
-/**
- * Created by fabricio on 14/01/18.
- */
-
-public class SearchViewAdapter extends BaseAdapter {
+public class RouteAdapter extends BaseAdapter {
     final String BLOCK_INFO_WS = Constants.getBlockInfoURL();
     Context mContext;
     LayoutInflater inflater;
@@ -52,6 +44,9 @@ public class SearchViewAdapter extends BaseAdapter {
     private View bar;
     private MapboxMap mapboxMap;
     Marker featureMarker;
+
+    private LatLng latLngSelected;
+    RouteAdapter routeAdapter;
 
     public class ViewHolder {
         String id;
@@ -85,7 +80,7 @@ public class SearchViewAdapter extends BaseAdapter {
         this.viewHolder = viewHolder;
     }
 
-    public SearchViewAdapter(Context context, MapboxMap mapboxMap, List<String> pois, View bar,
+    public RouteAdapter(Context context, MapboxMap mapboxMap, List<String> pois, View bar,
                              Marker featureMarker) {
         this.bar = bar;
         mContext = context;
@@ -139,11 +134,11 @@ public class SearchViewAdapter extends BaseAdapter {
                     Toast.makeText(getmContext(), mContext.getResources().getString(R.string.failed_connection_msg),
                             Toast.LENGTH_LONG).show();
                 } else {
+
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                             BLOCK_INFO_WS + holder.getIdNumber(), null, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            MapActivity mapActivity = (MapActivity) mContext;
                             try {
                                 JSONArray features = response.getJSONArray("features");
                                 JSONObject jsonObj = (JSONObject) features.get(0);
@@ -157,9 +152,7 @@ public class SearchViewAdapter extends BaseAdapter {
                                 LatLng point = new LatLng(lat, lon);
                                 System.out.println(point.toString() + " --------------------");
                                 TextView f = (TextView) bar;
-                                f.setText(name1);
-                                pois.clear();
-                                mapActivity.getViewHolder().editSearch.clearFocus();
+                                f.setText("");
                                 mapView.getMapAsync(new OnMapReadyCallback() {
                                     @Override
                                     public void onMapReady(MapboxMap mapboxMap) {
@@ -171,7 +164,7 @@ public class SearchViewAdapter extends BaseAdapter {
                                         );
                                         mapboxMap.setCameraPosition(new CameraPosition.Builder()
                                                 .target(point)
-                                                .zoom(Constants.CLOSE_ZOOM)
+                                                .zoom(18)
                                                 .build());
                                     }
                                 });
@@ -181,7 +174,6 @@ public class SearchViewAdapter extends BaseAdapter {
                                         Toast.LENGTH_LONG).show();
                             } finally {
                                 System.gc();
-                                mapActivity.getViewHolder().routeBtn.setVisibility(View.VISIBLE);
                             }
                         }
                     }, new Response.ErrorListener() {
@@ -193,6 +185,9 @@ public class SearchViewAdapter extends BaseAdapter {
                         }
                     });
                     AppController.getInstance(getmContext()).addToRequestQueue(jsonObjReq);
+
+
+
                 }
             }
         });
