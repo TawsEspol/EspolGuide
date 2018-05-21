@@ -8,12 +8,12 @@ import android.net.ConnectivityManager;
  */
 
 public class Constants {
-    public final static String IP_ = "192.168.0.8:8080";
+    public final static String IP_ = "192.168.0.118:8080";
     public final static String SERVER_URL = "http://" + IP_;
     public final static int CLOSE_ZOOM = 18;
     public final static int FAR_AWAY_ZOOM = 15;
-    public final static String ORIGIN_ADAPTER = "origin";
-    public final static String DESTINATION_ADAPTER = "destination";
+    public final static String FROM_ORIGIN = "from_origin";
+    public final static String FROM_DESTINATION = "from_destination";
 
     public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));

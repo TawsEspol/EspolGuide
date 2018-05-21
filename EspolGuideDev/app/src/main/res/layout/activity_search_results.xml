@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    tools:context="espol.edu.ec.espolguide.SearchResultsActivity">
+    <!--Search a POI bar-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/back"
+        style="@style/barra_rutas_pois"
+        >
+        <EditText
+            android:id="@+id/search_destiny"
+            style="@style/input_barra_pois"
+            android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+            >
+            <requestFocus />
+        </EditText>
+        <!--Lista de pois sugeridos en barra de busqueda-->
+        <ListView
+            android:id="@+id/listview"
+            style="@style/lista_sugerencias_barra"
+            android:layout_below="@id/search_destiny"
+            />
+    </LinearLayout>
+</FrameLayout>

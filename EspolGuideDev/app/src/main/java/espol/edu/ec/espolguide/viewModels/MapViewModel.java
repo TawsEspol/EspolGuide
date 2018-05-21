@@ -1,9 +1,12 @@
 package espol.edu.ec.espolguide.viewModels;
 
 import android.content.Context;
+import android.graphics.PointF;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -28,8 +31,56 @@ import org.osmdroid.views.overlay.Marker;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Observable;
+
+
+
+
+
+
+
+
+
+
+// classes to calculate a route
+import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
+import com.google.gson.JsonElement;
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
+import com.mapbox.api.directions.v5.models.DirectionsResponse;
+import com.mapbox.api.directions.v5.models.DirectionsRoute;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+//import retrofit2.Response;
+
+
+// classes needed to add location layer
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+
+import android.location.Location;
+
+import com.mapbox.mapboxsdk.geometry.LatLng;
+
+import android.support.annotation.NonNull;
+
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
+import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
+import com.mapbox.services.android.location.LostLocationEngine;
+import com.mapbox.android.core.location.LocationEngine;
+import com.mapbox.android.core.location.LocationEngineListener;
+import com.mapbox.android.core.location.LocationEnginePriority;
+import com.mapbox.android.core.permissions.PermissionsListener;
+import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.services.commons.geojson.Feature;
+
 
 public class MapViewModel extends Observable{
     public static String NAMES_REQUEST_STARTED = "names_request_started";
@@ -43,8 +94,10 @@ public class MapViewModel extends Observable{
     private SearchViewAdapter adapter;
     private MapActivity activity;
 
-    private RouteAdapter originAdapter;
-    private RouteAdapter destinationAdapter;
+
+
+
+
 
     public MapViewModel(MapActivity activity) {
         this.activity = activity;
@@ -54,6 +107,10 @@ public class MapViewModel extends Observable{
         setChanged();
         notifyObservers(NAMES_REQUEST_STARTED);
         new Nombres().execute(activity);
+    }
+
+    public ArrayList<String> getNamesItems(){
+        return this.namesItems;
     }
 
     public ArrayList<Marker> getMarkerList(){
@@ -104,55 +161,7 @@ public class MapViewModel extends Observable{
                         adapter = new SearchViewAdapter(activity, activity.getViewHolder().mapboxMap, namesItems, activity.getViewHolder().editSearch,
                                 activity.getViewHolder().featureMarker);
                         adapter.setMapView(activity.getViewHolder().mapView);
-
-                        originAdapter = new RouteAdapter(activity, activity.getViewHolder().mapboxMap, namesItems, activity.getViewHolder().editSearch,
-                                activity.getViewHolder().featureMarker, Constants.ORIGIN_ADAPTER);
-                        destinationAdapter = new RouteAdapter(activity, activity.getViewHolder().mapboxMap, namesItems, activity.getViewHolder().editSearch,
-                                activity.getViewHolder().featureMarker, Constants.DESTINATION_ADAPTER);
-
                         activity.getViewHolder().searchPoiLv.setAdapter(adapter);
-                        activity.getViewHolder().originLv.setAdapter(originAdapter);
-                        activity.getViewHolder().destinationLv.setAdapter(destinationAdapter);
-
-
-                        activity.getViewHolder().editOrigin.addTextChangedListener(new TextWatcher() {
-                            @Override
-                            public void afterTextChanged(Editable arg0) {
-                                // TODO Auto-generated method stub
-                                String text = activity.getViewHolder().editOrigin.getText().toString().toLowerCase(Locale.getDefault());
-                                adapter.filter(text);
-                            }
-                            @Override
-                            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-                                // TODO Auto-generated method stub
-                            }
-                            @Override
-                            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-                                                      int arg3) {
-                                // TODO Auto-generated method stub
-                                activity.getViewHolder().originLv.setVisibility(View.VISIBLE);
-                            }
-                        });
-
-                        activity.getViewHolder().editDestination.addTextChangedListener(new TextWatcher() {
-                            @Override
-                            public void afterTextChanged(Editable arg0) {
-                                // TODO Auto-generated method stub
-                                String text = activity.getViewHolder().editDestination.getText().toString().toLowerCase(Locale.getDefault());
-                                adapter.filter(text);
-                            }
-                            @Override
-                            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-                                // TODO Auto-generated method stub
-                            }
-                            @Override
-                            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-                                                      int arg3) {
-                                // TODO Auto-generated method stub
-                                activity.getViewHolder().destinationLv.setVisibility(View.VISIBLE);
-                            }
-                        });
-
                         activity.getViewHolder().editSearch.addTextChangedListener(new TextWatcher() {
                             @Override
                             public void afterTextChanged(Editable arg0) {
@@ -186,4 +195,10 @@ public class MapViewModel extends Observable{
             return new ArrayList();
         }
     }
+
+    public SearchViewAdapter getAdapter(){
+        return this.adapter;
+    }
+
+
 }

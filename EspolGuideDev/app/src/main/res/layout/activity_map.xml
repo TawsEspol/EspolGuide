@@ -222,5 +222,4 @@
             android:visibility="gone"
             />
     </LinearLayout>
-
 </FrameLayout>

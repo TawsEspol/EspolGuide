@@ -36,6 +36,7 @@ import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.Util;
+import java.io.Serializable;
 
 /**
  * Created by fabricio on 14/01/18.

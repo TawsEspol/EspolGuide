@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 
 import espol.edu.ec.espolguide.R;
+import espol.edu.ec.espolguide.SearchResultsActivity;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.Util;
@@ -72,16 +74,22 @@ public class RouteAdapter extends BaseAdapter {
     LayoutInflater inflater;
     private List<String> pois = null;
     private ArrayList<String> arraylist;
-    private MapView mapView;
+    private LinearLayout layout;
     private ViewHolder viewHolder;
     private View bar;
-    private MapboxMap mapboxMap;
-    Marker featureMarker;
 
 
-    private LatLng selectedCoordinate;
-    RouteAdapter routeAdapter;
-    private String adapterType;
+
+    private PermissionsManager permissionsManager;
+    private LocationEngine locationEngine;
+    private Location originLocation;
+
+    // variables for calculating and drawing a route
+    private Point originPosition;
+    private Point destinationPosition;
+    private DirectionsRoute currentRoute;
+    private static final String TAG = "DirectionsActivity";
+
 
     public class ViewHolder {
         String id;
@@ -99,36 +107,12 @@ public class RouteAdapter extends BaseAdapter {
         }
     }
 
-    public String getAdapterType(){
-        return this.adapterType;
+    public LinearLayout getLayout(){
+        return this.layout;
     }
 
-    public void setAdapterType(String adapterType){
-        this.adapterType = adapterType;
-    }
-
-    public RouteAdapter getRouteAdapter(){
-        return this.routeAdapter;
-    }
-
-    public void setRouteAdapter(RouteAdapter routeAdapter){
-        this.routeAdapter = routeAdapter;
-    }
-
-    public LatLng getSelectedCoordinate(){
-        return this.selectedCoordinate;
-    }
-
-    public void setSelectedCoordinate(LatLng selectedCoordinate){
-        this.selectedCoordinate = selectedCoordinate;
-    }
-
-    public MapView getMapView(){
-        return this.mapView;
-    }
-
-    public void setMapView(MapView mapView){
-        this.mapView = mapView;
+    public void setLayout(LinearLayout layout){
+        this.layout = layout;
     }
 
     public Context getmContext(){
@@ -139,17 +123,18 @@ public class RouteAdapter extends BaseAdapter {
         this.viewHolder = viewHolder;
     }
 
-    public RouteAdapter(Context context, MapboxMap mapboxMap, List<String> pois, View bar,
-                             Marker featureMarker, String adapterType) {
-        this.bar = bar;
-        mContext = context;
+    public RouteAdapter(List<String> pois) {
         this.pois = pois;
-        inflater = LayoutInflater.from(mContext);
-        this.mapboxMap = mapboxMap;
         this.arraylist = new ArrayList<String>();
         this.arraylist.addAll(pois);
-        this.featureMarker = featureMarker;
-        this.adapterType = adapterType;
+    }
+
+    public void setInflater(SearchResultsActivity searchResultsActivity){
+        this.inflater = LayoutInflater.from(searchResultsActivity);
+    }
+
+    public void setBar(View bar){
+        this.bar = bar;
     }
 
     @Override
@@ -200,35 +185,9 @@ public class RouteAdapter extends BaseAdapter {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                JSONArray features = response.getJSONArray("features");
-                                JSONObject jsonObj = (JSONObject) features.get(0);
-                                JSONObject jsonObjGeometry = jsonObj.getJSONObject("geometry");
-                                JSONArray coordinate1 = jsonObjGeometry.getJSONArray("coordinates").getJSONArray(0);
-                                JSONArray pointCoord = coordinate1.getJSONArray(0);
-                                System.out.println("=========ID: " + holder.getIdNumber() + " ========");
-                                System.out.println("***********Name: " + name1 + " ********");
-                                double lat = pointCoord.getDouble(0);
-                                double lon = pointCoord.getDouble(1);
-                                LatLng point = new LatLng(lat, lon);
-                                setSelectedCoordinate(point);
 
-                                System.out.println(point.toString() + " --------------------");
                                 pois.clear();
-                                mapView.getMapAsync(new OnMapReadyCallback() {
-                                    @Override
-                                    public void onMapReady(MapboxMap mapboxMap) {
-                                        if (featureMarker != null) {
-                                            mapboxMap.removeMarker(featureMarker);
-                                        }
-                                        featureMarker = mapboxMap.addMarker(new MarkerOptions()
-                                                .position(point)
-                                        );
-                                        mapboxMap.setCameraPosition(new CameraPosition.Builder()
-                                                .target(point)
-                                                .zoom(18)
-                                                .build());
-                                    }
-                                });
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Toast.makeText(getmContext(), mContext.getResources().getString(R.string.loading_poi_info_error_msg),

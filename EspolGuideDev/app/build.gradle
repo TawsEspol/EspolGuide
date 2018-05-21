@@ -37,14 +37,14 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:27.0.2'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compile 'org.osmdroid:osmdroid-android:5.6.5'
-    compile(name:'osmbonuspack_6.4', ext:'aar')
+    compile(name: 'osmbonuspack_6.4', ext: 'aar')
     compile 'org.apache.commons:commons-lang3:3.3.2'
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
@@ -57,7 +57,7 @@ dependencies {
 
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.1.1'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.12.0'
-
+    implementation ('com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.12.0') {
+        transitive = true
+    }
 }
-
-
