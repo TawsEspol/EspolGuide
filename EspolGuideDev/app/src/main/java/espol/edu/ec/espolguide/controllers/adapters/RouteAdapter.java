@@ -14,15 +14,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.mapbox.mapboxsdk.annotations.Marker;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -36,38 +27,6 @@ import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.Util;
 
 
-// classes to calculate a route
-//import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
-import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
-import com.mapbox.api.directions.v5.models.DirectionsResponse;
-import com.mapbox.api.directions.v5.models.DirectionsRoute;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-//import retrofit2.Response;
-
-
-// classes needed to add location layer
-import com.mapbox.geojson.Point;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-
-import android.location.Location;
-
-import com.mapbox.mapboxsdk.geometry.LatLng;
-
-import android.support.annotation.NonNull;
-
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-//import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
-//import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
-import com.mapbox.services.android.location.LostLocationEngine;
-import com.mapbox.android.core.location.LocationEngine;
-import com.mapbox.android.core.location.LocationEngineListener;
-import com.mapbox.android.core.location.LocationEnginePriority;
-import com.mapbox.android.core.permissions.PermissionsListener;
-import com.mapbox.android.core.permissions.PermissionsManager;
-
 public class RouteAdapter extends BaseAdapter {
     final String BLOCK_INFO_WS = Constants.getBlockInfoURL();
     Context mContext;
@@ -77,19 +36,6 @@ public class RouteAdapter extends BaseAdapter {
     private LinearLayout layout;
     private ViewHolder viewHolder;
     private View bar;
-
-
-
-    private PermissionsManager permissionsManager;
-    private LocationEngine locationEngine;
-    private Location originLocation;
-
-    // variables for calculating and drawing a route
-    private Point originPosition;
-    private Point destinationPosition;
-    private DirectionsRoute currentRoute;
-    private static final String TAG = "DirectionsActivity";
-
 
     public class ViewHolder {
         String id;

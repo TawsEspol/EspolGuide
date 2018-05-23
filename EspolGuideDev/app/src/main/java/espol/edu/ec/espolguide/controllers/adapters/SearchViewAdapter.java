@@ -98,6 +98,10 @@ public class SearchViewAdapter extends BaseAdapter {
         this.featureMarker = featureMarker;
     }
 
+    public ArrayList<String> getArraylist(){
+        return this.arraylist;
+    }
+
     @Override
     public int getCount() {
         return pois.size();

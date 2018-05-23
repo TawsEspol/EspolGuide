@@ -1,21 +1,19 @@
 package espol.edu.ec.espolguide;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PointF;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 
 import android.widget.Button;
@@ -25,11 +23,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.mapbox.android.core.location.LocationEngine;
-import com.mapbox.android.core.location.LocationEnginePriority;
-import com.mapbox.android.core.permissions.PermissionsManager;
-import com.mapbox.api.directions.v5.models.DirectionsResponse;
-import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.google.gson.JsonElement;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -39,28 +33,58 @@ import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.geojson.Feature;
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
-import com.mapbox.services.Constants;
-import com.mapbox.services.android.location.LostLocationEngine;
-import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
-import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 
 import espol.edu.ec.espolguide.controllers.adapters.RouteAdapter;
+import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.IntentHelper;
 import espol.edu.ec.espolguide.viewModels.MapViewModel;
 import espol.edu.ec.espolguide.viewModels.PoiInfoViewModel;
+
+
+
+
+import java.util.List;
+import android.location.Location;
+import android.support.annotation.NonNull;
+import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
+import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode;
+import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
+import com.mapbox.android.core.location.LocationEngine;
+import com.mapbox.android.core.location.LocationEngineListener;
+import com.mapbox.android.core.location.LocationEnginePriority;
+import com.mapbox.android.core.location.LocationEngineProvider;
+import com.mapbox.android.core.permissions.PermissionsListener;
+import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+
+// classes to calculate a route
+import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
+import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
+import com.mapbox.api.directions.v5.models.DirectionsResponse;
+import com.mapbox.api.directions.v5.models.DirectionsRoute;
+
+
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
+
+import android.util.Log;
+import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
+
 
 /**
 * Created by galo on 29/12/17.
 */
 
-public class MapActivity extends AppCompatActivity implements Observer, OnMapReadyCallback,
-        MapboxMap.OnMapClickListener{
+/**public class MapActivity extends AppCompatActivity implements Observer, OnMapReadyCallback,
+        MapboxMap.OnMapClickListener, LocationEngineListener, PermissionsListener{
     ViewHolder viewHolder;
-    MapViewModel viewModel;
+    MapViewModel viewModel;*/
+
+
+    public class MapActivity extends AppCompatActivity implements Observer, LocationEngineListener, PermissionsListener{
+        ViewHolder viewHolder;
+        MapViewModel viewModel;
 
 
 
@@ -69,21 +93,17 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     private LocationLayerPlugin locationPlugin;
     private LocationEngine locationEngine;
     private Location originLocation;
+    // variables for adding a marker
+    private Marker destinationMarker;
+    private LatLng originCoord;
+    private LatLng destinationCoord;
 
     // variables for calculating and drawing a route
     private Point originPosition;
     private Point destinationPosition;
     private DirectionsRoute currentRoute;
     private static final String TAG = "DirectionsActivity";
-
-
-    // variables for adding a marker
-    private org.osmdroid.views.overlay.Marker destinationMarker;
-    private LatLng originCoord;
-    private LatLng destinationCoord;
-
-
-
+    private NavigationMapRoute navigationMapRoute;
 
 
     @Override
@@ -92,11 +112,41 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         Mapbox.getInstance(this, getString(R.string.access_token));
         setContentView(R.layout.activity_map);
         this.viewHolder = new ViewHolder();
-        this.viewHolder.mapView.getMapAsync(this);
+//        this.viewHolder.mapView.getMapAsync(this);
+        viewHolder.mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(final MapboxMap mapboxMap) {
+
+                viewHolder.mapboxMap = mapboxMap;
+                enableLocationPlugin();
+                originCoord = new LatLng(originLocation.getLatitude(), originLocation.getLongitude());
+                mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(@NonNull LatLng point) {
+                        if (destinationMarker != null) {
+                            mapboxMap.removeMarker(destinationMarker);
+                        }
+                        destinationCoord = point;
+                        destinationMarker = mapboxMap.addMarker(new MarkerOptions()
+                                .position(destinationCoord)
+                        );
+
+                        destinationPosition = Point.fromLngLat(destinationCoord.getLongitude(), destinationCoord.getLatitude());
+                        originPosition = Point.fromLngLat(originCoord.getLongitude(), originCoord.getLatitude());
+                        getRoute(originPosition, destinationPosition);
+                    }
+
+                    ;
+                });
+            }
+            ;
+        });
+
+
         this.viewModel = new MapViewModel(this);
         this.viewModel.addObserver(this);
         this.viewModel.makeNamesRequest();
-        this.viewHolder.setEditTextOnFocusListener();
+        //this.viewHolder.setEditTextListeners();
     }
 
     public class ViewHolder{
@@ -122,6 +172,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             setDrawRouteButtonListener();
 //            setEditTextOnFocusListener();
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         }
 
         private void findViews(){
@@ -160,11 +211,14 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     routeBtn.setVisibility(View.GONE);
                     editDestination.clearFocus();
                     editOrigin.clearFocus();
+                    editOrigin.setText(getResources().getString(R.string.your_location));
+        //            drawRoutes();
+
                 }
             });
         }
 
-        private void setEditTextOnFocusListener(){
+        private void setEditTextListeners(){
             this.editSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -173,24 +227,14 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                     }
                 }
             });
-            this.editOrigin.addTextChangedListener(new TextWatcher() {
+            this.editOrigin.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
+                public void onClick(View v) {
                     if(editOrigin.getText().toString().trim().length() != 0){
                         String text = editOrigin.getText().toString().trim();
                         Intent intent=new Intent(MapActivity.this,SearchResultsActivity.class);
                         intent.putExtra("text", text);
-                        intent.putExtra("from", espol.edu.ec.espolguide.utils.Constants.FROM_ORIGIN);
+                        intent.putExtra("from", Constants.FROM_ORIGIN);
                         if(viewModel.getNamesItems() == null){
                             System.out.println("NULO DESDE ANTES");
                             System.out.println("NULO DESDE ANTES");
@@ -198,29 +242,20 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                         else{
                             System.out.println("NO ES NULO DESDE ANTES");
                         }
-                        IntentHelper.addObjectForKey(viewModel.getNamesItems(), "namesItems");
+                        System.out.println("Tamano antes de enviar: " + viewModel.getAdapter().getArraylist().size());
+                        IntentHelper.addObjectForKey(viewModel.getAdapter().getArraylist(), "namesItems");
                         startActivity(intent);
                     }
                 }
             });
-            this.editDestination.addTextChangedListener(new TextWatcher() {
+            this.editDestination.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
+                public void onClick(View v) {
                     if(editDestination.getText().toString().trim().length() != 0){
                         String text = editDestination.getText().toString().trim();
                         Intent intent=new Intent(MapActivity.this,SearchResultsActivity.class);
                         intent.putExtra("text", text);
-                        intent.putExtra("from", espol.edu.ec.espolguide.utils.Constants.FROM_ORIGIN);
+                        intent.putExtra("from", Constants.FROM_DESTINATION);
                         if(viewModel.getNamesItems() == null){
                             System.out.println("NULO DESDE ANTES");
                             System.out.println("NULO DESDE ANTES");
@@ -228,11 +263,15 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                         else{
                             System.out.println("NO ES NULO DESDE ANTES");
                         }
-                        IntentHelper.addObjectForKey(viewModel.getNamesItems(), "namesItems");
+                        System.out.println("Tamano antes de enviar: " + viewModel.getAdapter().getArraylist().size());
+                        IntentHelper.addObjectForKey(viewModel.getAdapter().getArraylist(), "namesItems");
                         startActivity(intent);
                     }
                 }
             });
+
+
+
         }
     }
 
@@ -240,13 +279,50 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         return this.viewHolder;
     }
 
-    @Override
-    public void onMapReady(MapboxMap mapboxMap) {
-        MapActivity.this.viewHolder.mapboxMap = mapboxMap;
-        mapboxMap.addOnMapClickListener(this);
+
+    public void getRoute(Point origin, Point destination) {
+        NavigationRoute.builder()
+                .accessToken(Mapbox.getAccessToken())
+                .origin(origin)
+                .destination(destination)
+                .build()
+                .getRoute(new Callback<DirectionsResponse>() {
+                    @Override
+                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+                        // You can get the generic HTTP info about the response
+                        Log.d(TAG, "Response code: " + response.code());
+                        if (response.body() == null) {
+                            Log.e(TAG, "No routes found, make sure you set the right user and access token.");
+                            return;
+                        } else if (response.body().routes().size() < 1) {
+                            Log.e(TAG, "No routes found");
+                            return;
+                        }
+
+                        currentRoute = response.body().routes().get(0);
+
+                        // Draw the route on the map
+                        if (navigationMapRoute != null) {
+                            navigationMapRoute.removeRoute();
+                        } else {
+                            navigationMapRoute = new NavigationMapRoute(null, viewHolder.mapView, viewHolder.mapboxMap, R.style.NavigationMapRoute);
+                        }
+                        navigationMapRoute.addRoute(currentRoute);
+                    }
+
+                    @Override
+                    public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+                        Log.e(TAG, "Error: " + throwable.getMessage());
+                    }
+                });
     }
 
-    @Override
+
+
+
+
+
+/**    @Override
     public void onMapClick(@NonNull LatLng point) {
         if (this.viewHolder.featureMarker != null) {
             this.viewHolder.mapboxMap.removeMarker(this.viewHolder.featureMarker);
@@ -266,86 +342,15 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
                         viewHolder.info)).show();
             }
         }
-    }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        String message = (String)arg;
-        if (message == viewModel.NAMES_REQUEST_STARTED) {
+        destinationCoord = point;
+        originCoord = new LatLng(originLocation.getLatitude(), originLocation.getLongitude());
+        destinationPosition = Point.fromLngLat(destinationCoord.getLongitude(), destinationCoord.getLatitude());
+        originPosition = Point.fromLngLat(originCoord.getLongitude(), originCoord.getLatitude());
+        getRoute(originPosition, destinationPosition);
 
-        }
-        if (message == viewModel.NAMES_REQUEST_FAILED_CONNECTION) {
-            MapActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-        if (message == viewModel.NAMES_REQUEST_FAILED_LOADING) {
-            MapActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_pois_names_error_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-        if (message == viewModel.NAMES_REQUEST_FAILED_HTTP) {
-            MapActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(MapActivity.this, getResources().getString(R.string.http_error_msg),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
-
-
-
-
-
-
-/**
-    private void getRoute(Point origin, Point destination) {
-        NavigationRoute.builder()
-                .accessToken(Mapbox.getAccessToken())
-                .origin(origin)
-                .destination(destination)
-                .profile("walking")
-                .build()
-                .getRoute(new Callback<DirectionsResponse>() {
-                    @Override
-                    public void onResponse(Call<DirectionsResponse> call, retrofit2.Response<DirectionsResponse> response) {
-                        // You can get the generic HTTP info about the response
-                        Log.d(TAG, "Response code: " + response.code());
-                        if (response.body() == null) {
-                            Log.e(TAG, "No routes found, make sure you set the right user and access token.");
-                            return;
-                        } else if (response.body().routes().size() < 1) {
-                            Log.e(TAG, "No routes found");
-                            return;
-                        }
-
-                        currentRoute = response.body().routes().get(0);
-
-                        // Draw the route on the map
-                        if (navigationMapRoute != null) {
-                            navigationMapRoute.removeRoute();
-                        } else {
-                            navigationMapRoute = new NavigationMapRoute(null, mapView, map, R.style.NavigationMapRoute);
-                        }
-                        navigationMapRoute.addRoute(currentRoute);
-                    }
-
-                    @Override
-                    public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
-                        Log.e(TAG, "Error: " + throwable.getMessage());
-                    }
-                });
     }*/
 
-/**
     @SuppressWarnings( {"MissingPermission"})
     private void enableLocationPlugin() {
         // Check if permissions are enabled and if not request
@@ -353,8 +358,8 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
             // Create an instance of LOST location engine
             initializeLocationEngine();
 
-            locationPlugin = new LocationLayerPlugin(mapView, map, locationEngine);
-            locationPlugin.setLocationLayerEnabled(LocationLayerMode.TRACKING);
+            locationPlugin = new LocationLayerPlugin(viewHolder.mapView, viewHolder.mapboxMap, locationEngine);
+            locationPlugin.setRenderMode(RenderMode.COMPASS);
         } else {
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
@@ -362,8 +367,9 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     }
 
     @SuppressWarnings( {"MissingPermission"})
-    private void initializeLocationEngine() {
-        locationEngine = new LostLocationEngine(MapViewModel.this);
+    public void initializeLocationEngine() {
+        LocationEngineProvider locationEngineProvider = new LocationEngineProvider(this);
+        locationEngine = locationEngineProvider.obtainBestLocationEngineAvailable();
         locationEngine.setPriority(LocationEnginePriority.HIGH_ACCURACY);
         locationEngine.activate();
 
@@ -376,15 +382,17 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         }
     }
 
-    private void setCameraPosition(Location location) {
-        activity.getViewHolder().mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+    public void setCameraPosition(Location location) {
+        viewHolder.mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(location.getLatitude(), location.getLongitude()), 13));
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
 
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain) {
@@ -425,7 +433,7 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         if (locationPlugin != null) {
             locationPlugin.onStart();
         }
-        mapView.onStart();
+        viewHolder.mapView.onStart();
     }
 
     @Override
@@ -437,13 +445,13 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
         if (locationPlugin != null) {
             locationPlugin.onStop();
         }
-        mapView.onStop();
+        viewHolder.mapView.onStop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mapView.onDestroy();
+        viewHolder.mapView.onDestroy();
         if (locationEngine != null) {
             locationEngine.deactivate();
         }
@@ -452,24 +460,69 @@ public class MapActivity extends AppCompatActivity implements Observer, OnMapRea
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mapView.onLowMemory();
+        viewHolder.mapView.onLowMemory();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mapView.onResume();
+        viewHolder.mapView.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mapView.onPause();
+        viewHolder.mapView.onPause();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
-    }*/
+        viewHolder.mapView.onSaveInstanceState(outState);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @Override
+    public void update(Observable o, Object arg) {
+        String message = (String)arg;
+        if (message == viewModel.NAMES_REQUEST_STARTED) {
+
+        }
+        if (message == viewModel.NAMES_REQUEST_FAILED_CONNECTION) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        if (message == viewModel.NAMES_REQUEST_FAILED_LOADING) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_pois_names_error_msg),
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        if (message == viewModel.NAMES_REQUEST_FAILED_HTTP) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.http_error_msg),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
 }

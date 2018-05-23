@@ -26,60 +26,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.osmdroid.views.overlay.Marker;
-//import org.osmdroid.views.MapView;
-//import org.osmdroid.views.overlay.Marker;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Observable;
-
-
-
-
-
-
-
-
-
-
-// classes to calculate a route
-import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
-import com.google.gson.JsonElement;
-import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
-import com.mapbox.api.directions.v5.models.DirectionsResponse;
-import com.mapbox.api.directions.v5.models.DirectionsRoute;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-//import retrofit2.Response;
-
-
-// classes needed to add location layer
-import com.mapbox.geojson.Point;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-
-import android.location.Location;
-
-import com.mapbox.mapboxsdk.geometry.LatLng;
-
-import android.support.annotation.NonNull;
-
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerMode;
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
-import com.mapbox.services.android.location.LostLocationEngine;
-import com.mapbox.android.core.location.LocationEngine;
-import com.mapbox.android.core.location.LocationEngineListener;
-import com.mapbox.android.core.location.LocationEnginePriority;
-import com.mapbox.android.core.permissions.PermissionsListener;
-import com.mapbox.android.core.permissions.PermissionsManager;
-import com.mapbox.services.commons.geojson.Feature;
 
 
 public class MapViewModel extends Observable{
@@ -93,11 +44,6 @@ public class MapViewModel extends Observable{
     final private ArrayList<String> namesItems = new ArrayList<>();
     private SearchViewAdapter adapter;
     private MapActivity activity;
-
-
-
-
-
 
     public MapViewModel(MapActivity activity) {
         this.activity = activity;
@@ -192,13 +138,11 @@ public class MapViewModel extends Observable{
                 });
                 AppController.getInstance(context).addToRequestQueue(jsonObjReq);
             }
-            return new ArrayList();
+            return namesItems;
         }
     }
 
     public SearchViewAdapter getAdapter(){
         return this.adapter;
     }
-
-
 }
