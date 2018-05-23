@@ -12,8 +12,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
-import android.text.Editable;
-import android.text.TextWatcher;
+
+import android.view.MotionEvent;
 import android.view.View;
 
 import android.widget.Button;
@@ -71,6 +71,8 @@ import retrofit2.Response;
 import android.util.Log;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 
+import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
+
 
 /**
 * Created by galo on 29/12/17.
@@ -86,7 +88,8 @@ import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
         ViewHolder viewHolder;
         MapViewModel viewModel;
 
-
+    public LatLng selectedOrigin;
+    public LatLng selectedDestination;
 
 
     private PermissionsManager permissionsManager;
@@ -112,41 +115,10 @@ import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
         Mapbox.getInstance(this, getString(R.string.access_token));
         setContentView(R.layout.activity_map);
         this.viewHolder = new ViewHolder();
-//        this.viewHolder.mapView.getMapAsync(this);
-        viewHolder.mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(final MapboxMap mapboxMap) {
-
-                viewHolder.mapboxMap = mapboxMap;
-                enableLocationPlugin();
-                originCoord = new LatLng(originLocation.getLatitude(), originLocation.getLongitude());
-                mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
-                    @Override
-                    public void onMapClick(@NonNull LatLng point) {
-                        if (destinationMarker != null) {
-                            mapboxMap.removeMarker(destinationMarker);
-                        }
-                        destinationCoord = point;
-                        destinationMarker = mapboxMap.addMarker(new MarkerOptions()
-                                .position(destinationCoord)
-                        );
-
-                        destinationPosition = Point.fromLngLat(destinationCoord.getLongitude(), destinationCoord.getLatitude());
-                        originPosition = Point.fromLngLat(originCoord.getLongitude(), originCoord.getLatitude());
-                        getRoute(originPosition, destinationPosition);
-                    }
-
-                    ;
-                });
-            }
-            ;
-        });
-
-
+        this.viewHolder.setMapOnClickListener();
         this.viewModel = new MapViewModel(this);
         this.viewModel.addObserver(this);
         this.viewModel.makeNamesRequest();
-        //this.viewHolder.setEditTextListeners();
     }
 
     public class ViewHolder{
@@ -170,9 +142,8 @@ import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
             findViews();
             setClosePoiButtonListener();
             setDrawRouteButtonListener();
-//            setEditTextOnFocusListener();
+            setEditTextListeners();
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
         }
 
         private void findViews(){
@@ -212,9 +183,47 @@ import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
                     editDestination.clearFocus();
                     editOrigin.clearFocus();
                     editOrigin.setText(getResources().getString(R.string.your_location));
-        //            drawRoutes();
-
+                    enableLocationPlugin();
+                    originCoord = new LatLng(originLocation.getLatitude(), originLocation.getLongitude());
+                    selectedOrigin = originCoord;
+                    originPosition = Point.fromLngLat(selectedOrigin.getLongitude(), selectedOrigin.getLatitude());
+                    destinationPosition = Point.fromLngLat(selectedDestination.getLongitude(), selectedDestination.getLatitude());
+                    getRoute(originPosition, destinationPosition);
                 }
+            });
+        }
+
+        private void setMapOnClickListener(){
+            viewHolder.mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(final MapboxMap mapboxMap) {
+                    viewHolder.mapboxMap = mapboxMap;
+                    mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
+                        @Override
+                        public void onMapClick(@NonNull LatLng point) {
+                            if (viewHolder.featureMarker != null) {
+                                viewHolder.mapboxMap.removeMarker(viewHolder.featureMarker);
+                            }
+                            final PointF pixel = viewHolder.mapboxMap.getProjection().toScreenLocation(point);
+                            List<Feature> features = viewHolder.mapboxMap.queryRenderedFeatures(pixel);
+                            if (features.size() > 0) {
+                                Feature feature = features.get(0);
+                                String blockName = "";
+                                String academicUnit = "";
+                                String description = "";
+                                if (feature.properties() != null && feature.properties().has("CODIGO")) {
+                                    blockName = feature.getStringProperty("BLOQUE").toString();
+                                    academicUnit = feature.getStringProperty("UNIDAD").toString();
+                                    description = feature.getStringProperty("DESCRIPCIO").toString();
+                                    new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description, MapActivity.this,
+                                            viewHolder.info)).show();
+                                }
+                            }
+                        }
+                        ;
+                    });
+                }
+                ;
             });
         }
 
@@ -227,50 +236,40 @@ import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
                     }
                 }
             });
-            this.editOrigin.setOnClickListener(new View.OnClickListener() {
+            this.editOrigin.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public void onClick(View v) {
-                    if(editOrigin.getText().toString().trim().length() != 0){
+                public boolean onTouch(View v, MotionEvent event) {
+                    if(MotionEvent.ACTION_UP == event.getAction()){
                         String text = editOrigin.getText().toString().trim();
                         Intent intent=new Intent(MapActivity.this,SearchResultsActivity.class);
                         intent.putExtra("text", text);
                         intent.putExtra("from", Constants.FROM_ORIGIN);
-                        if(viewModel.getNamesItems() == null){
-                            System.out.println("NULO DESDE ANTES");
-                            System.out.println("NULO DESDE ANTES");
-                        }
-                        else{
-                            System.out.println("NO ES NULO DESDE ANTES");
-                        }
                         System.out.println("Tamano antes de enviar: " + viewModel.getAdapter().getArraylist().size());
                         IntentHelper.addObjectForKey(viewModel.getAdapter().getArraylist(), "namesItems");
-                        startActivity(intent);
+                        startActivityForResult(intent, 1);
+                        //startActivity(intent);
                     }
+                    return false;
                 }
             });
-            this.editDestination.setOnClickListener(new View.OnClickListener() {
+
+
+            this.editDestination.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public void onClick(View v) {
-                    if(editDestination.getText().toString().trim().length() != 0){
+                public boolean onTouch(View v, MotionEvent event) {
+                    if(MotionEvent.ACTION_UP == event.getAction()){
                         String text = editDestination.getText().toString().trim();
                         Intent intent=new Intent(MapActivity.this,SearchResultsActivity.class);
                         intent.putExtra("text", text);
                         intent.putExtra("from", Constants.FROM_DESTINATION);
-                        if(viewModel.getNamesItems() == null){
-                            System.out.println("NULO DESDE ANTES");
-                            System.out.println("NULO DESDE ANTES");
-                        }
-                        else{
-                            System.out.println("NO ES NULO DESDE ANTES");
-                        }
                         System.out.println("Tamano antes de enviar: " + viewModel.getAdapter().getArraylist().size());
                         IntentHelper.addObjectForKey(viewModel.getAdapter().getArraylist(), "namesItems");
-                        startActivity(intent);
+                        startActivityForResult(intent, 1);
+                        //startActivity(intent);
                     }
+                    return false;
                 }
             });
-
-
 
         }
     }
@@ -278,7 +277,6 @@ import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
     public ViewHolder getViewHolder(){
         return this.viewHolder;
     }
-
 
     public void getRoute(Point origin, Point destination) {
         NavigationRoute.builder()
@@ -317,40 +315,6 @@ import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
                 });
     }
 
-
-
-
-
-
-/**    @Override
-    public void onMapClick(@NonNull LatLng point) {
-        if (this.viewHolder.featureMarker != null) {
-            this.viewHolder.mapboxMap.removeMarker(this.viewHolder.featureMarker);
-        }
-        final PointF pixel = this.viewHolder.mapboxMap.getProjection().toScreenLocation(point);
-        List<Feature> features = this.viewHolder.mapboxMap.queryRenderedFeatures(pixel);
-        if (features.size() > 0) {
-            Feature feature = features.get(0);
-            String blockName = "";
-            String academicUnit = "";
-            String description = "";
-            if (feature.properties() != null && feature.properties().has("CODIGO")) {
-                blockName = feature.getStringProperty("BLOQUE").toString();
-                academicUnit = feature.getStringProperty("UNIDAD").toString();
-                description = feature.getStringProperty("DESCRIPCIO").toString();
-                new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description, MapActivity.this,
-                        viewHolder.info)).show();
-            }
-        }
-
-        destinationCoord = point;
-        originCoord = new LatLng(originLocation.getLatitude(), originLocation.getLongitude());
-        destinationPosition = Point.fromLngLat(destinationCoord.getLongitude(), destinationCoord.getLatitude());
-        originPosition = Point.fromLngLat(originCoord.getLongitude(), originCoord.getLatitude());
-        getRoute(originPosition, destinationPosition);
-
-    }*/
-
     @SuppressWarnings( {"MissingPermission"})
     private void enableLocationPlugin() {
         // Check if permissions are enabled and if not request
@@ -370,7 +334,7 @@ import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
     public void initializeLocationEngine() {
         LocationEngineProvider locationEngineProvider = new LocationEngineProvider(this);
         locationEngine = locationEngineProvider.obtainBestLocationEngineAvailable();
-        locationEngine.setPriority(LocationEnginePriority.HIGH_ACCURACY);
+        locationEngine.setPriority(LocationEnginePriority.LOW_POWER);
         locationEngine.activate();
 
         Location lastLocation = locationEngine.getLastLocation();
@@ -481,19 +445,6 @@ import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
         viewHolder.mapView.onSaveInstanceState(outState);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public void update(Observable o, Object arg) {
         String message = (String)arg;
@@ -525,4 +476,90 @@ import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
             });
         }
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request it is that we're responding to
+        if (requestCode == Constants.REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                String from = data.getExtras().getString("from");
+                String officialName = data.getExtras().getString("officialName");
+                double selectedLat = data.getExtras().getDouble("selectedLat");
+                double selectedLng = data.getExtras().getDouble("selectedLng");
+
+                System.out.println("VALOR DE FROM: " + from);
+
+                if(from == Constants.FROM_ORIGIN){
+                    selectedOrigin = new LatLng(selectedLat, selectedLng);
+                    originPosition = Point.fromLngLat(selectedOrigin.getLongitude(), selectedOrigin.getLatitude());
+                    viewHolder.editOrigin.setText(officialName);
+                }
+                if (from == Constants.FROM_DESTINATION){
+                    selectedDestination = new LatLng(selectedLat, selectedLng);
+                    destinationPosition = Point.fromLngLat(selectedDestination.getLongitude(), selectedDestination.getLatitude());
+                    viewHolder.editDestination.setText(officialName);
+                }
+                if(originPosition==null){
+                    System.out.println("ORIGIN ES NULL");
+                }
+                if(destinationPosition==null){
+                    System.out.println("DESTINATION ES NULL");
+                }
+
+
+                if(originPosition!=null && destinationPosition!=null){
+                    System.out.println("(((((((((((((( NO ES NULO )))))))))))))))))))");
+                    getRoute(originPosition, destinationPosition);
+                }
+                viewHolder.editSearch.setText(officialName);
+
+
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**    @Override
+    public void onMapClick(@NonNull LatLng point) {
+    if (this.viewHolder.featureMarker != null) {
+    this.viewHolder.mapboxMap.removeMarker(this.viewHolder.featureMarker);
+    }
+    final PointF pixel = this.viewHolder.mapboxMap.getProjection().toScreenLocation(point);
+    List<Feature> features = this.viewHolder.mapboxMap.queryRenderedFeatures(pixel);
+    if (features.size() > 0) {
+    Feature feature = features.get(0);
+    String blockName = "";
+    String academicUnit = "";
+    String description = "";
+    if (feature.properties() != null && feature.properties().has("CODIGO")) {
+    blockName = feature.getStringProperty("BLOQUE").toString();
+    academicUnit = feature.getStringProperty("UNIDAD").toString();
+    description = feature.getStringProperty("DESCRIPCIO").toString();
+    new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description, MapActivity.this,
+    viewHolder.info)).show();
+    }
+    }
+
+    destinationCoord = point;
+    originCoord = new LatLng(originLocation.getLatitude(), originLocation.getLongitude());
+    destinationPosition = Point.fromLngLat(destinationCoord.getLongitude(), destinationCoord.getLatitude());
+    originPosition = Point.fromLngLat(originCoord.getLongitude(), originCoord.getLatitude());
+    getRoute(originPosition, destinationPosition);
+
+    }*/
 }

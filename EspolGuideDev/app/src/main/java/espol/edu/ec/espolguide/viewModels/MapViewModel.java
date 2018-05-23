@@ -145,4 +145,90 @@ public class MapViewModel extends Observable{
     public SearchViewAdapter getAdapter(){
         return this.adapter;
     }
+
+
+
+
+
+
+
+    private class BlockCoordinates extends AsyncTask<Context, Void, ArrayList> {
+        Context context;
+        @Override
+        protected ArrayList doInBackground(Context... contexts) {
+            context = contexts[0];
+            if (!Constants.isNetworkAvailable(context)) {
+                setChanged();
+                notifyObservers(NAMES_REQUEST_FAILED_CONNECTION);
+            }
+            else {
+                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                        Constants.getBlockInfoURL(), null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Iterator<String> iter = response.keys();
+                        while (iter.hasNext()) {
+                            String identifier = iter.next();
+                            Integer numIdentifier = Integer.getInteger(identifier.substring(6));
+                            if (numIdentifier == null || numIdentifier <= 69) {
+                                try {
+                                    String blockString = "";
+                                    JSONObject blockInfo = (JSONObject) response.get(identifier);
+                                    String officialName = (String) blockInfo.getString("NombreOficial");
+                                    JSONArray alternativeNames = blockInfo.getJSONArray("NombresAlternativos");
+                                    int totalAlternatives = alternativeNames.length();
+                                    String alternativeString = "";
+                                    for (int i = 0; i < totalAlternatives; i++) {
+                                        String alternative = (String) alternativeNames.get(i);
+                                        alternativeString = alternativeString + "|" + alternative;
+                                    }
+                                    blockString = identifier +
+                                            ";" + officialName + ";" + alternativeString;
+                                    namesItems.add(blockString);
+                                } catch (JSONException e) {
+                                    setChanged();
+                                    notifyObservers(NAMES_REQUEST_FAILED_LOADING);
+                                    continue;
+                                }
+                            }
+                        }
+
+                        adapter = new SearchViewAdapter(activity, activity.getViewHolder().mapboxMap, namesItems, activity.getViewHolder().editSearch,
+                                activity.getViewHolder().featureMarker);
+                        adapter.setMapView(activity.getViewHolder().mapView);
+                        activity.getViewHolder().searchPoiLv.setAdapter(adapter);
+                        activity.getViewHolder().editSearch.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void afterTextChanged(Editable arg0) {
+                                // TODO Auto-generated method stub
+                                String text = activity.getViewHolder().editSearch.getText().toString().toLowerCase(Locale.getDefault());
+                                adapter.filter(text);
+                            }
+                            @Override
+                            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+                                // TODO Auto-generated method stub
+                            }
+                            @Override
+                            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+                                                      int arg3) {
+                                // TODO Auto-generated method stub
+                                activity.getViewHolder().searchPoiLv.setVisibility(View.VISIBLE);
+                            }
+                        });
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("tag", "Error: " + error.getMessage());
+                        setChanged();
+                        notifyObservers(NAMES_REQUEST_FAILED_HTTP);
+                    }
+                });
+                AppController.getInstance(context).addToRequestQueue(jsonObjReq);
+            }
+            return namesItems;
+        }
+    }
+
 }

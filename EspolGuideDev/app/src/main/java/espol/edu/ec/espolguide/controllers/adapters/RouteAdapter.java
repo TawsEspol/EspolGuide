@@ -1,6 +1,8 @@
 package espol.edu.ec.espolguide.controllers.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -69,7 +73,8 @@ public class RouteAdapter extends BaseAdapter {
         this.viewHolder = viewHolder;
     }
 
-    public RouteAdapter(List<String> pois) {
+    public RouteAdapter(List<String> pois, SearchResultsActivity activity) {
+        this.mContext = activity;
         this.pois = pois;
         this.arraylist = new ArrayList<String>();
         this.arraylist.addAll(pois);
@@ -132,8 +137,24 @@ public class RouteAdapter extends BaseAdapter {
                         public void onResponse(JSONObject response) {
                             try {
 
+                                SearchResultsActivity activity = (SearchResultsActivity) mContext;
+                                JSONArray features = response.getJSONArray("features");
+                                JSONObject jsonObj = (JSONObject) features.get(0);
+                                JSONObject jsonObjGeometry = jsonObj.getJSONObject("geometry");
+                                JSONArray coordinate1 = jsonObjGeometry.getJSONArray("coordinates").getJSONArray(0);
+                                JSONArray pointCoord = coordinate1.getJSONArray(0);
+                                System.out.println("=========ID: " + holder.getIdNumber() + " ========");
+                                System.out.println("***********Name: " + name1 + " ********");
                                 pois.clear();
-
+                                double selectedLat = pointCoord.getDouble(0);
+                                double selectedLng = pointCoord.getDouble(1);
+                                Intent intent = new Intent();
+                                intent.putExtra("selectedLat", selectedLat);
+                                intent.putExtra("selectedLng", selectedLng);
+                                intent.putExtra("officialName", name1);
+                                intent.putExtra("from", activity.getFrom());
+                                activity.setResult(Activity.RESULT_OK, intent);
+                                activity.finish();
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Toast.makeText(getmContext(), mContext.getResources().getString(R.string.loading_poi_info_error_msg),
@@ -151,9 +172,6 @@ public class RouteAdapter extends BaseAdapter {
                         }
                     });
                     AppController.getInstance(getmContext()).addToRequestQueue(jsonObjReq);
-
-
-
                 }
             }
         });

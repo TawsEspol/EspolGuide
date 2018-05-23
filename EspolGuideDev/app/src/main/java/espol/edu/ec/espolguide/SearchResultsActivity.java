@@ -18,6 +18,7 @@ import java.util.Locale;
 import espol.edu.ec.espolguide.controllers.adapters.RouteAdapter;
 import espol.edu.ec.espolguide.controllers.adapters.SearchViewAdapter;
 import espol.edu.ec.espolguide.utils.IntentHelper;
+import espol.edu.ec.espolguide.utils.Util;
 
 public class SearchResultsActivity extends AppCompatActivity {
     private String from;
@@ -31,6 +32,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
         Bundle b = new Bundle();
+        Util.openKeyboard(this);
         Intent intent = getIntent();
         this.viewHolder = new ViewHolder();
         b = intent.getExtras();
@@ -45,7 +47,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         this.viewHolder.editSearch.setSelection(this.viewHolder.editSearch.getText().length());
         ArrayList<String> namesItems = (ArrayList<String>) IntentHelper.getObjectForKey("namesItems");
         System.out.println("Numero de bloques: " + namesItems.size());
-        this.adapter = new RouteAdapter(namesItems);
+        this.adapter = new RouteAdapter(namesItems, this);
         this.adapter.setInflater(this);
         this.adapter.setBar(this.viewHolder.editSearch);
         this.viewHolder.searchPoiLv.setAdapter(adapter);
@@ -83,5 +85,9 @@ public class SearchResultsActivity extends AppCompatActivity {
             editSearch = (EditText) findViewById(R.id.search_destiny);
             searchPoiLv = (ListView) findViewById(R.id.listview);
         }
+    }
+
+    public String getFrom(){
+        return this.from;
     }
 }
