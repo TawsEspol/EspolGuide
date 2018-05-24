@@ -18,6 +18,7 @@ import android.view.View;
 
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -37,6 +38,7 @@ import com.mapbox.geojson.Feature;
 import espol.edu.ec.espolguide.controllers.adapters.RouteAdapter;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.IntentHelper;
+import espol.edu.ec.espolguide.utils.Util;
 import espol.edu.ec.espolguide.viewModels.MapViewModel;
 import espol.edu.ec.espolguide.viewModels.PoiInfoViewModel;
 
@@ -78,28 +80,19 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
 * Created by galo on 29/12/17.
 */
 
-/**public class MapActivity extends AppCompatActivity implements Observer, OnMapReadyCallback,
-        MapboxMap.OnMapClickListener, LocationEngineListener, PermissionsListener{
-    ViewHolder viewHolder;
-    MapViewModel viewModel;*/
-
-
     public class MapActivity extends AppCompatActivity implements Observer, LocationEngineListener, PermissionsListener{
         ViewHolder viewHolder;
         MapViewModel viewModel;
 
     public LatLng selectedOrigin;
     public LatLng selectedDestination;
+    public String selectedEditText;
 
 
     private PermissionsManager permissionsManager;
     private LocationLayerPlugin locationPlugin;
     private LocationEngine locationEngine;
     private Location originLocation;
-    // variables for adding a marker
-    private Marker destinationMarker;
-    private LatLng originCoord;
-    private LatLng destinationCoord;
 
     // variables for calculating and drawing a route
     private Point originPosition;
@@ -119,6 +112,7 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
         this.viewModel = new MapViewModel(this);
         this.viewModel.addObserver(this);
         this.viewModel.makeNamesRequest();
+
     }
 
     public class ViewHolder{
@@ -137,6 +131,11 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
         public LinearLayout placesBox;
         public Button routeBtn;
 
+        public FrameLayout mapLayout;
+        public FrameLayout routeSearchLayour;
+        public ListView routesLv;
+        public EditText editSearchRoutes;
+
 
         public ViewHolder(){
             findViews();
@@ -152,15 +151,16 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
             closePoiInfoBtn = (Button) findViewById(R.id.close_poi_info_button);
             editSearch = (EditText) findViewById(R.id.search_destiny);
             searchPoiLv = (ListView) findViewById(R.id.listview);
-
             editOrigin = (EditText) findViewById(R.id.search_origin);
             editDestination = (EditText) findViewById(R.id.search_destination);
             originLv = (ListView) findViewById(R.id.origin_results);
             destinationLv = (ListView) findViewById(R.id.destination_results);
-
             placesBox = (LinearLayout) findViewById(R.id.places_box);
             routeBtn = (Button) findViewById(R.id.route_btn);
-
+            mapLayout = (FrameLayout) findViewById(R.id.map_layout);
+            routeSearchLayour = (FrameLayout) findViewById(R.id.routes_search_layout);
+            routesLv = (ListView) findViewById(R.id.listroutes);
+            editSearchRoutes = (EditText) findViewById(R.id.search_routes);
         }
 
         private void setClosePoiButtonListener(){
@@ -184,8 +184,7 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
                     editOrigin.clearFocus();
                     editOrigin.setText(getResources().getString(R.string.your_location));
                     enableLocationPlugin();
-                    originCoord = new LatLng(originLocation.getLatitude(), originLocation.getLongitude());
-                    selectedOrigin = originCoord;
+                    selectedOrigin = new LatLng(originLocation.getLatitude(), originLocation.getLongitude());
                     originPosition = Point.fromLngLat(selectedOrigin.getLongitude(), selectedOrigin.getLatitude());
                     destinationPosition = Point.fromLngLat(selectedDestination.getLongitude(), selectedDestination.getLatitude());
                     getRoute(originPosition, destinationPosition);
@@ -241,31 +240,29 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
                 public boolean onTouch(View v, MotionEvent event) {
                     if(MotionEvent.ACTION_UP == event.getAction()){
                         String text = editOrigin.getText().toString().trim();
-                        Intent intent=new Intent(MapActivity.this,SearchResultsActivity.class);
-                        intent.putExtra("text", text);
-                        intent.putExtra("from", Constants.FROM_ORIGIN);
-                        System.out.println("Tamano antes de enviar: " + viewModel.getAdapter().getArraylist().size());
-                        IntentHelper.addObjectForKey(viewModel.getAdapter().getArraylist(), "namesItems");
-                        startActivityForResult(intent, 1);
-                        //startActivity(intent);
+                        viewHolder.editSearchRoutes.setText(text);
+                        viewHolder.editSearchRoutes.requestFocus();
+                        viewHolder.editSearchRoutes.setSelection(text.length());
+                        selectedEditText = Constants.FROM_ORIGIN;
+                        viewHolder.mapLayout.setVisibility(View.GONE);
+                        viewHolder.routeSearchLayour.setVisibility(View.VISIBLE);
+                        Util.openKeyboard(MapActivity.this);
                     }
                     return false;
                 }
             });
-
 
             this.editDestination.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if(MotionEvent.ACTION_UP == event.getAction()){
                         String text = editDestination.getText().toString().trim();
-                        Intent intent=new Intent(MapActivity.this,SearchResultsActivity.class);
-                        intent.putExtra("text", text);
-                        intent.putExtra("from", Constants.FROM_DESTINATION);
-                        System.out.println("Tamano antes de enviar: " + viewModel.getAdapter().getArraylist().size());
-                        IntentHelper.addObjectForKey(viewModel.getAdapter().getArraylist(), "namesItems");
-                        startActivityForResult(intent, 1);
-                        //startActivity(intent);
+                        viewHolder.editSearchRoutes.setText(text);
+                        viewHolder.editSearchRoutes.setSelection(text.length());
+                        selectedEditText = Constants.FROM_DESTINATION;
+                        viewHolder.mapLayout.setVisibility(View.GONE);
+                        viewHolder.routeSearchLayour.setVisibility(View.VISIBLE);
+                        Util.openKeyboard(MapActivity.this);
                     }
                     return false;
                 }
@@ -282,6 +279,7 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
         NavigationRoute.builder()
                 .accessToken(Mapbox.getAccessToken())
                 .origin(origin)
+                .profile("walking")
                 .destination(destination)
                 .build()
                 .getRoute(new Callback<DirectionsResponse>() {
@@ -477,89 +475,19 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
         }
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Check which request it is that we're responding to
-        if (requestCode == Constants.REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                String from = data.getExtras().getString("from");
-                String officialName = data.getExtras().getString("officialName");
-                double selectedLat = data.getExtras().getDouble("selectedLat");
-                double selectedLng = data.getExtras().getDouble("selectedLng");
-
-                System.out.println("VALOR DE FROM: " + from);
-
-                if(from == Constants.FROM_ORIGIN){
-                    selectedOrigin = new LatLng(selectedLat, selectedLng);
-                    originPosition = Point.fromLngLat(selectedOrigin.getLongitude(), selectedOrigin.getLatitude());
-                    viewHolder.editOrigin.setText(officialName);
-                }
-                if (from == Constants.FROM_DESTINATION){
-                    selectedDestination = new LatLng(selectedLat, selectedLng);
-                    destinationPosition = Point.fromLngLat(selectedDestination.getLongitude(), selectedDestination.getLatitude());
-                    viewHolder.editDestination.setText(officialName);
-                }
-                if(originPosition==null){
-                    System.out.println("ORIGIN ES NULL");
-                }
-                if(destinationPosition==null){
-                    System.out.println("DESTINATION ES NULL");
-                }
-
-
-                if(originPosition!=null && destinationPosition!=null){
-                    System.out.println("(((((((((((((( NO ES NULO )))))))))))))))))))");
-                    getRoute(originPosition, destinationPosition);
-                }
-                viewHolder.editSearch.setText(officialName);
-
-
-            }
-        }
+    public Point getOriginPosition(){
+        return this.originPosition;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**    @Override
-    public void onMapClick(@NonNull LatLng point) {
-    if (this.viewHolder.featureMarker != null) {
-    this.viewHolder.mapboxMap.removeMarker(this.viewHolder.featureMarker);
-    }
-    final PointF pixel = this.viewHolder.mapboxMap.getProjection().toScreenLocation(point);
-    List<Feature> features = this.viewHolder.mapboxMap.queryRenderedFeatures(pixel);
-    if (features.size() > 0) {
-    Feature feature = features.get(0);
-    String blockName = "";
-    String academicUnit = "";
-    String description = "";
-    if (feature.properties() != null && feature.properties().has("CODIGO")) {
-    blockName = feature.getStringProperty("BLOQUE").toString();
-    academicUnit = feature.getStringProperty("UNIDAD").toString();
-    description = feature.getStringProperty("DESCRIPCIO").toString();
-    new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description, MapActivity.this,
-    viewHolder.info)).show();
-    }
+    public Point getDestinationPosition(){
+        return this.destinationPosition;
     }
 
-    destinationCoord = point;
-    originCoord = new LatLng(originLocation.getLatitude(), originLocation.getLongitude());
-    destinationPosition = Point.fromLngLat(destinationCoord.getLongitude(), destinationCoord.getLatitude());
-    originPosition = Point.fromLngLat(originCoord.getLongitude(), originCoord.getLatitude());
-    getRoute(originPosition, destinationPosition);
+    public void setOriginPosition(Point originPosition){
+        this.originPosition = originPosition;
+    }
 
-    }*/
+    public void setDestinationPosition(Point destinationPosition){
+        this.destinationPosition = destinationPosition;
+    }
 }

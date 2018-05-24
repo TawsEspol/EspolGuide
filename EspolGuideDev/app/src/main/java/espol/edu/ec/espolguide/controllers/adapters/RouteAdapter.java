@@ -1,8 +1,6 @@
 package espol.edu.ec.espolguide.controllers.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +14,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.R;
-import espol.edu.ec.espolguide.SearchResultsActivity;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.Util;
@@ -73,15 +73,12 @@ public class RouteAdapter extends BaseAdapter {
         this.viewHolder = viewHolder;
     }
 
-    public RouteAdapter(List<String> pois, SearchResultsActivity activity) {
+    public RouteAdapter(List<String> pois, MapActivity activity) {
         this.mContext = activity;
         this.pois = pois;
         this.arraylist = new ArrayList<String>();
         this.arraylist.addAll(pois);
-    }
-
-    public void setInflater(SearchResultsActivity searchResultsActivity){
-        this.inflater = LayoutInflater.from(searchResultsActivity);
+        inflater = LayoutInflater.from(mContext);
     }
 
     public void setBar(View bar){
@@ -137,7 +134,6 @@ public class RouteAdapter extends BaseAdapter {
                         public void onResponse(JSONObject response) {
                             try {
 
-                                SearchResultsActivity activity = (SearchResultsActivity) mContext;
                                 JSONArray features = response.getJSONArray("features");
                                 JSONObject jsonObj = (JSONObject) features.get(0);
                                 JSONObject jsonObjGeometry = jsonObj.getJSONObject("geometry");
@@ -148,13 +144,21 @@ public class RouteAdapter extends BaseAdapter {
                                 pois.clear();
                                 double selectedLat = pointCoord.getDouble(0);
                                 double selectedLng = pointCoord.getDouble(1);
-                                Intent intent = new Intent();
-                                intent.putExtra("selectedLat", selectedLat);
-                                intent.putExtra("selectedLng", selectedLng);
-                                intent.putExtra("officialName", name1);
-                                intent.putExtra("from", activity.getFrom());
-                                activity.setResult(Activity.RESULT_OK, intent);
-                                activity.finish();
+                                MapActivity activity = (MapActivity) mContext;
+                                if(activity.selectedEditText == Constants.FROM_ORIGIN){
+                                    activity.selectedOrigin = new LatLng(selectedLat, selectedLng);
+                                    activity.getViewHolder().editOrigin.setText(name1);
+                                    activity.setOriginPosition(Point.fromLngLat(activity.selectedOrigin.getLongitude(), activity.selectedOrigin.getLatitude()));
+                                }
+                                else if(activity.selectedEditText == Constants.FROM_DESTINATION){
+                                    activity.selectedDestination = new LatLng(selectedLat, selectedLng);
+                                    activity.getViewHolder().editDestination.setText(name1);
+                                    activity.setDestinationPosition(Point.fromLngLat(activity.selectedDestination.getLongitude(), activity.selectedDestination.getLatitude()));
+                                }
+                                activity.getViewHolder().routeSearchLayour.setVisibility(View.GONE);
+                                activity.getViewHolder().mapLayout.setVisibility(View.VISIBLE);
+                                activity.getRoute(activity.getOriginPosition(), activity.getDestinationPosition());
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Toast.makeText(getmContext(), mContext.getResources().getString(R.string.loading_poi_info_error_msg),

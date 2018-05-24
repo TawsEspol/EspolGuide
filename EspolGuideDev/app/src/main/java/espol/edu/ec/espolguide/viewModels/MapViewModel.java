@@ -127,6 +127,28 @@ public class MapViewModel extends Observable{
                             }
                         });
 
+                        RouteAdapter routeAdapter = new RouteAdapter(namesItems, activity);
+                        activity.getViewHolder().routesLv.setAdapter(routeAdapter);
+                        activity.getViewHolder().editSearchRoutes.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void afterTextChanged(Editable arg0) {
+                                // TODO Auto-generated method stub
+                                String text = activity.getViewHolder().editSearchRoutes.getText().toString().toLowerCase(Locale.getDefault());
+                                routeAdapter.filter(text);
+                            }
+                            @Override
+                            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+                                // TODO Auto-generated method stub
+                            }
+                            @Override
+                            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+                                                      int arg3) {
+                                activity.getViewHolder().routesLv.setVisibility(View.VISIBLE);
+                                // TODO Auto-generated method stub
+
+                            }
+                        });
+
                     }
                 }, new Response.ErrorListener() {
                     @Override
