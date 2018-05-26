@@ -9,11 +9,13 @@ import android.net.ConnectivityManager;
 
 public class Constants {
 
-    public final static String IP_ = "";
+    public final static String IP_ = "192.168.0.10:8080";
 
     public final static String SERVER_URL = "http://" + IP_;
     public final static int CLOSE_ZOOM = 18;
-    public final static int FAR_AWAY_ZOOM = 15;
+    public final static int FAR_AWAY_ZOOM = 16;
+    public final static double ESPOL_CENTRAL_LAT = -2.14630;
+    public final static double ESPOL_CENTRAL_LNG = -79.96575;
     public final static String FROM_ORIGIN = "from_origin";
     public final static String FROM_DESTINATION = "from_destination";
     public final static int REQUEST_CODE = 1;

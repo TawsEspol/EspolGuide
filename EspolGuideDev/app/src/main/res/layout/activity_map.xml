@@ -123,6 +123,26 @@
                 android:layout_below="@id/search_destiny"
                 />
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/route_button_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="60dp"
+            android:layout_marginRight="40dp"
+            android:layout_gravity="right|bottom"
+            android:visibility="visible">
+            <Button
+                android:id="@+id/route_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/route_round_button"
+                android:text="Ver\nRuta"
+                android:textColor="#ffffff"
+                android:textAllCaps="false"
+                android:textSize="16dp"
+                android:visibility="gone"
+                />
+        </LinearLayout>
         <!--Layout de fondo de información del POI-->
         <LinearLayout
             android:id="@+id/overlay"
@@ -205,28 +225,6 @@
                     style="@style/info"
                     />
             </LinearLayout>
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/route_button_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="60dp"
-            android:layout_marginRight="40dp"
-            android:layout_gravity="right|bottom"
-            android:visibility="visible">
-            <Button
-                android:id="@+id/route_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/route_round_button"
-                android:text="Ver\nRuta"
-                android:textColor="#ffffff"
-                android:textAllCaps="false"
-                android:textSize="16dp"
-                android:visibility="gone"
-                />
         </LinearLayout>
     </FrameLayout>
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
