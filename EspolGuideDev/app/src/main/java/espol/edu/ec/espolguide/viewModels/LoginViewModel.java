@@ -2,14 +2,8 @@ package espol.edu.ec.espolguide.viewModels;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
@@ -19,20 +13,13 @@ import org.ksoap2.transport.HttpTransportSE;
 import org.kxml2.kdom.Element;
 import org.kxml2.kdom.Node;
 
-import java.sql.SQLOutput;
-import java.util.Map;
 import java.util.Observable;
 
-import espol.edu.ec.espolguide.Login;
+import espol.edu.ec.espolguide.LoginActivity;
 import espol.edu.ec.espolguide.MapActivity;
-import espol.edu.ec.espolguide.PoiInfo;
-import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.utils.Constants;
 
-import android.view.View;
 import android.widget.Toast;
-
-import static android.support.v4.content.ContextCompat.startActivity;
 
 /**
  * Created by fabricio on 19/05/18.
@@ -48,9 +35,9 @@ public class LoginViewModel extends Observable {
     public static String METHOD_NAME = "autenticacion";
     public static String SOAP_ACTION = "http://tempuri.org/autenticacion";
 
-    private Login activity;
+    private LoginActivity activity;
 
-    public LoginViewModel(Login activity) {
+    public LoginViewModel(LoginActivity activity) {
         this.activity = activity;
     }
 
@@ -120,6 +107,9 @@ public class LoginViewModel extends Observable {
                 Intent intent;
                 intent = new Intent(ctx, MapActivity.class);
                 ctx.startActivity(intent);
+                activity.getViewHolder().password.setText("");
+                activity.getViewHolder().password.setText("");
+                activity.finish();
             } else {
                 Toast message = Toast.makeText(ctx,
                         "Credenciales incorrectas", Toast.LENGTH_LONG);

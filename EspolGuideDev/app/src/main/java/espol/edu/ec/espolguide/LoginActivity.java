@@ -19,7 +19,7 @@ import espol.edu.ec.espolguide.viewModels.MapViewModel;
  * Created by fabricio on 19/05/18.
  */
 
-public class Login extends AppCompatActivity implements Observer {
+public class LoginActivity extends AppCompatActivity implements Observer {
     ViewHolder viewHolder;
     LoginViewModel viewModel;
 
