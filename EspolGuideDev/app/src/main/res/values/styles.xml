@@ -19,6 +19,65 @@
         <item name="android:background">@drawable/shape_searchview_poi</item>
     </style>
 
+
+    <style name="auth_user" >
+        <item name="android:orientation">vertical</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:hint">Usuario</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:layout_marginTop">25dp</item>
+        <item name="android:layout_marginRight">70dp</item>
+        <item name="android:layout_marginLeft">70dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_gravity">left|top</item>
+        <item name="android:background">@drawable/shape_searchview_poi</item>
+    </style>
+
+    <style name="auth_pass" >
+        <item name="android:orientation">vertical</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:hint">Contraseña</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:layout_marginTop">25dp</item>
+        <item name="android:layout_marginRight">70dp</item>
+        <item name="android:layout_marginLeft">70dp</item>
+        <item name="android:layout_marginBottom">30dp</item>
+        <item name="android:layout_gravity">left|top</item>
+        <item name="android:background">@drawable/shape_searchview_poi</item>
+    </style>
+
+    <style name="login_btn" >
+        <item name="android:orientation">vertical</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:layout_marginTop">45dp</item>
+        <item name="android:layout_marginRight">90dp</item>
+        <item name="android:layout_marginLeft">90dp</item>
+        <item name="android:layout_marginBottom">30dp</item>
+        <item name="android:layout_gravity">left|top</item>
+    </style>
+
+    <style name="OptionButton" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+
+        <item name="android:drawableLeft">@drawable/bonuspack_bubble</item>
+        <item name="android:layout_marginTop">55dip</item>
+        <item name="android:layout_marginRight">25dip</item>
+        <item name="android:layout_marginLeft">25dip</item>
+        <item name="android:layout_gravity">left|top</item>
+    </style>
+
     <style name="barra_rutas_pois" parent="Widget.AppCompat.SearchView" >
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
