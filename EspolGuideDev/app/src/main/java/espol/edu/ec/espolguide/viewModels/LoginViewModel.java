@@ -1,6 +1,7 @@
 package espol.edu.ec.espolguide.viewModels;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.view.View;
@@ -19,14 +20,19 @@ import org.kxml2.kdom.Element;
 import org.kxml2.kdom.Node;
 
 import java.sql.SQLOutput;
+import java.util.Map;
 import java.util.Observable;
 
 import espol.edu.ec.espolguide.Login;
+import espol.edu.ec.espolguide.MapActivity;
+import espol.edu.ec.espolguide.PoiInfo;
 import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.utils.Constants;
 
 import android.view.View;
 import android.widget.Toast;
+
+import static android.support.v4.content.ContextCompat.startActivity;
 
 /**
  * Created by fabricio on 19/05/18.
@@ -79,8 +85,8 @@ public class LoginViewModel extends Observable {
                 setChanged();
                 notifyObservers(AUTH_FAILED_CONNECTION);
             } else {
-                System.out.println(auths[0].usr.getText());
-                System.out.println(auths[0].pass.getText());
+                //System.out.println(auths[0].usr.getText());
+                //System.out.println(auths[0].pass.getText());
                 SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.AUTH_METHOD_NAME);
                 request.addProperty("authUser", auths[0].usr.getText().toString());
                 request.addProperty("authContrasenia", auths[0].pass.getText().toString());
@@ -111,9 +117,11 @@ public class LoginViewModel extends Observable {
 
             if (result) {
                 //@Todo AsyncTask finalizado
-                activity.setContentView(R.layout.activity_map);
+                Intent intent;
+                intent = new Intent(ctx, MapActivity.class);
+                ctx.startActivity(intent);
             } else {
-                Toast message = Toast.makeText(activity.getApplicationContext(),
+                Toast message = Toast.makeText(ctx,
                         "Credenciales incorrectas", Toast.LENGTH_LONG);
                 message.show();
             }

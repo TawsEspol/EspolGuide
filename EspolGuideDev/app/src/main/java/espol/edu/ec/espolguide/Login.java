@@ -7,6 +7,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
+import com.mapbox.mapboxsdk.Mapbox;
+
 import java.util.Observable;
 import java.util.Observer;
 
@@ -24,6 +26,7 @@ public class Login extends AppCompatActivity implements Observer {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Mapbox.getInstance(this, getString(R.string.access_token));
         setContentView(R.layout.start);
         this.viewHolder = new ViewHolder();
         this.viewModel = new LoginViewModel(this);
@@ -50,7 +53,6 @@ public class Login extends AppCompatActivity implements Observer {
             this.authBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    System.out.println("CLICK");
                     viewModel.auth();
                 }
             });
