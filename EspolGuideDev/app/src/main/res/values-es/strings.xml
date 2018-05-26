@@ -11,4 +11,6 @@
     <string name="loading_blocks_shapes_error_msg">Error cargando bloques...</string>
     <string name="loading_poi_info_error_msg">Error cargando información del sitio...</string>
 
+    <string name="your_location">Tu ubicación</string>
+
 </resources>

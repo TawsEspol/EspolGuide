@@ -14,18 +14,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.annotations.Marker;
-import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,23 +29,17 @@ import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.Util;
-import java.io.Serializable;
 
-/**
- * Created by fabricio on 14/01/18.
- */
 
-public class SearchViewAdapter extends BaseAdapter {
+public class RouteAdapter extends BaseAdapter {
     final String BLOCK_INFO_WS = Constants.getBlockInfoURL();
     Context mContext;
     LayoutInflater inflater;
     private List<String> pois = null;
     private ArrayList<String> arraylist;
-    private MapView mapView;
+    private LinearLayout layout;
     private ViewHolder viewHolder;
     private View bar;
-    private MapboxMap mapboxMap;
-    Marker featureMarker;
 
     public class ViewHolder {
         String id;
@@ -70,12 +57,12 @@ public class SearchViewAdapter extends BaseAdapter {
         }
     }
 
-    public MapView getMapView(){
-        return this.mapView;
+    public LinearLayout getLayout(){
+        return this.layout;
     }
 
-    public void setMapView(MapView mapView){
-        this.mapView = mapView;
+    public void setLayout(LinearLayout layout){
+        this.layout = layout;
     }
 
     public Context getmContext(){
@@ -86,20 +73,16 @@ public class SearchViewAdapter extends BaseAdapter {
         this.viewHolder = viewHolder;
     }
 
-    public SearchViewAdapter(Context context, MapboxMap mapboxMap, List<String> pois, View bar,
-                             Marker featureMarker) {
-        this.bar = bar;
-        mContext = context;
+    public RouteAdapter(List<String> pois, MapActivity activity) {
+        this.mContext = activity;
         this.pois = pois;
-        inflater = LayoutInflater.from(mContext);
-        this.mapboxMap = mapboxMap;
         this.arraylist = new ArrayList<String>();
         this.arraylist.addAll(pois);
-        this.featureMarker = featureMarker;
+        inflater = LayoutInflater.from(mContext);
     }
 
-    public ArrayList<String> getArraylist(){
-        return this.arraylist;
+    public void setBar(View bar){
+        this.bar = bar;
     }
 
     @Override
@@ -144,12 +127,13 @@ public class SearchViewAdapter extends BaseAdapter {
                     Toast.makeText(getmContext(), mContext.getResources().getString(R.string.failed_connection_msg),
                             Toast.LENGTH_LONG).show();
                 } else {
+
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                             BLOCK_INFO_WS + holder.getIdNumber(), null, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            MapActivity mapActivity = (MapActivity) mContext;
                             try {
+
                                 JSONArray features = response.getJSONArray("features");
                                 JSONObject jsonObj = (JSONObject) features.get(0);
                                 JSONObject jsonObjGeometry = jsonObj.getJSONObject("geometry");
@@ -157,38 +141,30 @@ public class SearchViewAdapter extends BaseAdapter {
                                 JSONArray pointCoord = coordinate1.getJSONArray(0);
                                 System.out.println("=========ID: " + holder.getIdNumber() + " ========");
                                 System.out.println("***********Name: " + name1 + " ********");
-                                double lat = pointCoord.getDouble(0);
-                                double lon = pointCoord.getDouble(1);
-                                LatLng point = new LatLng(lat, lon);
-                                mapActivity.selectedDestination = point;
-                                mapActivity.getViewHolder().editDestination.setText(name1);
-                                System.out.println(point.toString() + " --------------------");
-                                TextView f = (TextView) bar;
-                                f.setText(name1);
                                 pois.clear();
-                                mapActivity.getViewHolder().editSearch.clearFocus();
-                                mapView.getMapAsync(new OnMapReadyCallback() {
-                                    @Override
-                                    public void onMapReady(MapboxMap mapboxMap) {
-                                        if (featureMarker != null) {
-                                            mapboxMap.removeMarker(featureMarker);
-                                        }
-                                        featureMarker = mapboxMap.addMarker(new MarkerOptions()
-                                                .position(point)
-                                        );
-                                        mapboxMap.setCameraPosition(new CameraPosition.Builder()
-                                                .target(point)
-                                                .zoom(Constants.CLOSE_ZOOM)
-                                                .build());
-                                    }
-                                });
+                                double selectedLat = pointCoord.getDouble(0);
+                                double selectedLng = pointCoord.getDouble(1);
+                                MapActivity activity = (MapActivity) mContext;
+                                if(activity.selectedEditText == Constants.FROM_ORIGIN){
+                                    activity.selectedOrigin = new LatLng(selectedLat, selectedLng);
+                                    activity.getViewHolder().editOrigin.setText(name1);
+                                    activity.setOriginPosition(Point.fromLngLat(activity.selectedOrigin.getLongitude(), activity.selectedOrigin.getLatitude()));
+                                }
+                                else if(activity.selectedEditText == Constants.FROM_DESTINATION){
+                                    activity.selectedDestination = new LatLng(selectedLat, selectedLng);
+                                    activity.getViewHolder().editDestination.setText(name1);
+                                    activity.setDestinationPosition(Point.fromLngLat(activity.selectedDestination.getLongitude(), activity.selectedDestination.getLatitude()));
+                                }
+                                activity.getViewHolder().routeSearchLayour.setVisibility(View.GONE);
+                                activity.getViewHolder().mapLayout.setVisibility(View.VISIBLE);
+                                activity.getRoute(activity.getOriginPosition(), activity.getDestinationPosition());
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Toast.makeText(getmContext(), mContext.getResources().getString(R.string.loading_poi_info_error_msg),
                                         Toast.LENGTH_LONG).show();
                             } finally {
                                 System.gc();
-                                mapActivity.getViewHolder().routeBtn.setVisibility(View.VISIBLE);
                             }
                         }
                     }, new Response.ErrorListener() {

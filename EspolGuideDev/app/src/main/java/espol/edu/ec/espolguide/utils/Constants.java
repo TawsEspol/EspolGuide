@@ -12,6 +12,11 @@ public class Constants {
     public final static String IP_ = "";
 
     public final static String SERVER_URL = "http://" + IP_;
+    public final static int CLOSE_ZOOM = 18;
+    public final static int FAR_AWAY_ZOOM = 15;
+    public final static String FROM_ORIGIN = "from_origin";
+    public final static String FROM_DESTINATION = "from_destination";
+    public final static int REQUEST_CODE = 1;
 
     public final static String NAMESPACE = "http://tempuri.org/";
     public final static String URL="https://ws.espol.edu.ec/saac/wsGuide.asmx";

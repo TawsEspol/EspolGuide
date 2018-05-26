@@ -10,4 +10,7 @@
     <string name="loading_pois_names_error_msg">Erro ao carregar nomes de lugares...</string>
     <string name="loading_blocks_shapes_error_msg">Erro ao carregar blocos...</string>
     <string name="loading_poi_info_error_msg">Erro ao carregar informações do local...</string>
+
+    <string name="your_location">Sua localização</string>
+
 </resources>
