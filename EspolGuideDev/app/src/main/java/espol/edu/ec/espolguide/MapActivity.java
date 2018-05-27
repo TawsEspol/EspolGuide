@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -73,6 +75,7 @@ import retrofit2.Response;
 import android.util.Log;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 
+import static espol.edu.ec.espolguide.utils.Constants.ESPOL_CENTRAL_LNG;
 import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
 
 
@@ -130,6 +133,7 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
         public ListView destinationLv;
         public LinearLayout placesBox;
         public Button routeBtn;
+        public ImageButton backBtn;
 
         public FrameLayout mapLayout;
         public FrameLayout routeSearchLayour;
@@ -139,6 +143,7 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
 
         public ViewHolder(){
             findViews();
+            setBackButtonListener();
             setClosePoiButtonListener();
             setDrawRouteButtonListener();
             setEditTextListeners();
@@ -161,6 +166,39 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
             routeSearchLayour = (FrameLayout) findViewById(R.id.routes_search_layout);
             routesLv = (ListView) findViewById(R.id.listroutes);
             editSearchRoutes = (EditText) findViewById(R.id.search_routes);
+            backBtn = (ImageButton) findViewById(R.id.back_button);
+        }
+
+        private void setBackButtonListener(){
+            this.backBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    editDestination.setText("");
+                    editOrigin.setText("");
+                    editSearch.setText("");
+                    placesBox.setVisibility(View.GONE);
+                    routeBtn.setVisibility(View.GONE);
+                    if (featureMarker != null){
+                        mapboxMap.removeMarker(featureMarker);
+                    }
+                    if (viewModel.getAdapter().getFeatureMarker() != null){
+                        mapboxMap.removeMarker(viewModel.getAdapter().getFeatureMarker());
+                    }
+                    if (navigationMapRoute != null) {
+                        navigationMapRoute.removeRoute();
+                    }
+                    editSearch.setVisibility(View.VISIBLE);
+                    mapView.getMapAsync(new OnMapReadyCallback() {
+                        @Override
+                        public void onMapReady(MapboxMap mapboxMap) {
+                            mapboxMap.setCameraPosition(new CameraPosition.Builder()
+                                    .target(new LatLng(Constants.ESPOL_CENTRAL_LAT, ESPOL_CENTRAL_LNG))
+                                    .zoom(Constants.FAR_AWAY_ZOOM)
+                                    .build());
+                        }
+                    });
+                }
+            });
         }
 
         private void setClosePoiButtonListener(){
@@ -203,6 +241,9 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
                             if (viewHolder.featureMarker != null) {
                                 viewHolder.mapboxMap.removeMarker(viewHolder.featureMarker);
                             }
+                            if (viewHolder.featureMarker != null) {
+                                viewHolder.mapboxMap.removeMarker(viewHolder.featureMarker);
+                            }
                             final PointF pixel = viewHolder.mapboxMap.getProjection().toScreenLocation(point);
                             List<Feature> features = viewHolder.mapboxMap.queryRenderedFeatures(pixel);
                             if (features.size() > 0) {
@@ -241,6 +282,7 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
                     if(MotionEvent.ACTION_UP == event.getAction()){
                         String text = editOrigin.getText().toString().trim();
                         viewHolder.editSearchRoutes.setText(text);
+                        viewHolder.editOrigin.setFocusable(false);
                         viewHolder.editSearchRoutes.requestFocus();
                         viewHolder.editSearchRoutes.setSelection(text.length());
                         selectedEditText = Constants.FROM_ORIGIN;
@@ -258,6 +300,8 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
                     if(MotionEvent.ACTION_UP == event.getAction()){
                         String text = editDestination.getText().toString().trim();
                         viewHolder.editSearchRoutes.setText(text);
+                        viewHolder.editDestination.setFocusable(false);
+                        viewHolder.editSearchRoutes.requestFocus();
                         viewHolder.editSearchRoutes.setSelection(text.length());
                         selectedEditText = Constants.FROM_DESTINATION;
                         viewHolder.mapLayout.setVisibility(View.GONE);
@@ -296,7 +340,15 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
                         }
 
                         currentRoute = response.body().routes().get(0);
-
+                        if(viewHolder.featureMarker != null){
+                            viewHolder.mapboxMap.removeMarker(viewHolder.featureMarker);
+                        }
+                        if(viewModel.getAdapter().getFeatureMarker() != null){
+                            viewHolder.mapboxMap.removeMarker(viewModel.getAdapter().getFeatureMarker());
+                        }
+                        viewHolder.featureMarker = viewHolder.mapboxMap.addMarker(new MarkerOptions()
+                                .position(selectedDestination)
+                        );
                         // Draw the route on the map
                         if (navigationMapRoute != null) {
                             navigationMapRoute.removeRoute();
@@ -319,9 +371,10 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
             // Create an instance of LOST location engine
             initializeLocationEngine();
-
-            locationPlugin = new LocationLayerPlugin(viewHolder.mapView, viewHolder.mapboxMap, locationEngine);
-            locationPlugin.setRenderMode(RenderMode.COMPASS);
+            if(locationPlugin == null){
+                locationPlugin = new LocationLayerPlugin(viewHolder.mapView, viewHolder.mapboxMap, locationEngine);
+                locationPlugin.setRenderMode(RenderMode.COMPASS);
+            }
         } else {
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
@@ -489,5 +542,42 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
 
     public void setDestinationPosition(Point destinationPosition){
         this.destinationPosition = destinationPosition;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (viewHolder.mapLayout.getVisibility() == View.GONE){
+            this.viewHolder.routeSearchLayour.setVisibility(View.GONE);
+            this.viewHolder.mapLayout.setVisibility(View.VISIBLE);
+            this.viewHolder.editSearchRoutes.setText("");
+        }
+
+        else if (viewHolder.editSearch.getVisibility() == View.GONE ||
+                viewHolder.routeBtn.getVisibility() == View.VISIBLE){
+            this.viewHolder.editDestination.setText("");
+            this.viewHolder.editOrigin.setText("");
+            this.viewHolder.placesBox.setVisibility(View.GONE);
+            this.viewHolder.routeBtn.setVisibility(View.GONE);
+            if (this.viewHolder.featureMarker != null){
+                this.viewHolder.mapboxMap.removeMarker(this.viewHolder.featureMarker);
+            }
+            if (this.viewModel.getAdapter().getFeatureMarker() != null){
+                this.viewHolder.mapboxMap.removeMarker(this.viewModel.getAdapter().getFeatureMarker());
+            }
+            if (navigationMapRoute != null) {
+                navigationMapRoute.removeRoute();
+            }
+            this.viewHolder.editSearch.setVisibility(View.VISIBLE);
+            this.viewHolder.mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(MapboxMap mapboxMap) {
+                    mapboxMap.setCameraPosition(new CameraPosition.Builder()
+                            .target(new LatLng(Constants.ESPOL_CENTRAL_LAT, ESPOL_CENTRAL_LNG))
+                            .zoom(Constants.FAR_AWAY_ZOOM)
+                            .build());
+                }
+            });
+
+        }
     }
 }
