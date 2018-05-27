@@ -3,11 +3,11 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/first</item>
+        <item name="colorPrimaryDark">@color/second</item>
+        <item name="colorAccent">@color/third</item>
     </style>
-    <style name="barra_busqueda_pois" parent="Widget.AppCompat.SearchView" >
+    <style name="barra_busqueda_pois" parent="AppTheme" >
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">vertical</item>
@@ -20,7 +20,7 @@
     </style>
 
 
-    <style name="auth_user" >
+    <style name="auth_user" parent="AppTheme">
         <item name="android:orientation">vertical</item>
         <item name="android:textSize">15sp</item>
         <item name="android:hint">Usuario</item>
@@ -36,7 +36,7 @@
         <item name="android:background">@drawable/shape_searchview_poi</item>
     </style>
 
-    <style name="auth_pass" >
+    <style name="auth_pass" parent="AppTheme">
         <item name="android:orientation">vertical</item>
         <item name="android:textSize">15sp</item>
         <item name="android:hint">Contraseña</item>
@@ -52,7 +52,7 @@
         <item name="android:background">@drawable/shape_searchview_poi</item>
     </style>
 
-    <style name="login_btn" >
+    <style name="login_btn" parent="AppTheme">
         <item name="android:orientation">vertical</item>
         <item name="android:textSize">15sp</item>
         <item name="android:paddingLeft">20dp</item>
@@ -66,7 +66,7 @@
         <item name="android:layout_gravity">left|top</item>
     </style>
 
-    <style name="OptionButton" parent="Theme.AppCompat.Light">
+    <style name="OptionButton" parent="AppTheme">
         <!-- Customize your theme here. -->
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -78,7 +78,7 @@
         <item name="android:layout_gravity">left|top</item>
     </style>
 
-    <style name="barra_rutas_pois" parent="Widget.AppCompat.SearchView" >
+    <style name="barra_rutas_pois" parent="AppTheme" >
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">vertical</item>
@@ -88,27 +88,27 @@
     </style>
 
 
-    <style name="nombre_principal_lista">
+    <style name="nombre_principal_lista" parent="AppTheme">
         <item name="android:textColor">#000000</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="nombre_alternativo_lista">
+    <style name="nombre_alternativo_lista" parent="AppTheme">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">#a8a8a8</item>
         <item name="android:layout_below">@id/name</item>
     </style>
 
-    <style name="lista_sugerencias_barra">
+    <style name="lista_sugerencias_barra" parent="AppTheme">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:visibility">gone</item>
     </style>
 
     <!--Edit text de la barra de busqueda-->
-    <style name="input_barra_pois">
+    <style name="input_barra_pois" parent="AppTheme">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:maxLines">1</item>
@@ -123,7 +123,7 @@
     </style>
 
 
-    <style name="info">
+    <style name="info" parent="AppTheme">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingTop">10dip</item>
@@ -136,10 +136,7 @@
         <item name="android:hint">@string/search_poi_hint</item>
     </style>
 
-    <style name="texto" parent="Base.Theme.AppCompat.CompactMenu">
-        <item name="colorPrimary">#673AB7</item>
-        <item name="colorPrimaryDark">#512DA8</item>
-        <item name="colorAccent">#512DA8</item>
+    <style name="texto" parent="AppTheme">
         <item name="android:paddingTop">10dip</item>
         <item name="android:paddingLeft">15dip</item>
         <item name="android:paddingBottom">10dip</item>
