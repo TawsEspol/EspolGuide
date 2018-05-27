@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,21 +25,24 @@ public class PoiInfo extends AppCompatActivity implements Observer {
     private View view;
     private String code;
     private String name;
+    private String id_;
     private String academicUnit;
     private int favoritesCount;
     private String description;
     private ArrayList<String> alternativeNames = new ArrayList<String>();
     private PoiInfoViewModel viewModel;
 
-    public PoiInfo(String blockName, String academicUnit, String description, Context ctx, View view){
+    public PoiInfo(String id_, String blockName, String academicUnit, String description, Context ctx, View view){
         this.ctx = ctx;
         this.view = view;
         viewModel = new PoiInfoViewModel(this);
         viewModel.addObserver(this);
+        setId_(id_);
         setName(blockName);
         setAcademicUnit(academicUnit);
         setDescription(description);
     }
+
 
     @Override
     public void update(Observable o, Object arg) {
@@ -101,6 +105,12 @@ public class PoiInfo extends AppCompatActivity implements Observer {
     public void setCode(String code) {
         this.code = code;
     }
+
+    public String getId_() {
+        return id_;
+    }
+
+    public void setId_(String id_) { this.id_= id_;}
 
     public String getName() {
         return name;
