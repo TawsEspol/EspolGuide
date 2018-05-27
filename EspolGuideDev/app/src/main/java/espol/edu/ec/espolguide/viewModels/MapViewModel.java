@@ -169,11 +169,6 @@ public class MapViewModel extends Observable{
     }
 
 
-
-
-
-
-
     private class BlockCoordinates extends AsyncTask<Context, Void, ArrayList> {
         Context context;
         @Override
