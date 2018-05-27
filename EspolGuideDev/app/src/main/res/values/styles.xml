@@ -1,12 +1,14 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/first</item>
         <item name="colorPrimaryDark">@color/second</item>
         <item name="colorAccent">@color/third</item>
     </style>
+
+
     <style name="barra_busqueda_pois" parent="AppTheme" >
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -20,10 +22,12 @@
     </style>
 
 
-    <style name="auth_user" parent="AppTheme">
+    <style name="auth_edit_text" parent="AppTheme">
         <item name="android:orientation">vertical</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:hint">Usuario</item>
+        <item name="android:textColor">@color/second</item>
+        <item name="android:textColorHint">@color/second</item>
+        <item name="android:backgroundTint">@color/second</item>
         <item name="android:paddingLeft">20dp</item>
         <item name="android:paddingRight">20dp</item>
         <item name="android:paddingTop">12dp</item>
@@ -33,23 +37,14 @@
         <item name="android:layout_marginLeft">70dp</item>
         <item name="android:layout_marginBottom">10dp</item>
         <item name="android:layout_gravity">left|top</item>
-        <item name="android:background">@drawable/shape_searchview_poi</item>
     </style>
 
-    <style name="auth_pass" parent="AppTheme">
-        <item name="android:orientation">vertical</item>
-        <item name="android:textSize">15sp</item>
+    <style name="auth_user" parent="auth_edit_text">
+        <item name="android:hint">Usuario</item>
+    </style>
+
+    <style name="auth_pass" parent="auth_edit_text">
         <item name="android:hint">Contraseña</item>
-        <item name="android:paddingLeft">20dp</item>
-        <item name="android:paddingRight">20dp</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingBottom">12dp</item>
-        <item name="android:layout_marginTop">25dp</item>
-        <item name="android:layout_marginRight">70dp</item>
-        <item name="android:layout_marginLeft">70dp</item>
-        <item name="android:layout_marginBottom">30dp</item>
-        <item name="android:layout_gravity">left|top</item>
-        <item name="android:background">@drawable/shape_searchview_poi</item>
     </style>
 
     <style name="login_btn" parent="AppTheme">
@@ -57,13 +52,14 @@
         <item name="android:textSize">15sp</item>
         <item name="android:paddingLeft">20dp</item>
         <item name="android:paddingRight">20dp</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingBottom">12dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
         <item name="android:layout_marginTop">45dp</item>
-        <item name="android:layout_marginRight">90dp</item>
-        <item name="android:layout_marginLeft">90dp</item>
+        <item name="android:layout_marginRight">140dp</item>
+        <item name="android:layout_marginLeft">140dp</item>
         <item name="android:layout_marginBottom">30dp</item>
         <item name="android:layout_gravity">left|top</item>
+        <item name="android:background">@drawable/login_button</item>
     </style>
 
     <style name="OptionButton" parent="AppTheme">
