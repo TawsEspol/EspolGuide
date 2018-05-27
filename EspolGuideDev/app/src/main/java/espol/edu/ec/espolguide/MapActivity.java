@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -132,6 +133,7 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
         public ListView destinationLv;
         public LinearLayout placesBox;
         public Button routeBtn;
+        public ImageButton backBtn;
 
         public FrameLayout mapLayout;
         public FrameLayout routeSearchLayour;
@@ -141,6 +143,7 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
 
         public ViewHolder(){
             findViews();
+            setBackButtonListener();
             setClosePoiButtonListener();
             setDrawRouteButtonListener();
             setEditTextListeners();
@@ -163,6 +166,39 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
             routeSearchLayour = (FrameLayout) findViewById(R.id.routes_search_layout);
             routesLv = (ListView) findViewById(R.id.listroutes);
             editSearchRoutes = (EditText) findViewById(R.id.search_routes);
+            backBtn = (ImageButton) findViewById(R.id.back_button);
+        }
+
+        private void setBackButtonListener(){
+            this.backBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    editDestination.setText("");
+                    editOrigin.setText("");
+                    editSearch.setText("");
+                    placesBox.setVisibility(View.GONE);
+                    routeBtn.setVisibility(View.GONE);
+                    if (featureMarker != null){
+                        mapboxMap.removeMarker(featureMarker);
+                    }
+                    if (viewModel.getAdapter().getFeatureMarker() != null){
+                        mapboxMap.removeMarker(viewModel.getAdapter().getFeatureMarker());
+                    }
+                    if (navigationMapRoute != null) {
+                        navigationMapRoute.removeRoute();
+                    }
+                    editSearch.setVisibility(View.VISIBLE);
+                    mapView.getMapAsync(new OnMapReadyCallback() {
+                        @Override
+                        public void onMapReady(MapboxMap mapboxMap) {
+                            mapboxMap.setCameraPosition(new CameraPosition.Builder()
+                                    .target(new LatLng(Constants.ESPOL_CENTRAL_LAT, ESPOL_CENTRAL_LNG))
+                                    .zoom(Constants.FAR_AWAY_ZOOM)
+                                    .build());
+                        }
+                    });
+                }
+            });
         }
 
         private void setClosePoiButtonListener(){
@@ -246,6 +282,7 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
                     if(MotionEvent.ACTION_UP == event.getAction()){
                         String text = editOrigin.getText().toString().trim();
                         viewHolder.editSearchRoutes.setText(text);
+                        viewHolder.editOrigin.setFocusable(false);
                         viewHolder.editSearchRoutes.requestFocus();
                         viewHolder.editSearchRoutes.setSelection(text.length());
                         selectedEditText = Constants.FROM_ORIGIN;
@@ -263,6 +300,8 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
                     if(MotionEvent.ACTION_UP == event.getAction()){
                         String text = editDestination.getText().toString().trim();
                         viewHolder.editSearchRoutes.setText(text);
+                        viewHolder.editDestination.setFocusable(false);
+                        viewHolder.editSearchRoutes.requestFocus();
                         viewHolder.editSearchRoutes.setSelection(text.length());
                         selectedEditText = Constants.FROM_DESTINATION;
                         viewHolder.mapLayout.setVisibility(View.GONE);
