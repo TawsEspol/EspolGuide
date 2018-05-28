@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="#054A91"
+            android:background="@color/second"
             >
             <LinearLayout
                 android:id="@+id/places_box"
@@ -55,7 +55,7 @@
                         android:layout_height="60dp"
                         android:src="@drawable/ic_left_arrow"
                         android:tint="#FFFFFF"
-                        android:backgroundTint="#054A91"/>
+                        android:backgroundTint="@color/second"/>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/bars_box"
@@ -75,13 +75,15 @@
                             android:maxLines="1"
                             android:lines="1"
                             android:singleLine="true"
-                            android:background="@android:color/white"
+                            android:background="@drawable/shape_searchview_poi"
                             android:textSize="15dp"
                             android:hint="Buscar origen"
                             android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
                             android:paddingTop="10dp"
                             android:paddingLeft="15dp"
-                            android:paddingBottom="10dp">
+                            android:paddingBottom="10dp"
+                            style="@style/input_barra_pois"
+                            >
                             <requestFocus />
                         </EditText>
                         <ListView
@@ -103,13 +105,14 @@
                             android:maxLines="1"
                             android:lines="1"
                             android:singleLine="true"
-                            android:background="@android:color/white"
+                            android:background="@drawable/shape_searchview_poi"
                             android:textSize="15dp"
                             android:hint="Buscar destino"
                             android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
                             android:paddingTop="10dp"
                             android:paddingLeft="15dp"
                             android:paddingBottom="10dp"
+                            style="@style/input_barra_pois"
                             >
                             <requestFocus />
                         </EditText>
@@ -153,7 +156,7 @@
                 android:id="@+id/route_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/route_round_button"
+                android:background="@drawable/login_button"
                 android:text="Ver\nRuta"
                 android:textColor="#ffffff"
                 android:textAllCaps="false"
@@ -170,18 +173,19 @@
             android:layout_marginLeft="20dip"
             android:layout_marginRight="20dip"
             android:layout_marginTop="40dip"
-            android:background="#99000000"
+            android:orientation="vertical"
+            android:background="@color/second"
             android:visibility="gone">
 
             <!--Layout de información del POI-->
             <LinearLayout
                 android:id="@+id/overlayinside"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="310dp"
                 android:layout_margin="5dip"
-                android:background="#ffffff"
                 android:clickable="true"
                 android:orientation="vertical"
+                android:background="#ffffff"
                 >
                 <Button
                     android:id="@+id/close_poi_info_button"
@@ -203,47 +207,77 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginHorizontal="10dip"
                     android:layout_marginTop="10dip"
+                    android:layout_marginBottom="10dip"
                     android:scaleType="fitXY"
-                    android:src="@drawable/fiec"
-                    />
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_margin="10dp">
-                    <TextView
-                        android:id="@+id/name_poi"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_margin="15dp"
-                        android:layout_gravity="center"
-                        android:layout_below="@+id/name_poi"
-                        style="@style/info"
-                        />
-                    <TextView
-                        android:id="@+id/unidad"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="15dp"
-                        style="@style/info"
-                        android:layout_gravity="center"
-                        />
-                </LinearLayout>
-                <TextView
-                    android:id="@+id/descripcion"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_margin="15dp"
-                    style="@style/info"
                     />
             </LinearLayout>
-        </LinearLayout>
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/white">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/name_poi"
+                            style="@style/data"
+                            />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginLeft="70dp"
+                            android:layout_marginRight="70dp"
+                            android:background="@color/third"/>
+                        <TextView
+                            android:text="nombre"
+                            style="@style/property"
+                            />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/unidad"
+                            style="@style/data"
+                            />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginLeft="70dp"
+                            android:layout_marginRight="70dp"
+                            android:background="@color/third"/>
+                        <TextView
+                            android:text="unidad"
+                            style="@style/property"
+                            />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/descripcion"
+                            style="@style/data"
+                            />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginLeft="70dp"
+                            android:layout_marginRight="70dp"
+                            android:background="@color/third"/>
+                        <TextView
+                            android:text="descripcion"
+                            style="@style/property"
+                            />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
     </FrameLayout>
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:mapbox="http://schemas.android.com/apk/res-auto"
