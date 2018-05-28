@@ -1,12 +1,17 @@
 package espol.edu.ec.espolguide.viewModels;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,8 +21,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import espol.edu.ec.espolguide.PoiInfo;
+import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
+import espol.edu.ec.espolguide.utils.ImageHelper;
 import espol.edu.ec.espolguide.utils.Util;
 
 import org.json.JSONArray;
@@ -74,13 +81,13 @@ public class PoiInfoViewModel extends Observable {
 
     public void show() {
         ViewGroup nextChild = (ViewGroup) ((ViewGroup)activity.getView()).getChildAt(0);
-        ViewGroup linear = (ViewGroup) nextChild.getChildAt(2);
+        ViewGroup linear = (ViewGroup) ((ViewGroup)activity.getView()).getChildAt(1);
         ImageView imageView = (ImageView) nextChild.getChildAt(1);
-        TextView name = (TextView) linear.getChildAt(0);
+        TextView name = (TextView) ((ViewGroup)linear.getChildAt(0)).getChildAt(0);
         name.setText(activity.getName());
-        TextView academicUnit = (TextView) linear.getChildAt(1);
+        TextView academicUnit = (TextView) ((ViewGroup)linear.getChildAt(1)).getChildAt(0);
         academicUnit.setText(activity.getacAdemicUnit());
-        TextView description = (TextView) nextChild.getChildAt(3);
+        TextView description = (TextView) ((ViewGroup)linear.getChildAt(2)).getChildAt(0);
         description.setText(activity.getDescription());
         new Counter().execute(new PhotoData(activity.getCtx(),imageView,activity.getId_()));
         activity.getView().setVisibility(View.VISIBLE);
@@ -123,6 +130,19 @@ public class PoiInfoViewModel extends Observable {
         @Override
         protected void onPostExecute(Drawable d) {
             super.onPostExecute(d);
+            /*
+            Bitmap myBitmap = ((BitmapDrawable) d).getBitmap();
+
+            // Llama al método encargado de cortar en forma cuadrada a la imagen.
+            Bitmap croppedImage = ImageHelper.cropBitmapToSquare(myBitmap);
+
+            // Llama al método encargado de redondear las esquinas de la imagen
+            // previamente cortada. Recibe como parámetros el mapa de bits y el tamaño // de sus lados en pixeles.
+            Bitmap roundedCornersImage = ImageHelper.getRoundedCornerBitmap(
+                    croppedImage, 140);
+
+            // Asigna el mapa de bits resultante a la vista ImageView que lo mostrará.
+            iv.setImageBitmap(roundedCornersImage);*/
             iv.setImageDrawable(d);
 
         }
