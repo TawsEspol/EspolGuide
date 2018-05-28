@@ -18,6 +18,7 @@
         <item name="android:layout_marginRight">25dip</item>
         <item name="android:layout_marginLeft">25dip</item>
         <item name="android:layout_gravity">left|top</item>
+
         <item name="android:background">@drawable/shape_searchview_poi</item>
     </style>
 
@@ -81,11 +82,12 @@
         <item name="android:textSize">30sp</item>
         <item name="android:layout_gravity">left|top</item>
         <item name="android:background">@drawable/shape_searchview_poi</item>
+        <item name="android:textColor">@color/second</item>
     </style>
 
 
     <style name="nombre_principal_lista" parent="AppTheme">
-        <item name="android:textColor">#000000</item>
+        <item name="android:textColor">@color/first</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
@@ -93,7 +95,7 @@
     <style name="nombre_alternativo_lista" parent="AppTheme">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">#a8a8a8</item>
+        <item name="android:textColor">@color/second</item>
         <item name="android:layout_below">@id/name</item>
     </style>
 
@@ -116,30 +118,36 @@
         <item name="android:background">@android:color/transparent</item>
         <item name="android:textSize">15dip</item>
         <item name="android:hint">@string/search_poi_hint</item>
+        <item name="android:textColor">@color/second</item>
+        <item name="android:textColorHint">@color/third</item>
     </style>
 
 
-    <style name="info" parent="AppTheme">
+    <style name="data" parent="AppTheme">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingTop">10dip</item>
-        <item name="android:paddingLeft">15dip</item>
-        <item name="android:paddingBottom">10dip</item>
         <item name="android:layout_marginTop">15dip</item>
-        <item name="android:layout_marginLeft">10dip</item>
-
-        <item name="android:textSize">15dip</item>
+        <item name="android:layout_marginLeft">70dip</item>
+        <item name="android:layout_marginRight">70dip</item>
+        <item name="android:textSize">20dip</item>
         <item name="android:hint">@string/search_poi_hint</item>
+        <item name="android:textColor">@color/second</item>
+        <item name="android:textStyle"></item>
+        <item name="android:gravity">center</item>
+        <!--item name="android:background">@drawable/shape_data</item-->
     </style>
 
-    <style name="texto" parent="AppTheme">
-        <item name="android:paddingTop">10dip</item>
-        <item name="android:paddingLeft">15dip</item>
-        <item name="android:paddingBottom">10dip</item>
-        <item name="android:layout_width">60dip</item>
-        <item name="android:layout_height">20dip</item>
-        <item name="android:background">@android:color/transparent</item>
-
+    <style name="property" parent="AppTheme">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">3dip</item>
+        <item name="android:layout_marginLeft">70dip</item>
+        <item name="android:layout_marginRight">70dip</item>
+        <item name="android:textSize">10dip</item>
+        <item name="android:hint">@string/search_poi_hint</item>
+        <item name="android:textColor">@color/first</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:gravity">right</item>
     </style>
 
 
