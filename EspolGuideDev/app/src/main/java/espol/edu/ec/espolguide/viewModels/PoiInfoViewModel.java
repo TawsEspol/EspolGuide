@@ -24,7 +24,6 @@ import espol.edu.ec.espolguide.PoiInfo;
 import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
-import espol.edu.ec.espolguide.utils.ImageHelper;
 import espol.edu.ec.espolguide.utils.Util;
 
 import org.json.JSONArray;
