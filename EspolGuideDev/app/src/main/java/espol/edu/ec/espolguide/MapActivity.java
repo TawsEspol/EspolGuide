@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -83,7 +84,7 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
 * Created by galo on 29/12/17.
 */
 
-    public class MapActivity extends AppCompatActivity implements Observer, LocationEngineListener, PermissionsListener{
+public class MapActivity extends AppCompatActivity implements Observer, LocationEngineListener, PermissionsListener{
         ViewHolder viewHolder;
         MapViewModel viewModel;
 
@@ -251,19 +252,20 @@ import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
                                 String blockName = "";
                                 String academicUnit = "";
                                 String description = "";
+                                String id_ = "";
                                 if (feature.properties() != null && feature.properties().has("CODIGO")) {
                                     blockName = feature.getStringProperty("BLOQUE").toString();
                                     academicUnit = feature.getStringProperty("UNIDAD").toString();
                                     description = feature.getStringProperty("DESCRIPCIO").toString();
-                                    new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description, MapActivity.this,
+                                    id_ = feature.id().toString();
+                                    new PoiInfoViewModel(new PoiInfo(id_, blockName, academicUnit, description, MapActivity.this,
                                             viewHolder.info)).show();
                                 }
                             }
                         }
-                        ;
+
                     });
                 }
-                ;
             });
         }
 

@@ -42,4 +42,8 @@ public class Constants {
         return SERVER_URL + "/infoBloque/";
     }
 
+    public static String getBlockPhoto(){
+        return SERVER_URL + "/photoBlock/";
+    }
+
 }

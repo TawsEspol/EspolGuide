@@ -5,6 +5,7 @@
     <application
         android:allowBackup="true"
         android:supportsRtl="true"
+        android:label="EspolGuide"
         android:theme="@style/AppTheme">
         <activity android:name=".LoginActivity">
 
