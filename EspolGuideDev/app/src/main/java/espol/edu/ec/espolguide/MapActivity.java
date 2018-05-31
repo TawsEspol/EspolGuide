@@ -1,17 +1,14 @@
 package espol.edu.ec.espolguide;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-
 
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,13 +17,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -38,22 +32,15 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.geojson.Feature;
 
-import espol.edu.ec.espolguide.controllers.adapters.RouteAdapter;
 import espol.edu.ec.espolguide.utils.Constants;
-import espol.edu.ec.espolguide.utils.IntentHelper;
 import espol.edu.ec.espolguide.utils.Util;
 import espol.edu.ec.espolguide.viewModels.MapViewModel;
 import espol.edu.ec.espolguide.viewModels.PoiInfoViewModel;
 
-
-
-
-import java.util.List;
 import android.location.Location;
-import android.support.annotation.NonNull;
+
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode;
-import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineListener;
 import com.mapbox.android.core.location.LocationEnginePriority;
@@ -62,23 +49,16 @@ import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 
-// classes to calculate a route
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
-
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import android.util.Log;
-import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
-
-import static espol.edu.ec.espolguide.utils.Constants.ESPOL_CENTRAL_LNG;
-import static espol.edu.ec.espolguide.utils.Constants.REQUEST_CODE;
-
 
 /**
 * Created by galo on 29/12/17.
@@ -92,13 +72,11 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
     public LatLng selectedDestination;
     public String selectedEditText;
 
-
     private PermissionsManager permissionsManager;
     private LocationLayerPlugin locationPlugin;
     private LocationEngine locationEngine;
     private Location originLocation;
 
-    // variables for calculating and drawing a route
     private Point originPosition;
     private Point destinationPosition;
     private DirectionsRoute currentRoute;
@@ -137,7 +115,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
         public ImageButton backBtn;
 
         public FrameLayout mapLayout;
-        public FrameLayout routeSearchLayour;
+        public FrameLayout routeSearchLayout;
         public ListView routesLv;
         public EditText editSearchRoutes;
 
@@ -164,7 +142,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
             placesBox = (LinearLayout) findViewById(R.id.places_box);
             routeBtn = (Button) findViewById(R.id.route_btn);
             mapLayout = (FrameLayout) findViewById(R.id.map_layout);
-            routeSearchLayour = (FrameLayout) findViewById(R.id.routes_search_layout);
+            routeSearchLayout = (FrameLayout) findViewById(R.id.routes_search_layout);
             routesLv = (ListView) findViewById(R.id.listroutes);
             editSearchRoutes = (EditText) findViewById(R.id.search_routes);
             backBtn = (ImageButton) findViewById(R.id.back_button);
@@ -193,7 +171,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                         @Override
                         public void onMapReady(MapboxMap mapboxMap) {
                             mapboxMap.setCameraPosition(new CameraPosition.Builder()
-                                    .target(new LatLng(Constants.ESPOL_CENTRAL_LAT, ESPOL_CENTRAL_LNG))
+                                    .target(new LatLng(Constants.ESPOL_CENTRAL_LAT, Constants.ESPOL_CENTRAL_LNG))
                                     .zoom(Constants.FAR_AWAY_ZOOM)
                                     .build());
                         }
@@ -289,7 +267,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                         viewHolder.editSearchRoutes.setSelection(text.length());
                         selectedEditText = Constants.FROM_ORIGIN;
                         viewHolder.mapLayout.setVisibility(View.GONE);
-                        viewHolder.routeSearchLayour.setVisibility(View.VISIBLE);
+                        viewHolder.routeSearchLayout.setVisibility(View.VISIBLE);
                         Util.openKeyboard(MapActivity.this);
                     }
                     return false;
@@ -307,7 +285,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                         viewHolder.editSearchRoutes.setSelection(text.length());
                         selectedEditText = Constants.FROM_DESTINATION;
                         viewHolder.mapLayout.setVisibility(View.GONE);
-                        viewHolder.routeSearchLayour.setVisibility(View.VISIBLE);
+                        viewHolder.routeSearchLayout.setVisibility(View.VISIBLE);
                         Util.openKeyboard(MapActivity.this);
                     }
                     return false;
@@ -549,7 +527,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
     @Override
     public void onBackPressed() {
         if (viewHolder.mapLayout.getVisibility() == View.GONE){
-            this.viewHolder.routeSearchLayour.setVisibility(View.GONE);
+            this.viewHolder.routeSearchLayout.setVisibility(View.GONE);
             this.viewHolder.mapLayout.setVisibility(View.VISIBLE);
             this.viewHolder.editSearchRoutes.setText("");
         }
@@ -574,7 +552,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                 @Override
                 public void onMapReady(MapboxMap mapboxMap) {
                     mapboxMap.setCameraPosition(new CameraPosition.Builder()
-                            .target(new LatLng(Constants.ESPOL_CENTRAL_LAT, ESPOL_CENTRAL_LNG))
+                            .target(new LatLng(Constants.ESPOL_CENTRAL_LAT, Constants.ESPOL_CENTRAL_LNG))
                             .zoom(Constants.FAR_AWAY_ZOOM)
                             .build());
                 }

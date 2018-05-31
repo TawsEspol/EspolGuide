@@ -8,17 +8,13 @@ import android.net.ConnectivityManager;
  */
 
 public class Constants {
-
-    public final static String IP_ = "";
-
-    public final static String SERVER_URL = "http://" + IP_;
+    public final static String SERVER_URL = "http://" + "espol-guide.espol.edu.ec";
     public final static int CLOSE_ZOOM = 18;
     public final static int FAR_AWAY_ZOOM = 16;
     public final static double ESPOL_CENTRAL_LAT = -2.14630;
     public final static double ESPOL_CENTRAL_LNG = -79.96575;
     public final static String FROM_ORIGIN = "from_origin";
     public final static String FROM_DESTINATION = "from_destination";
-    public final static int REQUEST_CODE = 1;
 
     public final static String NAMESPACE = "http://tempuri.org/";
     public final static String URL="https://ws.espol.edu.ec/saac/wsGuide.asmx";

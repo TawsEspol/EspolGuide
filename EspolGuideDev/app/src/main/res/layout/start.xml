@@ -19,16 +19,18 @@
 
     <EditText
         style="@style/auth_user"
+        android:hint="@string/espol_username"
         android:id="@+id/username"
         android:gravity="center"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:digits="QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm-0123456789"
+        android:digits="QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm-_.0123456789"
         />
 
     <EditText
         style="@style/auth_pass"
+        android:hint="@string/password"
         android:id="@+id/password"
         android:inputType="textPassword"
         android:gravity="center"
@@ -36,15 +38,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789"
         />
 
     <Button
         style = "@style/login_btn"
         android:id="@+id/buttonAuth"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"/>
+        android:text="@string/login"
+        android:singleLine="true"
+        android:layout_gravity="center_horizontal"/>
 
     <!-- Child linear layout with horizontal orientation -->
 
