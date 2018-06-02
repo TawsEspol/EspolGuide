@@ -257,8 +257,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                                     blockName = feature.getStringProperty("BLOQUE").toString();
                                     academicUnit = feature.getStringProperty("UNIDAD").toString();
                                     description = feature.getStringProperty("DESCRIPCIO").toString();
-                                    id_ = feature.id().toString();
-                                    new PoiInfoViewModel(new PoiInfo(id_, blockName, academicUnit, description, MapActivity.this,
+                                    new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description, MapActivity.this,
                                             viewHolder.info)).show();
                                 }
                             }
