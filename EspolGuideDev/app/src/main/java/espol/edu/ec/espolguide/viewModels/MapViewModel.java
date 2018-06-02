@@ -58,15 +58,18 @@ import java.util.Observable;
 
 public class MapViewModel extends Observable{
     public static String NAMES_REQUEST_STARTED = "names_request_started";
-    public static String NAMES_REQUEST_SUCCESS = "names_request_success";
+    public static String NAMES_REQUEST_SUCCEEDED = "names_request_succeeded";
     public static String NAMES_REQUEST_FAILED_CONNECTION = "names_request_failed_connection";
     public static String NAMES_REQUEST_FAILED_HTTP = "names_request_failed_http";
     public static String NAMES_REQUEST_FAILED_LOADING = "names_request_failed_loading";
 
-    public static String POI_INFO_REQUEST_STARTED = "names_request_started";
-    public static String POI_INFO_REQUEST_SUCCESS = "names_request_success";
-    public static String POI_INFO_REQUEST_FAILED_LOADING = "names_request_failed_loading";
+    public static String POI_INFO_REQUEST_STARTED = "poi_info_request_started";
+    public static String POI_INFO_REQUEST_SUCCEEDED = "poi_info_request_succeeded";
+    public static String POI_INFO_REQUEST_FAILED_LOADING = "poi_info_request_failed_loading";
 
+    public static String ROUTE_REQUEST_STARTED = "route_request_started";
+    public static String ROUTE_REQUEST_SUCCEEDED = "route_request_succeeded";
+    public static String ROUTE_REQUEST_FAILED = "route_request_failed";
 
     final private String POIS_NAMES_WS = Constants.getAlternativeNamesURL();
     final private ArrayList<String> namesItems = new ArrayList<>();
@@ -241,49 +244,55 @@ public class MapViewModel extends Observable{
 
 
     public void getRoute(Point origin, Point destination) {
-        NavigationRoute.builder()
-                .accessToken(Mapbox.getAccessToken())
-                .origin(origin)
-                .profile(DirectionsCriteria.PROFILE_WALKING)
-                .destination(destination)
-                .build()
-                .getRoute(new Callback<DirectionsResponse>() {
-                    @Override
-                    public void onResponse(Call<DirectionsResponse> call, retrofit2.Response<DirectionsResponse> response) {
-                        // You can get the generic HTTP info about the response
-                        Log.d(getTAG(), "Response code: " + response.code());
-                        if (response.body() == null) {
-                            Log.e(getTAG(), "No routes found, make sure you set the right user and access token.");
-                            return;
-                        } else if (response.body().routes().size() < 1) {
-                            Log.e(getTAG(), "No routes found");
-                            return;
+        setChanged();
+        notifyObservers(ROUTE_REQUEST_STARTED);
+        if(origin != null && destination!=null){
+            NavigationRoute.builder()
+                    .accessToken(Mapbox.getAccessToken())
+                    .origin(origin)
+                    .profile(DirectionsCriteria.PROFILE_WALKING)
+                    .destination(destination)
+                    .build()
+                    .getRoute(new Callback<DirectionsResponse>() {
+                        @Override
+                        public void onResponse(Call<DirectionsResponse> call, retrofit2.Response<DirectionsResponse> response) {
+                            // You can get the generic HTTP info about the response
+                            Log.d(getTAG(), "Response code: " + response.code());
+                            if (response.body() == null) {
+                                Log.e(getTAG(), "No routes found, make sure you set the right user and access token.");
+                                return;
+                            } else if (response.body().routes().size() < 1) {
+                                Log.e(getTAG(), "No routes found");
+                                return;
+                            }
+
+                            setCurrentRoute(response.body().routes().get(0));
+                            if(activity.getViewHolder().featureMarker != null){
+                                activity.getViewHolder().mapboxMap.removeMarker(activity.getViewHolder().featureMarker);
+                            }
+                            if(MapViewModel.this.getAdapter().getFeatureMarker() != null){
+                                activity.getViewHolder().mapboxMap.removeMarker(MapViewModel.this.getAdapter().getFeatureMarker());
+                            }
+                            activity.getViewHolder().featureMarker = activity.getViewHolder().mapboxMap.addMarker(new MarkerOptions()
+                                    .position(activity.getSelectedDestination())
+                            );
+                            if (getNavigationMapRoute() != null) {
+                                getNavigationMapRoute().removeRoute();
+                            } else {
+
+                                setNavigationMapRoute(new NavigationMapRoute(null, activity.getViewHolder().mapView, activity.getViewHolder().mapboxMap, R.style.NavigationMapRoute));
+                            }
+                            getNavigationMapRoute().addRoute(getCurrentRoute());
+                            setChanged();
+                            notifyObservers(ROUTE_REQUEST_SUCCEEDED);
                         }
 
-                        setCurrentRoute(response.body().routes().get(0));
-                        if(activity.getViewHolder().featureMarker != null){
-                            activity.getViewHolder().mapboxMap.removeMarker(activity.getViewHolder().featureMarker);
-                        }
-                        if(MapViewModel.this.getAdapter().getFeatureMarker() != null){
-                            activity.getViewHolder().mapboxMap.removeMarker(MapViewModel.this.getAdapter().getFeatureMarker());
-                        }
-                        activity.getViewHolder().featureMarker = activity.getViewHolder().mapboxMap.addMarker(new MarkerOptions()
-                                .position(activity.getSelectedDestination())
-                        );
-                        if (getNavigationMapRoute() != null) {
-                            getNavigationMapRoute().removeRoute();
-                        } else {
-
-                            setNavigationMapRoute(new NavigationMapRoute(null, activity.getViewHolder().mapView, activity.getViewHolder().mapboxMap, R.style.NavigationMapRoute));
-                        }
-                        getNavigationMapRoute().addRoute(getCurrentRoute());
-                    }
-
-                    @Override
-                    public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
-                        Log.e(getTAG(), "Error: " + throwable.getMessage());
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+                            setChanged();
+                            notifyObservers(ROUTE_REQUEST_FAILED);                        }
+                    });
+        }
     }
 
     public void setMapOnClickListener(){
@@ -319,7 +328,7 @@ public class MapViewModel extends Observable{
                                     new PoiInfoViewModel(new PoiInfo(id_, blockName, academicUnit, description, activity,
                                             activity.getViewHolder().info)).show();
                                     setChanged();
-                                    notifyObservers(POI_INFO_REQUEST_SUCCESS);
+                                    notifyObservers(POI_INFO_REQUEST_SUCCEEDED);
                                 }
                             }
                         } catch (Exception e){

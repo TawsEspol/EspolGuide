@@ -49,7 +49,9 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
     private LatLng selectedOrigin;
     private LatLng selectedDestination;
     private String selectedEditText;
+
     private Location originLocation;
+
     private Point originPosition;
     private Point destinationPosition;
 
@@ -63,46 +65,6 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
         this.viewModel.setMapOnClickListener();
         this.viewModel.addObserver(this);
         this.viewModel.makeNamesRequest();
-    }
-
-    public LatLng getSelectedOrigin() {
-        return selectedOrigin;
-    }
-
-    public void setSelectedOrigin(LatLng selectedOrigin) {
-        this.selectedOrigin = selectedOrigin;
-    }
-
-    public LatLng getSelectedDestination() {
-        return selectedDestination;
-    }
-
-    public void setSelectedDestination(LatLng selectedDestination) {
-        this.selectedDestination = selectedDestination;
-    }
-
-    public String getSelectedEditText() {
-        return selectedEditText;
-    }
-
-    public void setSelectedEditText(String selectedEditText) {
-        this.selectedEditText = selectedEditText;
-    }
-
-    public Location getOriginLocation() {
-        return originLocation;
-    }
-
-    public void setOriginLocation(Location originLocation) {
-        this.originLocation = originLocation;
-    }
-
-    public MapViewModel getViewModel() {
-        return this.viewModel;
-    }
-
-    public void setViewModel(MapViewModel viewModel){
-        this.viewModel = viewModel;
     }
 
     public class ViewHolder{
@@ -213,10 +175,30 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                     editOrigin.clearFocus();
                     editOrigin.setText(getResources().getString(R.string.your_location));
                     viewModel.enableLocationPlugin();
-                    setSelectedOrigin(new LatLng(getOriginLocation().getLatitude(), getOriginLocation().getLongitude()));
-                    setOriginPosition(Point.fromLngLat(getSelectedOrigin().getLongitude(), getSelectedOrigin().getLatitude()));
-                    setDestinationPosition(Point.fromLngLat(getSelectedDestination().getLongitude(), getSelectedDestination().getLatitude()));
-                    viewModel.getRoute(getOriginPosition(), getDestinationPosition());
+                    try{
+                        setSelectedOrigin(new LatLng(getOriginLocation().getLatitude(), getOriginLocation().getLongitude()));
+                        setOriginPosition(Point.fromLngLat(getSelectedOrigin().getLongitude(), getSelectedOrigin().getLatitude()));
+                        setDestinationPosition(Point.fromLngLat(getSelectedDestination().getLongitude(), getSelectedDestination().getLatitude()));
+                        viewModel.getRoute(getOriginPosition(), getDestinationPosition());
+                    }
+                    catch(Exception e){
+                        if (!Constants.isNetworkAvailable(MapActivity.this)) {
+                            MapActivity.this.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                        else{
+                            MapActivity.this.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(MapActivity.this, getResources().getString(R.string.error_on_getting_location),
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    }
                 }
             });
         }
@@ -269,8 +251,65 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
         }
     }
 
-    public ViewHolder getViewHolder(){
-        return this.viewHolder;
+    @Override
+    public void update(Observable o, Object arg) {
+        String message = (String)arg;
+        if (message == viewModel.NAMES_REQUEST_STARTED) {
+
+        }
+        if (message == viewModel.NAMES_REQUEST_FAILED_CONNECTION) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        if (message == viewModel.NAMES_REQUEST_FAILED_LOADING) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_pois_names_error_msg),
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        if (message == viewModel.NAMES_REQUEST_FAILED_HTTP) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.http_error_msg),
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        if (message == viewModel.POI_INFO_REQUEST_STARTED) {
+
+        }
+        if (message == viewModel.POI_INFO_REQUEST_SUCCEEDED) {
+
+        }
+        if (message == viewModel.POI_INFO_REQUEST_FAILED_LOADING) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_poi_info_error_msg),
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        if (message == viewModel.ROUTE_REQUEST_STARTED) {
+
+        }
+        if (message == viewModel.ROUTE_REQUEST_SUCCEEDED) {
+
+        }
+        if (message == viewModel.ROUTE_REQUEST_FAILED) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.error_on_calculating_route),
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     @Override
@@ -365,66 +404,6 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
     }
 
     @Override
-    public void update(Observable o, Object arg) {
-        String message = (String)arg;
-        if (message == viewModel.NAMES_REQUEST_STARTED) {
-
-        }
-        if (message == viewModel.NAMES_REQUEST_FAILED_CONNECTION) {
-            MapActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-        if (message == viewModel.NAMES_REQUEST_FAILED_LOADING) {
-            MapActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_pois_names_error_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-        if (message == viewModel.NAMES_REQUEST_FAILED_HTTP) {
-            MapActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(MapActivity.this, getResources().getString(R.string.http_error_msg),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        if (message == viewModel.POI_INFO_REQUEST_STARTED) {
-
-        }
-        if (message == viewModel.POI_INFO_REQUEST_SUCCESS) {
-
-        }
-        if (message == viewModel.POI_INFO_REQUEST_FAILED_LOADING) {
-            MapActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_poi_info_error_msg),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
-    public Point getOriginPosition(){
-        return this.originPosition;
-    }
-
-    public Point getDestinationPosition(){
-        return this.destinationPosition;
-    }
-
-    public void setOriginPosition(Point originPosition){
-        this.originPosition = originPosition;
-    }
-
-    public void setDestinationPosition(Point destinationPosition){ this.destinationPosition = destinationPosition; }
-
-    @Override
     public void onBackPressed() {
         if (viewHolder.mapLayout.getVisibility() == View.GONE){
             this.viewHolder.routeSearchLayout.setVisibility(View.GONE);
@@ -458,5 +437,63 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
             });
 
         }
+    }
+
+    public LatLng getSelectedOrigin() {
+        return selectedOrigin;
+    }
+
+    public void setSelectedOrigin(LatLng selectedOrigin) {
+        this.selectedOrigin = selectedOrigin;
+    }
+
+    public LatLng getSelectedDestination() {
+        return selectedDestination;
+    }
+
+    public void setSelectedDestination(LatLng selectedDestination) {
+        this.selectedDestination = selectedDestination;
+    }
+
+    public String getSelectedEditText() {
+        return selectedEditText;
+    }
+
+    public void setSelectedEditText(String selectedEditText) {
+        this.selectedEditText = selectedEditText;
+    }
+
+    public Location getOriginLocation() {
+        return originLocation;
+    }
+
+    public void setOriginLocation(Location originLocation) {
+        this.originLocation = originLocation;
+    }
+
+    public MapViewModel getViewModel() {
+        return this.viewModel;
+    }
+
+    public void setViewModel(MapViewModel viewModel){
+        this.viewModel = viewModel;
+    }
+
+    public Point getOriginPosition(){
+        return this.originPosition;
+    }
+
+    public Point getDestinationPosition(){
+        return this.destinationPosition;
+    }
+
+    public void setOriginPosition(Point originPosition){
+        this.originPosition = originPosition;
+    }
+
+    public void setDestinationPosition(Point destinationPosition){ this.destinationPosition = destinationPosition; }
+
+    public ViewHolder getViewHolder(){
+        return this.viewHolder;
     }
 }

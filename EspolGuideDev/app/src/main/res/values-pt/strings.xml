@@ -13,6 +13,8 @@
     <string name="loading_pois_names_error_msg">Erro ao carregar nomes de lugares...</string>
     <string name="loading_poi_info_error_msg">Erro ao carregar informações do local...</string>
     <string name="wrong_credentials_msg">Credenciais erradas inseridas...</string>
+    <string name="error_on_getting_location">Erro ao obter sua localização...</string>
+    <string name="error_on_calculating_route">Erro calculando ruta...</string>
 
     <string name="your_location">Sua localização</string>
 </resources>
