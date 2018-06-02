@@ -9,9 +9,7 @@ import android.net.ConnectivityManager;
 
 public class Constants {
 
-    public final static String IP_ = "";
-
-    public final static String SERVER_URL = "http://" + IP_;
+    public final static String SERVER_URL = "http://espol-guide.espol.edu.ec";
     public final static int CLOSE_ZOOM = 18;
     public final static int FAR_AWAY_ZOOM = 16;
     public final static double ESPOL_CENTRAL_LAT = -2.14630;
