@@ -11,7 +11,6 @@
     <string name="failed_connection_msg">Internet connection not available</string>
     <string name="http_error_msg">Error on connecting with server</string>
     <string name="loading_pois_names_error_msg">Error on loading place names...</string>
-    <string name="loading_blocks_shapes_error_msg">Error on loading blocks...</string>
     <string name="loading_poi_info_error_msg">Error on loading place information...</string>
     <string name="wrong_credentials_msg">Wrong credentials entered...</string>
 

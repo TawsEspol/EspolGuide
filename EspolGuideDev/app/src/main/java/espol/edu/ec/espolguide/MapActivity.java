@@ -5,7 +5,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import android.content.pm.ActivityInfo;
-import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -23,42 +22,21 @@ import android.widget.Toast;
 
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.geojson.Feature;
 
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.Util;
 import espol.edu.ec.espolguide.viewModels.MapViewModel;
-import espol.edu.ec.espolguide.viewModels.PoiInfoViewModel;
 
 import android.location.Location;
 
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
-import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode;
-import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineListener;
-import com.mapbox.android.core.location.LocationEnginePriority;
-import com.mapbox.android.core.location.LocationEngineProvider;
 import com.mapbox.android.core.permissions.PermissionsListener;
-import com.mapbox.android.core.permissions.PermissionsManager;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-
-import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
-import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
-import com.mapbox.api.directions.v5.models.DirectionsResponse;
-import com.mapbox.api.directions.v5.models.DirectionsRoute;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import android.util.Log;
 
 /**
 * Created by galo on 29/12/17.
@@ -68,21 +46,12 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
         ViewHolder viewHolder;
         MapViewModel viewModel;
 
-    public LatLng selectedOrigin;
-    public LatLng selectedDestination;
-    public String selectedEditText;
-
-    private PermissionsManager permissionsManager;
-    private LocationLayerPlugin locationPlugin;
-    private LocationEngine locationEngine;
+    private LatLng selectedOrigin;
+    private LatLng selectedDestination;
+    private String selectedEditText;
     private Location originLocation;
-
     private Point originPosition;
     private Point destinationPosition;
-    private DirectionsRoute currentRoute;
-    private static final String TAG = "DirectionsActivity";
-    private NavigationMapRoute navigationMapRoute;
-
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -90,11 +59,50 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
         Mapbox.getInstance(this, getString(R.string.access_token));
         setContentView(R.layout.activity_map);
         this.viewHolder = new ViewHolder();
-        this.viewHolder.setMapOnClickListener();
         this.viewModel = new MapViewModel(this);
+        this.viewModel.setMapOnClickListener();
         this.viewModel.addObserver(this);
         this.viewModel.makeNamesRequest();
+    }
 
+    public LatLng getSelectedOrigin() {
+        return selectedOrigin;
+    }
+
+    public void setSelectedOrigin(LatLng selectedOrigin) {
+        this.selectedOrigin = selectedOrigin;
+    }
+
+    public LatLng getSelectedDestination() {
+        return selectedDestination;
+    }
+
+    public void setSelectedDestination(LatLng selectedDestination) {
+        this.selectedDestination = selectedDestination;
+    }
+
+    public String getSelectedEditText() {
+        return selectedEditText;
+    }
+
+    public void setSelectedEditText(String selectedEditText) {
+        this.selectedEditText = selectedEditText;
+    }
+
+    public Location getOriginLocation() {
+        return originLocation;
+    }
+
+    public void setOriginLocation(Location originLocation) {
+        this.originLocation = originLocation;
+    }
+
+    public MapViewModel getViewModel() {
+        return this.viewModel;
+    }
+
+    public void setViewModel(MapViewModel viewModel){
+        this.viewModel = viewModel;
     }
 
     public class ViewHolder{
@@ -148,6 +156,10 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
             backBtn = (ImageButton) findViewById(R.id.back_button);
         }
 
+        public void setMapboxMap(MapboxMap mapboxMap){
+            this.mapboxMap = mapboxMap;
+        }
+
         private void setBackButtonListener(){
             this.backBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -163,8 +175,8 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                     if (viewModel.getAdapter().getFeatureMarker() != null){
                         mapboxMap.removeMarker(viewModel.getAdapter().getFeatureMarker());
                     }
-                    if (navigationMapRoute != null) {
-                        navigationMapRoute.removeRoute();
+                    if (viewModel.getNavigationMapRoute() != null) {
+                        viewModel.getNavigationMapRoute().removeRoute();
                     }
                     editSearch.setVisibility(View.VISIBLE);
                     mapView.getMapAsync(new OnMapReadyCallback() {
@@ -200,49 +212,11 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                     editDestination.clearFocus();
                     editOrigin.clearFocus();
                     editOrigin.setText(getResources().getString(R.string.your_location));
-                    enableLocationPlugin();
-                    selectedOrigin = new LatLng(originLocation.getLatitude(), originLocation.getLongitude());
-                    originPosition = Point.fromLngLat(selectedOrigin.getLongitude(), selectedOrigin.getLatitude());
-                    destinationPosition = Point.fromLngLat(selectedDestination.getLongitude(), selectedDestination.getLatitude());
-                    getRoute(originPosition, destinationPosition);
-                }
-            });
-        }
-
-        private void setMapOnClickListener(){
-            viewHolder.mapView.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(final MapboxMap mapboxMap) {
-                    viewHolder.mapboxMap = mapboxMap;
-                    mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
-                        @Override
-                        public void onMapClick(@NonNull LatLng point) {
-                            if (viewHolder.featureMarker != null) {
-                                viewHolder.mapboxMap.removeMarker(viewHolder.featureMarker);
-                            }
-                            if (viewHolder.featureMarker != null) {
-                                viewHolder.mapboxMap.removeMarker(viewHolder.featureMarker);
-                            }
-                            final PointF pixel = viewHolder.mapboxMap.getProjection().toScreenLocation(point);
-                            List<Feature> features = viewHolder.mapboxMap.queryRenderedFeatures(pixel);
-                            if (features.size() > 0) {
-                                Feature feature = features.get(0);
-                                String blockName = "";
-                                String academicUnit = "";
-                                String description = "";
-                                String id_ = "";
-                                if (feature.properties() != null && feature.properties().has("CODIGO")) {
-                                    blockName = feature.getStringProperty("BLOQUE").toString();
-                                    academicUnit = feature.getStringProperty("UNIDAD").toString();
-                                    description = feature.getStringProperty("DESCRIPCIO").toString();
-                                    id_ = feature.id().toString();
-                                    new PoiInfoViewModel(new PoiInfo(id_, blockName, academicUnit, description, MapActivity.this,
-                                            viewHolder.info)).show();
-                                }
-                            }
-                        }
-
-                    });
+                    viewModel.enableLocationPlugin();
+                    setSelectedOrigin(new LatLng(getOriginLocation().getLatitude(), getOriginLocation().getLongitude()));
+                    setOriginPosition(Point.fromLngLat(getSelectedOrigin().getLongitude(), getSelectedOrigin().getLatitude()));
+                    setDestinationPosition(Point.fromLngLat(getSelectedDestination().getLongitude(), getSelectedDestination().getLatitude()));
+                    viewModel.getRoute(getOriginPosition(), getDestinationPosition());
                 }
             });
         }
@@ -265,7 +239,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                         viewHolder.editOrigin.setFocusable(false);
                         viewHolder.editSearchRoutes.requestFocus();
                         viewHolder.editSearchRoutes.setSelection(text.length());
-                        selectedEditText = Constants.FROM_ORIGIN;
+                        setSelectedEditText(Constants.FROM_ORIGIN);
                         viewHolder.mapLayout.setVisibility(View.GONE);
                         viewHolder.routeSearchLayout.setVisibility(View.VISIBLE);
                         Util.openKeyboard(MapActivity.this);
@@ -283,7 +257,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                         viewHolder.editDestination.setFocusable(false);
                         viewHolder.editSearchRoutes.requestFocus();
                         viewHolder.editSearchRoutes.setSelection(text.length());
-                        selectedEditText = Constants.FROM_DESTINATION;
+                        setSelectedEditText(Constants.FROM_DESTINATION);
                         viewHolder.mapLayout.setVisibility(View.GONE);
                         viewHolder.routeSearchLayout.setVisibility(View.VISIBLE);
                         Util.openKeyboard(MapActivity.this);
@@ -299,105 +273,19 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
         return this.viewHolder;
     }
 
-    public void getRoute(Point origin, Point destination) {
-        NavigationRoute.builder()
-                .accessToken(Mapbox.getAccessToken())
-                .origin(origin)
-                .profile("walking")
-                .destination(destination)
-                .build()
-                .getRoute(new Callback<DirectionsResponse>() {
-                    @Override
-                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                        // You can get the generic HTTP info about the response
-                        Log.d(TAG, "Response code: " + response.code());
-                        if (response.body() == null) {
-                            Log.e(TAG, "No routes found, make sure you set the right user and access token.");
-                            return;
-                        } else if (response.body().routes().size() < 1) {
-                            Log.e(TAG, "No routes found");
-                            return;
-                        }
-
-                        currentRoute = response.body().routes().get(0);
-                        if(viewHolder.featureMarker != null){
-                            viewHolder.mapboxMap.removeMarker(viewHolder.featureMarker);
-                        }
-                        if(viewModel.getAdapter().getFeatureMarker() != null){
-                            viewHolder.mapboxMap.removeMarker(viewModel.getAdapter().getFeatureMarker());
-                        }
-                        viewHolder.featureMarker = viewHolder.mapboxMap.addMarker(new MarkerOptions()
-                                .position(selectedDestination)
-                        );
-                        // Draw the route on the map
-                        if (navigationMapRoute != null) {
-                            navigationMapRoute.removeRoute();
-                        } else {
-                            navigationMapRoute = new NavigationMapRoute(null, viewHolder.mapView, viewHolder.mapboxMap, R.style.NavigationMapRoute);
-                        }
-                        navigationMapRoute.addRoute(currentRoute);
-                    }
-
-                    @Override
-                    public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
-                        Log.e(TAG, "Error: " + throwable.getMessage());
-                    }
-                });
-    }
-
-    @SuppressWarnings( {"MissingPermission"})
-    private void enableLocationPlugin() {
-        // Check if permissions are enabled and if not request
-        if (PermissionsManager.areLocationPermissionsGranted(this)) {
-            // Create an instance of LOST location engine
-            initializeLocationEngine();
-            if(locationPlugin == null){
-                locationPlugin = new LocationLayerPlugin(viewHolder.mapView, viewHolder.mapboxMap, locationEngine);
-                locationPlugin.setRenderMode(RenderMode.COMPASS);
-            }
-        } else {
-            permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(this);
-        }
-    }
-
-    @SuppressWarnings( {"MissingPermission"})
-    public void initializeLocationEngine() {
-        LocationEngineProvider locationEngineProvider = new LocationEngineProvider(this);
-        locationEngine = locationEngineProvider.obtainBestLocationEngineAvailable();
-        locationEngine.setPriority(LocationEnginePriority.LOW_POWER);
-        locationEngine.activate();
-
-        Location lastLocation = locationEngine.getLastLocation();
-        if (lastLocation != null) {
-            originLocation = lastLocation;
-            setCameraPosition(lastLocation);
-        } else {
-            locationEngine.addLocationEngineListener(this);
-        }
-    }
-
-    public void setCameraPosition(Location location) {
-        viewHolder.mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(location.getLatitude(), location.getLongitude()), 13));
-    }
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        viewModel.getPermissionsManager().onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
-
 
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain) {
-
     }
 
     @Override
     public void onPermissionResult(boolean granted) {
         if (granted) {
-            enableLocationPlugin();
+            viewModel.enableLocationPlugin();
         } else {
             finish();
         }
@@ -406,15 +294,15 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
     @Override
     @SuppressWarnings( {"MissingPermission"})
     public void onConnected() {
-        locationEngine.requestLocationUpdates();
+        viewModel.getLocationEngine().requestLocationUpdates();
     }
 
     @Override
     public void onLocationChanged(Location location) {
         if (location != null) {
-            originLocation = location;
-            setCameraPosition(location);
-            locationEngine.removeLocationEngineListener(this);
+            setOriginLocation(location);
+            viewModel.setCameraPosition(location);
+            viewModel.getLocationEngine().removeLocationEngineListener(this);
         }
     }
 
@@ -422,11 +310,11 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
     @SuppressWarnings( {"MissingPermission"})
     protected void onStart() {
         super.onStart();
-        if (locationEngine != null) {
-            locationEngine.requestLocationUpdates();
+        if (viewModel.getLocationEngine() != null) {
+            viewModel.getLocationEngine().requestLocationUpdates();
         }
-        if (locationPlugin != null) {
-            locationPlugin.onStart();
+        if (viewModel.getLocationPlugin() != null) {
+            viewModel.getLocationPlugin().onStart();
         }
         viewHolder.mapView.onStart();
     }
@@ -434,11 +322,11 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
     @Override
     protected void onStop() {
         super.onStop();
-        if (locationEngine != null) {
-            locationEngine.removeLocationUpdates();
+        if (viewModel.getLocationEngine() != null) {
+            viewModel.getLocationEngine().removeLocationUpdates();
         }
-        if (locationPlugin != null) {
-            locationPlugin.onStop();
+        if (viewModel.getLocationPlugin() != null) {
+            viewModel.getLocationPlugin().onStop();
         }
         viewHolder.mapView.onStop();
     }
@@ -447,8 +335,8 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
     protected void onDestroy() {
         super.onDestroy();
         viewHolder.mapView.onDestroy();
-        if (locationEngine != null) {
-            locationEngine.deactivate();
+        if (viewModel.getLocationEngine() != null) {
+            viewModel.getLocationEngine().deactivate();
         }
     }
 
@@ -506,6 +394,20 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                 }
             });
         }
+        if (message == viewModel.POI_INFO_REQUEST_STARTED) {
+
+        }
+        if (message == viewModel.POI_INFO_REQUEST_SUCCESS) {
+
+        }
+        if (message == viewModel.POI_INFO_REQUEST_FAILED_LOADING) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_poi_info_error_msg),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     public Point getOriginPosition(){
@@ -520,9 +422,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
         this.originPosition = originPosition;
     }
 
-    public void setDestinationPosition(Point destinationPosition){
-        this.destinationPosition = destinationPosition;
-    }
+    public void setDestinationPosition(Point destinationPosition){ this.destinationPosition = destinationPosition; }
 
     @Override
     public void onBackPressed() {
@@ -531,7 +431,6 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
             this.viewHolder.mapLayout.setVisibility(View.VISIBLE);
             this.viewHolder.editSearchRoutes.setText("");
         }
-
         else if (viewHolder.editSearch.getVisibility() == View.GONE ||
                 viewHolder.routeBtn.getVisibility() == View.VISIBLE){
             this.viewHolder.editDestination.setText("");
@@ -544,8 +443,8 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
             if (this.viewModel.getAdapter().getFeatureMarker() != null){
                 this.viewHolder.mapboxMap.removeMarker(this.viewModel.getAdapter().getFeatureMarker());
             }
-            if (navigationMapRoute != null) {
-                navigationMapRoute.removeRoute();
+            if (viewModel.getNavigationMapRoute() != null) {
+                viewModel.getNavigationMapRoute().removeRoute();
             }
             this.viewHolder.editSearch.setVisibility(View.VISIBLE);
             this.viewHolder.mapView.getMapAsync(new OnMapReadyCallback() {

@@ -111,12 +111,12 @@ public class PoiInfoViewModel extends Observable {
             iv = datas[0].imgvw;
             Drawable d;
             if (!Constants.isNetworkAvailable(context)) {
+                d = null;
                 setChanged();
                 notifyObservers(POI_PHOTO_REQUEST_FAILED_CONNECTION);
-                d = null;
             }
             else {
-                d = LoadImage(Constants.getBlockPhoto()+identifier);
+                d = LoadImage(Constants.getBlockPhoto()+ identifier);
             }
             return d;
         }

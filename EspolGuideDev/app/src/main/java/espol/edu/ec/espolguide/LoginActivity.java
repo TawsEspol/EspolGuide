@@ -75,7 +75,6 @@ public class LoginActivity extends AppCompatActivity implements Observer {
             this.viewHolder.password.setText("");
             this.finish();
         }
-
         if (message == viewModel.AUTH_REQUEST_FAILED_CONNECTION) {
             LoginActivity.this.runOnUiThread(new Runnable() {
                 public void run() {

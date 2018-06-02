@@ -1,16 +1,6 @@
 package espol.edu.ec.espolguide.models;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.view.View;
-
-import android.graphics.Color;
-import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
 
 import java.util.ArrayList;
 
