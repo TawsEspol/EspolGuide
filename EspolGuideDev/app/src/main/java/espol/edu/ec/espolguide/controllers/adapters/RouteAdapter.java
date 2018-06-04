@@ -15,11 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapbox.geojson.Point;
-import com.mapbox.mapboxsdk.annotations.MarkerOptions;
-import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,7 +29,6 @@ import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.Util;
-
 
 public class RouteAdapter extends BaseAdapter {
     final String BLOCK_INFO_WS = Constants.getBlockInfoURL();
@@ -149,19 +144,23 @@ public class RouteAdapter extends BaseAdapter {
                                 double selectedLat = pointCoord.getDouble(0);
                                 double selectedLng = pointCoord.getDouble(1);
                                 MapActivity activity = (MapActivity) mContext;
-                                if(activity.selectedEditText == Constants.FROM_ORIGIN){
-                                    activity.selectedOrigin = new LatLng(selectedLat, selectedLng);
+                                if(activity.getSelectedEditText() == Constants.FROM_ORIGIN){
+                                    LatLng selectedOrigin = new LatLng(selectedLat, selectedLng);
+                                    activity.setSelectedOrigin(selectedOrigin);
                                     activity.getViewHolder().editOrigin.setText(name1);
-                                    activity.setOriginPosition(Point.fromLngLat(activity.selectedOrigin.getLongitude(), activity.selectedOrigin.getLatitude()));
+                                    activity.setOriginPosition(Point.fromLngLat(activity.getSelectedOrigin().getLongitude(),
+                                            activity.getSelectedOrigin().getLatitude()));
                                 }
-                                else if(activity.selectedEditText == Constants.FROM_DESTINATION){
-                                    activity.selectedDestination = new LatLng(selectedLat, selectedLng);
+                                else if(activity.getSelectedEditText() == Constants.FROM_DESTINATION){
+                                    LatLng selectedDestination = new LatLng(selectedLat, selectedLng);
+                                    activity.setSelectedDestination(selectedDestination);
                                     activity.getViewHolder().editDestination.setText(name1);
-                                    activity.setDestinationPosition(Point.fromLngLat(activity.selectedDestination.getLongitude(), activity.selectedDestination.getLatitude()));
+                                    activity.setDestinationPosition(Point.fromLngLat(activity.getSelectedDestination().getLongitude(),
+                                            activity.getSelectedDestination().getLatitude()));
                                 }
-                                activity.getViewHolder().routeSearchLayour.setVisibility(View.GONE);
+                                activity.getViewHolder().routeSearchLayout.setVisibility(View.GONE);
                                 activity.getViewHolder().mapLayout.setVisibility(View.VISIBLE);
-                                activity.getRoute(activity.getOriginPosition(), activity.getDestinationPosition());
+                                activity.getViewModel().getRoute(activity.getOriginPosition(), activity.getDestinationPosition());
 
                             } catch (Exception e) {
                                 e.printStackTrace();

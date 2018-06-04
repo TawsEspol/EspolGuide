@@ -164,7 +164,7 @@ public class SearchViewAdapter extends BaseAdapter {
                                 double lat = pointCoord.getDouble(0);
                                 double lon = pointCoord.getDouble(1);
                                 LatLng point = new LatLng(lat, lon);
-                                mapActivity.selectedDestination = point;
+                                mapActivity.setSelectedDestination(point);
                                 mapActivity.getViewHolder().editDestination.setText(name1);
                                 System.out.println(point.toString() + " --------------------");
                                 TextView f = (TextView) bar;

@@ -27,13 +27,12 @@ import android.widget.Toast;
 
 public class LoginViewModel extends Observable {
     public static String AUTH_REQUEST_STARTED = "auth_request_started";
-    public static String AUTH_REQUEST_SUCCEED = "authdraw_request_succeed";
-    public static String AUTH_FAILED_CONNECTION = "auth_request_failed_connection";
-    public static String AUTH_FAILED_HTTP = "auth_request_failed_http";
+    public static String AUTH_REQUEST_SUCCEED = "auth_request_succeed";
+    public static String AUTH_REQUEST_FAILED_CONNECTION = "auth_request_failed_connection";
+    public static String AUTH_REQUEST_FAILED_HTTP = "auth_request_failed_http";
+    public static String AUTH_WRONG_CREDENTIALS = "auth_wrong_credentials";
     public static String NAMESPACE = "http://tempuri.org/";
-    public static String URL = "https://ws.espol.edu.ec/saac/wsGuide.asmx";
-    public static String METHOD_NAME = "autenticacion";
-    public static String SOAP_ACTION = "http://tempuri.org/autenticacion";
+
 
     private LoginActivity activity;
 
@@ -48,7 +47,6 @@ public class LoginViewModel extends Observable {
                 activity.getViewHolder().password));
     }
 
-    //Enviar el view para coger el valor de los textfields
     private class AuthScreen {
         Context context;
         EditText usr;
@@ -70,10 +68,9 @@ public class LoginViewModel extends Observable {
             ctx = auths[0].context;
             if (!Constants.isNetworkAvailable(ctx)) {
                 setChanged();
-                notifyObservers(AUTH_FAILED_CONNECTION);
+                notifyObservers(AUTH_REQUEST_FAILED_CONNECTION);
             } else {
-                //System.out.println(auths[0].usr.getText());
-                //System.out.println(auths[0].pass.getText());
+                try {
                 SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.AUTH_METHOD_NAME);
                 request.addProperty("authUser", auths[0].usr.getText().toString());
                 request.addProperty("authContrasenia", auths[0].pass.getText().toString());
@@ -83,37 +80,28 @@ public class LoginViewModel extends Observable {
                 envelope.headerOut[0] = buildAuthHeader();
                 envelope.setOutputSoapObject(request);
                 HttpTransportSE transport = new HttpTransportSE(Constants.URL);
-
-                try {
-                    transport.call(Constants.AUTH_SOAP_ACTION, envelope);
-                    SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
-                    result = Boolean.valueOf(response.toString());
-                    return result;
+                transport.call(Constants.AUTH_SOAP_ACTION, envelope);
+                SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+                result = Boolean.valueOf(response.toString());
+                return result;
                 } catch (Exception e) {
                     System.out.println(e);
+                    setChanged();
+                    notifyObservers(AUTH_REQUEST_FAILED_HTTP);
                 }
             }
-
             return false;
-
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
-
             if (result) {
-                //@Todo AsyncTask finalizado
-                Intent intent;
-                intent = new Intent(ctx, MapActivity.class);
-                ctx.startActivity(intent);
-                activity.getViewHolder().password.setText("");
-                activity.getViewHolder().password.setText("");
-                activity.finish();
+                setChanged();
+                notifyObservers(AUTH_REQUEST_SUCCEED);
             } else {
-                Toast message = Toast.makeText(ctx,
-                        "Credenciales incorrectas", Toast.LENGTH_LONG);
-                message.show();
+                setChanged();
+                notifyObservers(AUTH_WRONG_CREDENTIALS);
             }
         }
 
@@ -125,7 +113,6 @@ public class LoginViewModel extends Observable {
             Element key_ = new Element().createElement(NAMESPACE, "key");
             key_.addChild(Node.TEXT, Constants.KEY_SOAP_HEADER);
             h.addChild(Node.ELEMENT, key_);
-
             return h;
         }
 

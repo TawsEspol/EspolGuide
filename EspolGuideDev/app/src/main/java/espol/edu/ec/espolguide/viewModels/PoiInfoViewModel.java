@@ -15,11 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
 import espol.edu.ec.espolguide.PoiInfo;
 import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.AppController;
@@ -116,12 +111,12 @@ public class PoiInfoViewModel extends Observable {
             iv = datas[0].imgvw;
             Drawable d;
             if (!Constants.isNetworkAvailable(context)) {
+                d = null;
                 setChanged();
                 notifyObservers(POI_PHOTO_REQUEST_FAILED_CONNECTION);
-                d = null;
             }
             else {
-                d = LoadImage(Constants.getBlockPhoto()+identifier);
+                d = LoadImage(Constants.getBlockPhoto()+ identifier);
             }
             return d;
         }

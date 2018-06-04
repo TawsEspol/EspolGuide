@@ -22,12 +22,11 @@
         <item name="android:background">@drawable/shape_searchview_poi</item>
     </style>
 
-
     <style name="auth_edit_text" parent="AppTheme">
         <item name="android:orientation">vertical</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/second</item>
-        <item name="android:textColorHint">@color/second</item>
+        <item name="android:textColor">@color/first</item>
+        <item name="android:textColorHint">@color/third</item>
         <item name="android:backgroundTint">@color/second</item>
         <item name="android:paddingLeft">20dp</item>
         <item name="android:paddingRight">20dp</item>
@@ -41,11 +40,9 @@
     </style>
 
     <style name="auth_user" parent="auth_edit_text">
-        <item name="android:hint">Usuario</item>
     </style>
 
     <style name="auth_pass" parent="auth_edit_text">
-        <item name="android:hint">Contraseña</item>
     </style>
 
     <style name="login_btn" parent="AppTheme">
@@ -56,10 +53,7 @@
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
         <item name="android:layout_marginTop">45dp</item>
-        <item name="android:layout_marginRight">140dp</item>
-        <item name="android:layout_marginLeft">140dp</item>
         <item name="android:layout_marginBottom">30dp</item>
-        <item name="android:layout_gravity">left|top</item>
         <item name="android:background">@drawable/login_button</item>
     </style>
 
