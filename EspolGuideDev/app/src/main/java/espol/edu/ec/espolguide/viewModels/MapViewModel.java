@@ -324,8 +324,7 @@ public class MapViewModel extends Observable{
                                     blockName = feature.getStringProperty("BLOQUE").toString();
                                     academicUnit = feature.getStringProperty("UNIDAD").toString();
                                     description = feature.getStringProperty("DESCRIPCIO").toString();
-                                    id_ = feature.id().toString();
-                                    new PoiInfoViewModel(new PoiInfo(id_, blockName, academicUnit, description, activity,
+                                    new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description, activity,
                                             activity.getViewHolder().info)).show();
                                     setChanged();
                                     notifyObservers(POI_INFO_REQUEST_SUCCEEDED);
