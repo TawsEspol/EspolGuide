@@ -83,7 +83,7 @@ public class PoiInfoViewModel extends Observable {
         academicUnit.setText(activity.getacAdemicUnit());
         TextView description = (TextView) ((ViewGroup)linear.getChildAt(2)).getChildAt(0);
         description.setText(activity.getDescription());
-        new Counter().execute(new PhotoData(activity.getCtx(),imageView,activity.getId_()));
+        new Counter().execute(new PhotoData(activity.getCtx(),imageView,activity.getName()));
         activity.getView().setVisibility(View.VISIBLE);
     }
 

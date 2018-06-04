@@ -187,6 +187,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                                 public void run() {
                                     Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
                                             Toast.LENGTH_LONG).show();
+
                                 }
                             });
                         }

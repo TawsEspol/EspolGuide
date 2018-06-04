@@ -25,19 +25,17 @@ public class PoiInfo extends AppCompatActivity implements Observer {
     private View view;
     private String code;
     private String name;
-    private String id_;
     private String academicUnit;
     private int favoritesCount;
     private String description;
     private ArrayList<String> alternativeNames = new ArrayList<String>();
     private PoiInfoViewModel viewModel;
 
-    public PoiInfo(String id_, String blockName, String academicUnit, String description, Context ctx, View view){
+    public PoiInfo(String blockName, String academicUnit, String description, Context ctx, View view){
         this.ctx = ctx;
         this.view = view;
         viewModel = new PoiInfoViewModel(this);
         viewModel.addObserver(this);
-        setId_(id_);
         setName(blockName);
         setAcademicUnit(academicUnit);
         setDescription(description);
@@ -105,12 +103,6 @@ public class PoiInfo extends AppCompatActivity implements Observer {
     public void setCode(String code) {
         this.code = code;
     }
-
-    public String getId_() {
-        return id_;
-    }
-
-    public void setId_(String id_) { this.id_= id_;}
 
     public String getName() {
         return name;
