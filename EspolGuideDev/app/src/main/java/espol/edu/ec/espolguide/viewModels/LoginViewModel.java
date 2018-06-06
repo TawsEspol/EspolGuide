@@ -85,7 +85,6 @@ public class LoginViewModel extends Observable {
                 result = Boolean.valueOf(response.toString());
                 return result;
                 } catch (Exception e) {
-                    System.out.println(e);
                     setChanged();
                     notifyObservers(AUTH_REQUEST_FAILED_HTTP);
                 }
@@ -100,6 +99,8 @@ public class LoginViewModel extends Observable {
                 setChanged();
                 notifyObservers(AUTH_REQUEST_SUCCEED);
             } else {
+                activity.getViewHolder().username.setText("");
+                activity.getViewHolder().password.setText("");
                 setChanged();
                 notifyObservers(AUTH_WRONG_CREDENTIALS);
             }
