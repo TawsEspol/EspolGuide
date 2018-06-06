@@ -99,8 +99,6 @@ public class LoginViewModel extends Observable {
                 setChanged();
                 notifyObservers(AUTH_REQUEST_SUCCEED);
             } else {
-                activity.getViewHolder().username.setText("");
-                activity.getViewHolder().password.setText("");
                 setChanged();
                 notifyObservers(AUTH_WRONG_CREDENTIALS);
             }

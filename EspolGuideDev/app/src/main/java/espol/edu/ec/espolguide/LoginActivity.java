@@ -133,6 +133,7 @@ public class LoginActivity extends AppCompatActivity implements Observer {
             });
         }
         if (message == viewModel.AUTH_WRONG_CREDENTIALS) {
+            this.viewHolder.username.setText("");
             this.viewHolder.password.setText("");
             LoginActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
