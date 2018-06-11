@@ -5,10 +5,12 @@ import android.graphics.PointF;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -82,10 +84,9 @@ public class MapViewModel extends Observable{
     private static final String TAG = "DirectionsActivity";
     private NavigationMapRoute navigationMapRoute;
     private MapActivity activity;
+    private String selectedRouteMode;
 
-    public MapViewModel(MapActivity activity) {
-        this.activity = activity;
-    }
+    public MapViewModel(MapActivity activity) { this.activity = activity; }
 
     public static String getTAG() {
         return TAG;
@@ -135,6 +136,14 @@ public class MapViewModel extends Observable{
 
     public void setNavigationMapRoute(NavigationMapRoute navigationMapRoute) {
         this.navigationMapRoute = navigationMapRoute;
+    }
+
+    public String getSelectedRouteMode(){
+        return this.selectedRouteMode;
+    }
+
+    public void setSelectedRouteMode(String selectedRouteMode){
+        this.selectedRouteMode = selectedRouteMode;
     }
 
     private class Nombres extends AsyncTask<Context, Void, ArrayList> {
@@ -219,7 +228,6 @@ public class MapViewModel extends Observable{
                                                       int arg3) {
                                 activity.getViewHolder().routesLv.setVisibility(View.VISIBLE);
                                 // TODO Auto-generated method stub
-
                             }
                         });
 
@@ -242,15 +250,48 @@ public class MapViewModel extends Observable{
         return this.adapter;
     }
 
+    public void changeRouteModeView(){
+        if(this.selectedRouteMode == Constants.CAR_ROUTE_MODE){
+            LinearLayout carButtonBackground = (LinearLayout) activity.getViewHolder().carBtn.getParent();
+            carButtonBackground.setBackgroundResource(R.drawable.selected_mode_button);
+            activity.getViewHolder().carBtn.setColorFilter(
+                    ContextCompat.getColor(activity, R.color.second), android.graphics.PorterDuff.Mode.SRC_IN);
+
+            LinearLayout walkButtonBackground = (LinearLayout) activity.getViewHolder().walkBtn.getParent();
+            walkButtonBackground.setBackgroundResource(R.drawable.unselected_mode_button);
+            activity.getViewHolder().walkBtn.setColorFilter(
+                    ContextCompat.getColor(activity, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
+        }
+        else{
+            LinearLayout walkButtonBackground = (LinearLayout) activity.getViewHolder().walkBtn.getParent();
+            walkButtonBackground.setBackgroundResource(R.drawable.selected_mode_button);
+            activity.getViewHolder().walkBtn.setColorFilter(
+                    ContextCompat.getColor(activity, R.color.second), android.graphics.PorterDuff.Mode.SRC_IN);
+
+            LinearLayout carButtonBackground = (LinearLayout) activity.getViewHolder().carBtn.getParent();
+            carButtonBackground.setBackgroundResource(R.drawable.unselected_mode_button);
+            activity.getViewHolder().carBtn.setColorFilter(
+                    ContextCompat.getColor(activity, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
+        }
+    }
+
+    public String getDirectionCriteria(){
+        String directionsCriteria = DirectionsCriteria.PROFILE_WALKING;
+        if(this.selectedRouteMode == Constants.CAR_ROUTE_MODE){
+            directionsCriteria = DirectionsCriteria.PROFILE_DRIVING;
+        }
+        return directionsCriteria;
+    }
 
     public void getRoute(Point origin, Point destination) {
         setChanged();
         notifyObservers(ROUTE_REQUEST_STARTED);
+        this.changeRouteModeView();
         if(origin != null && destination!=null){
             NavigationRoute.builder()
                     .accessToken(Mapbox.getAccessToken())
                     .origin(origin)
-                    .profile(DirectionsCriteria.PROFILE_WALKING)
+                    .profile(this.getDirectionCriteria())
                     .destination(destination)
                     .build()
                     .getRoute(new Callback<DirectionsResponse>() {
@@ -319,11 +360,10 @@ public class MapViewModel extends Observable{
                                 String blockName = "";
                                 String academicUnit = "";
                                 String description = "";
-                                String id_ = "";
-                                if (feature.properties() != null && feature.properties().has("CODIGO")) {
-                                    blockName = feature.getStringProperty("BLOQUE").toString();
-                                    academicUnit = feature.getStringProperty("UNIDAD").toString();
-                                    description = feature.getStringProperty("DESCRIPCIO").toString();
+                                if (feature.properties() != null && feature.properties().has("code_gtsi")) {
+                                    blockName = feature.getStringProperty("name").toString();
+                                    academicUnit = feature.getStringProperty("unity").toString();
+                                    description = feature.getStringProperty("descriptio").toString();
                                     new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description, activity,
                                             activity.getViewHolder().info)).show();
                                     setChanged();
@@ -373,6 +413,29 @@ public class MapViewModel extends Observable{
         } else {
             this.getLocationEngine().addLocationEngineListener(activity);
         }
+    }
+
+    public void setRouteModeButtonsListeners(){
+        activity.getViewHolder().walkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(getSelectedRouteMode() != Constants.WALKING_ROUTE_MODE){
+                    setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
+                    getRoute(activity.getOriginPosition(), activity.getDestinationPosition());
+                }
+            }
+        });
+
+        activity.getViewHolder().carBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(getSelectedRouteMode() != Constants.CAR_ROUTE_MODE){
+                    setSelectedRouteMode(Constants.CAR_ROUTE_MODE);
+                    getRoute(activity.getOriginPosition(), activity.getDestinationPosition());
+                }
+
+            }
+        });
     }
 
     public void setCameraPosition(Location location) {

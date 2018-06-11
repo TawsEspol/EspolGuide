@@ -17,6 +17,8 @@
     <string name="error_on_calculating_route">Error on calculating route...</string>
 
     <string name="your_location">Your location</string>
+    <string name="search_origin">Search a origin</string>
+    <string name="search_destination">Search a destination</string>
 
     <string name="facebook_app_id"></string>
     <string name="fb_login_protocol_scheme"></string>
