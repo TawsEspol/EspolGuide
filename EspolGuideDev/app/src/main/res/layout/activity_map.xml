@@ -1,125 +1,364 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mapa"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
-    <LinearLayout
-        android:id="@+id/contenedor_mapa"
+    <FrameLayout
+        android:id="@+id/map_layout"
         android:layout_width="match_parent"
+        android:orientation="vertical"
         android:layout_height="match_parent">
-        <org.osmdroid.views.MapView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/mapview"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:clickable="true" />
-    </LinearLayout>
-
-    <!--Contenedor de barra de busqueda y sugerencias-->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        style="@style/barra_busqueda_pois"
-        >
-        <!--Ingreso de texto en barra de busqueda-->
-        <EditText
-            android:id="@+id/search"
-            style="@style/input_barra_pois"
-            android:digits="qwertyuiopasdfghjklñzxcvbnm-0123456789 "
-            >
-            <requestFocus />
-        </EditText>
-
-        <!--Lista de pois sugeridos en barra de busqueda-->
-        <ListView
-            android:id="@+id/listview"
-            style="@style/lista_sugerencias_barra"
-            />
-    </LinearLayout>
-
-    <!--Layout de fondo de información del POI-->
-    <LinearLayout
-        android:id="@+id/overlay"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginBottom="30dip"
-        android:layout_marginLeft="20dip"
-        android:layout_marginRight="20dip"
-        android:layout_marginTop="40dip"
-        android:background="#99000000"
-        android:visibility="gone">
-
-        <!--Layout de información del POI-->
         <LinearLayout
-            android:id="@+id/overlayinside"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_margin="5dip"
-            android:background="#ffffff"
-            android:clickable="true"
+            android:id="@+id/contenedor_mapa"
+            android:layout_width="match_parent"
             android:orientation="vertical"
+            android:layout_height="match_parent">
+            <com.mapbox.mapboxsdk.maps.MapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                mapbox:mapbox_cameraTargetLat="-2.14630"
+                mapbox:mapbox_cameraTargetLng="-79.96575"
+                mapbox:mapbox_styleUrl="mapbox://styles/mguarand/cjgty8tqc000n2ss2p69lu0re"
+                mapbox:mapbox_cameraZoom="16" />
+            />
+        </LinearLayout>
+
+        <!--Draw route bars-->
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/second"
             >
-
-            <Button
-                android:id="@+id/close_poi_info_button"
-                android:layout_width="30dip"
-                android:layout_height="25dip"
-                android:layout_gravity="right"
-                android:layout_margin="3dip"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/boton_redondo"
-                android:text="X"
-                android:textColor="#ffffff"
-                android:textSize="16dip"
-                />
-
-            <ImageView
-                android:id="@+id/flag"
-                android:layout_width="fill_parent"
-                android:layout_height="250dip"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginHorizontal="10dip"
-                android:layout_marginTop="10dip"
-                android:scaleType="fitXY"
-                android:src="@drawable/fiec"
-                />
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/route_box"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="10dp">
-                <TextView
-                    android:id="@+id/codigo"
-                    android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <LinearLayout
+                    android:id="@+id/places_box"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_margin="15dp"
-                    android:layout_gravity="center"
-                    android:layout_below="@+id/codigo"
-                    style="@style/info"
-                    />
-                <TextView
-                    android:id="@+id/unidad"
-                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp">
+                    <LinearLayout
+                        android:id="@+id/back_button_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_gravity="center_vertical">
+                        <ImageButton
+                            android:id="@+id/back_button"
+                            android:layout_width="25dp"
+                            android:layout_height="60dp"
+                            android:src="@drawable/ic_left_arrow"
+                            android:tint="@color/white"
+                            android:background="@android:color/transparent"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/bars_box"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginHorizontal="5dp">
+                        <LinearLayout
+                            android:id="@+id/origin_box"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/search_origin"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:maxLines="1"
+                                android:lines="1"
+                                android:singleLine="true"
+                                android:background="@drawable/shape_searchview_poi"
+                                android:textSize="14dp"
+                                android:hint="@string/search_origin"
+                                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                                android:paddingTop="5dp"
+                                android:paddingLeft="15dp"
+                                android:paddingBottom="5dp"
+                                style="@style/input_barra_pois"
+                                >
+                                <requestFocus />
+                            </EditText>
+                            <ListView
+                                android:id="@+id/origin_results"
+                                style="@style/lista_sugerencias_barra"
+                                android:layout_below="@id/search_origin"
+                                />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/destination_box"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginTop="10dp">
+                            <EditText
+                                android:id="@+id/search_destination"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:maxLines="1"
+                                android:lines="1"
+                                android:singleLine="true"
+                                android:background="@drawable/shape_searchview_poi"
+                                android:textSize="14dp"
+                                android:hint="@string/search_destination"
+                                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                                android:paddingTop="5dp"
+                                android:paddingLeft="15dp"
+                                android:paddingBottom="5dp"
+                                style="@style/input_barra_pois"
+                                >
+                                <requestFocus />
+                            </EditText>
+                            <ListView
+                                android:id="@+id/destination_results"
+                                style="@style/lista_sugerencias_barra"
+                                android:layout_below="@id/search_destination"
+                                />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/route_mode_box"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="15dp"
-                    style="@style/info"
-                    android:layout_gravity="center"
-                    />
-            </LinearLayout>
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
+                    <LinearLayout
+                        android:id="@+id/walk_button_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="0dp"
+                        android:background="@drawable/login_button"
+                        >
+                        <ImageButton
+                            android:id="@+id/walk_button"
+                            android:layout_width="40dp"
+                            android:layout_height="45dp"
+                            android:src="@drawable/ic_walk_icon"
+                            android:tint="@color/white"
+                            android:background="@android:color/transparent"/>
+                    </LinearLayout>
 
-            <TextView
-                android:id="@+id/descripcion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="15dp"
-                style="@style/info"
+                    <LinearLayout
+                        android:id="@+id/car_button_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/login_button"
+                        >
+                        <ImageButton
+                            android:id="@+id/car_button"
+                            android:layout_width="40dp"
+                            android:layout_height="45dp"
+                            android:src="@drawable/ic_car_icon"
+                            android:tint="@color/white"
+                            android:background="@android:color/transparent"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!--Search a POI bar-->
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            style="@style/barra_busqueda_pois"
+            >
+            <EditText
+                android:id="@+id/search_destiny"
+                style="@style/input_barra_pois"
+                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                >
+                <requestFocus />
+            </EditText>
+            <!--Lista de pois sugeridos en barra de busqueda-->
+            <ListView
+                android:id="@+id/listview"
+                style="@style/lista_sugerencias_barra"
+                android:layout_below="@id/search_destiny"
                 />
         </LinearLayout>
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/route_button_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="60dp"
+            android:layout_marginRight="40dp"
+            android:layout_gravity="right|bottom"
+            android:visibility="visible">
+            <Button
+                android:id="@+id/route_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/login_button"
+                android:text="Ver\nRuta"
+                android:textColor="#ffffff"
+                android:textAllCaps="false"
+                android:textSize="16dp"
+                android:visibility="gone"
+                />
+        </LinearLayout>
+        <!--Layout de fondo de información del POI-->
+        <LinearLayout
+            android:id="@+id/overlay"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="30dip"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:layout_marginTop="40dip"
+            android:orientation="vertical"
+            android:background="@color/second"
+            android:visibility="gone">
 
+            <!--Layout de información del POI-->
+            <LinearLayout
+                android:id="@+id/overlayinside"
+                android:layout_width="fill_parent"
+                android:layout_height="310dp"
+                android:layout_margin="5dip"
+                android:clickable="true"
+                android:orientation="vertical"
+                android:background="#ffffff"
+                >
+                <Button
+                    android:id="@+id/close_poi_info_button"
+                    android:layout_width="30dip"
+                    android:layout_height="25dip"
+                    android:layout_gravity="right"
+                    android:layout_margin="3dip"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/close_poi_round_button"
+                    android:text="X"
+                    android:textColor="#ffffff"
+                    android:textSize="16dip"
+                    />
+                <ImageView
+                    android:id="@+id/flag"
+                    android:layout_width="fill_parent"
+                    android:layout_height="250dip"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="10dip"
+                    android:layout_marginRight="10dip"
+                    android:layout_marginTop="10dip"
+                    android:layout_marginBottom="10dip"
+                    android:scaleType="fitXY"
+                    />
+            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/white">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/name_poi"
+                            style="@style/data"
+                            />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginLeft="70dp"
+                            android:layout_marginRight="70dp"
+                            android:background="@color/third"/>
+                        <TextView
+                            android:text="nombre"
+                            style="@style/property"
+                            />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/unidad"
+                            style="@style/data"
+                            />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginLeft="70dp"
+                            android:layout_marginRight="70dp"
+                            android:background="@color/third"/>
+                        <TextView
+                            android:text="unidad"
+                            style="@style/property"
+                            />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/descripcion"
+                            style="@style/data"
+                            />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginLeft="70dp"
+                            android:layout_marginRight="70dp"
+                            android:background="@color/third"/>
+                        <TextView
+                            android:text="descripcion"
+                            style="@style/property"
+                            />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+    </FrameLayout>
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:mapbox="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/routes_search_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:orientation="vertical" >
+        <!--Search a POI bar-->
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/back"
+            style="@style/barra_rutas_pois"
+            >
+            <EditText
+                android:id="@+id/search_routes"
+                style="@style/input_barra_pois"
+                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                >
+                <requestFocus />
+            </EditText>
+            <!--Lista de pois sugeridos en barra de busqueda-->
+            <ListView
+                android:id="@+id/listroutes"
+                style="@style/lista_sugerencias_barra"
+                android:layout_below="@id/search_destiny"
+                />
+        </LinearLayout>
+    </FrameLayout>
 </FrameLayout>

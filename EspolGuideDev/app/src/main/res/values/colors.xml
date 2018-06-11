@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="colorSearchBar">#00FF00</color>
+    <color name="first">#054A91</color>
+    <color name="second">#3E7CB1</color>
+    <color name="third">#81A4CD</color>
+    <color name="fourth">#DBE4EE</color>
+    <color name="fifth">#F17300</color>
+    <color name="white">#FFFFFF</color>
 </resources>

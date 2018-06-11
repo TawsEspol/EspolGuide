@@ -1,12 +1,26 @@
 <resources>
     <string name="app_name">EspolGuide</string>
+    <string name="access_token"></string>
+
     <string name="university_name">ESPOL</string>
     <string name="search_poi_hint">Buscar en ESPOL</string>
+    <string name="espol_username">Usuario ESPOL</string>
+    <string name="password">Contraseña</string>
+    <string name="login">Ingresar</string>
 
     <string name="failed_connection_msg">Conexión a Internet no disponible</string>
     <string name="http_error_msg">Error al conectarse con el servidor</string>
     <string name="loading_pois_names_error_msg">Error cargando nombres de sitios...</string>
-    <string name="loading_blocks_shapes_error_msg">Error cargando bloques...</string>
     <string name="loading_poi_info_error_msg">Error cargando información del sitio...</string>
+    <string name="wrong_credentials_msg">Credenciales incorrectas ingresadas...</string>
+    <string name="error_on_getting_location">Error obteniendo su ubicación...</string>
+    <string name="error_on_calculating_route">Error calculando la ruta...</string>
+
+    <string name="your_location">Tu ubicación</string>
+    <string name="search_origin">Buscar origen</string>
+    <string name="search_destination">Buscar destino</string>
+
+    <string name="facebook_app_id"></string>
+    <string name="fb_login_protocol_scheme"></string>
 
 </resources>
