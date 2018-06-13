@@ -18,6 +18,7 @@ import java.util.Observable;
 import espol.edu.ec.espolguide.LoginActivity;
 import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.utils.Constants;
+import espol.edu.ec.espolguide.utils.SessionHelper;
 
 import com.facebook.AccessToken;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -45,7 +46,8 @@ public class LoginViewModel extends Observable {
     public static String GOOGL_AUTH_WRONG_CREDENTIALS = "google_auth_wrong_credentials";
     public static String FB_AUTHENTICATION = "facebook_authentication";
     public static String GOOGL_AUTHENTICATION = "google_authentication";
-
+    public static String IS_ESPOL_LOGGED_IN = "is_espol_logged_in";
+    public static String IS_NOT_LOGGED_IN = "is_not_logged_in";
 
     private LoginActivity activity;
 
@@ -200,6 +202,16 @@ public class LoginViewModel extends Observable {
             h.addChild(Node.ELEMENT, key_);
             return h;
         }
+    }
 
+    public void checkSessions(){
+        if(SessionHelper.isEspolLoggedIn(activity)){
+            setChanged();
+            notifyObservers(IS_ESPOL_LOGGED_IN);
+        }
+        else{
+            setChanged();
+            notifyObservers(IS_NOT_LOGGED_IN);
+        }
     }
 }

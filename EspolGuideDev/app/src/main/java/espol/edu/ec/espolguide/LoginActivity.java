@@ -27,6 +27,7 @@ import com.mapbox.mapboxsdk.Mapbox;
 import java.util.Observable;
 import java.util.Observer;
 
+import espol.edu.ec.espolguide.utils.SessionHelper;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.viewModels.LoginViewModel;
 
@@ -61,6 +62,7 @@ public class LoginActivity extends AppCompatActivity implements Observer {
         this.viewHolder = new ViewHolder(this);
         this.viewModel = new LoginViewModel(this);
         this.viewModel.addObserver(this);
+        this.viewModel.checkSessions();
     }
 
     public class ViewHolder {
@@ -166,6 +168,8 @@ public class LoginActivity extends AppCompatActivity implements Observer {
             this.startActivity(intent);
             this.viewHolder.username.setText("");
             this.viewHolder.password.setText("");
+            String espolUsername = this.getViewHolder().username.getText().toString().trim();
+            SessionHelper.saveEspolSession(this, espolUsername);
             this.finish();
         }
 
@@ -226,6 +230,14 @@ public class LoginActivity extends AppCompatActivity implements Observer {
                             Toast.LENGTH_SHORT).show();
                 }
             });
+        }
+        else if (message == viewModel.IS_ESPOL_LOGGED_IN) {
+            Intent intent = new Intent(this, MapActivity.class);
+            this.startActivity(intent);
+            this.finish();
+        }
+        if (message == viewModel.IS_NOT_LOGGED_IN) {
+
         }
     }
 }
