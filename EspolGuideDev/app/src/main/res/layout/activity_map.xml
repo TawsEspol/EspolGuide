@@ -34,94 +34,148 @@
             android:background="@color/second"
             >
             <LinearLayout
-                android:id="@+id/places_box"
+                android:id="@+id/route_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginHorizontal="5dp"
-                android:visibility="gone"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp">
+                android:orientation="vertical"
+                android:visibility="gone">
                 <LinearLayout
-                    android:id="@+id/back_button_box"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginHorizontal="5dp"
-                    android:layout_gravity="center_vertical">
-                    <ImageButton
-                        android:id="@+id/back_button"
-                        android:layout_width="25dp"
-                        android:layout_height="60dp"
-                        android:src="@drawable/ic_left_arrow"
-                        android:tint="#FFFFFF"
-                        android:backgroundTint="@color/second"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/bars_box"
+                    android:id="@+id/places_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginHorizontal="5dp">
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp">
                     <LinearLayout
-                        android:id="@+id/origin_box"
-                        android:layout_width="match_parent"
+                        android:id="@+id/back_button_box"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <EditText
-                            android:id="@+id/search_origin"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:maxLines="1"
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:background="@drawable/shape_searchview_poi"
-                            android:textSize="15dp"
-                            android:hint="Buscar origen"
-                            android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
-                            android:paddingTop="10dp"
-                            android:paddingLeft="15dp"
-                            android:paddingBottom="10dp"
-                            style="@style/input_barra_pois"
-                            >
-                            <requestFocus />
-                        </EditText>
-                        <ListView
-                            android:id="@+id/origin_results"
-                            style="@style/lista_sugerencias_barra"
-                            android:layout_below="@id/search_origin"
-                            />
+                        android:orientation="vertical"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_gravity="center_vertical">
+                        <ImageButton
+                            android:id="@+id/back_button"
+                            android:layout_width="25dp"
+                            android:layout_height="60dp"
+                            android:src="@drawable/ic_left_arrow"
+                            android:tint="@color/white"
+                            android:background="@android:color/transparent"/>
                     </LinearLayout>
                     <LinearLayout
-                        android:id="@+id/destination_box"
+                        android:id="@+id/bars_box"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:layout_marginTop="10dp">
-                        <EditText
-                            android:id="@+id/search_destination"
-                            android:layout_width="fill_parent"
+                        android:layout_marginHorizontal="5dp">
+                        <LinearLayout
+                            android:id="@+id/origin_box"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:maxLines="1"
-                            android:lines="1"
-                            android:singleLine="true"
-                            android:background="@drawable/shape_searchview_poi"
-                            android:textSize="15dp"
-                            android:hint="Buscar destino"
-                            android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
-                            android:paddingTop="10dp"
-                            android:paddingLeft="15dp"
-                            android:paddingBottom="10dp"
-                            style="@style/input_barra_pois"
-                            >
-                            <requestFocus />
-                        </EditText>
-                        <ListView
-                            android:id="@+id/destination_results"
-                            style="@style/lista_sugerencias_barra"
-                            android:layout_below="@id/search_destination"
-                            />
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/search_origin"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:maxLines="1"
+                                android:lines="1"
+                                android:singleLine="true"
+                                android:background="@drawable/shape_searchview_poi"
+                                android:textSize="14dp"
+                                android:hint="@string/search_origin"
+                                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                                android:paddingTop="5dp"
+                                android:paddingLeft="15dp"
+                                android:paddingBottom="5dp"
+                                style="@style/input_barra_pois"
+                                >
+                                <requestFocus />
+                            </EditText>
+                            <ListView
+                                android:id="@+id/origin_results"
+                                style="@style/lista_sugerencias_barra"
+                                android:layout_below="@id/search_origin"
+                                />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/destination_box"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginTop="10dp">
+                            <EditText
+                                android:id="@+id/search_destination"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:maxLines="1"
+                                android:lines="1"
+                                android:singleLine="true"
+                                android:background="@drawable/shape_searchview_poi"
+                                android:textSize="14dp"
+                                android:hint="@string/search_destination"
+                                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                                android:paddingTop="5dp"
+                                android:paddingLeft="15dp"
+                                android:paddingBottom="5dp"
+                                style="@style/input_barra_pois"
+                                >
+                                <requestFocus />
+                            </EditText>
+                            <ListView
+                                android:id="@+id/destination_results"
+                                style="@style/lista_sugerencias_barra"
+                                android:layout_below="@id/search_destination"
+                                />
+                        </LinearLayout>
                     </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/route_mode_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
+                    <LinearLayout
+                        android:id="@+id/walk_button_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="0dp"
+                        android:background="@drawable/login_button"
+                        >
+                        <ImageButton
+                            android:id="@+id/walk_button"
+                            android:layout_width="40dp"
+                            android:layout_height="45dp"
+                            android:src="@drawable/ic_walk_icon"
+                            android:tint="@color/white"
+                            android:background="@android:color/transparent"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/car_button_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/login_button"
+                        >
+                        <ImageButton
+                            android:id="@+id/car_button"
+                            android:layout_width="40dp"
+                            android:layout_height="45dp"
+                            android:src="@drawable/ic_car_icon"
+                            android:tint="@color/white"
+                            android:background="@android:color/transparent"/>
+                    </LinearLayout>
+
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -205,7 +259,8 @@
                     android:layout_height="250dip"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginHorizontal="10dip"
+                    android:layout_marginLeft="10dip"
+                    android:layout_marginRight="10dip"
                     android:layout_marginTop="10dip"
                     android:layout_marginBottom="10dip"
                     android:scaleType="fitXY"

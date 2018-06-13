@@ -65,6 +65,8 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
         this.viewModel.setMapOnClickListener();
         this.viewModel.addObserver(this);
         this.viewModel.makeNamesRequest();
+        this.viewModel.setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
+        this.viewModel.setRouteModeButtonsListeners();
     }
 
     public class ViewHolder{
@@ -80,7 +82,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
         public EditText editDestination;
         public ListView originLv;
         public ListView destinationLv;
-        public LinearLayout placesBox;
+        public LinearLayout routeBox;
         public Button routeBtn;
         public ImageButton backBtn;
 
@@ -89,6 +91,8 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
         public ListView routesLv;
         public EditText editSearchRoutes;
 
+        public ImageButton walkBtn;
+        public ImageButton carBtn;
 
         public ViewHolder(){
             findViews();
@@ -109,13 +113,15 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
             editDestination = (EditText) findViewById(R.id.search_destination);
             originLv = (ListView) findViewById(R.id.origin_results);
             destinationLv = (ListView) findViewById(R.id.destination_results);
-            placesBox = (LinearLayout) findViewById(R.id.places_box);
+            routeBox = (LinearLayout) findViewById(R.id.route_box);
             routeBtn = (Button) findViewById(R.id.route_btn);
             mapLayout = (FrameLayout) findViewById(R.id.map_layout);
             routeSearchLayout = (FrameLayout) findViewById(R.id.routes_search_layout);
             routesLv = (ListView) findViewById(R.id.listroutes);
             editSearchRoutes = (EditText) findViewById(R.id.search_routes);
             backBtn = (ImageButton) findViewById(R.id.back_button);
+            walkBtn = (ImageButton) findViewById(R.id.walk_button);
+            carBtn = (ImageButton) findViewById(R.id.car_button);
         }
 
         public void setMapboxMap(MapboxMap mapboxMap){
@@ -129,7 +135,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                     editDestination.setText("");
                     editOrigin.setText("");
                     editSearch.setText("");
-                    placesBox.setVisibility(View.GONE);
+                    routeBox.setVisibility(View.GONE);
                     routeBtn.setVisibility(View.GONE);
                     if (featureMarker != null){
                         mapboxMap.removeMarker(featureMarker);
@@ -141,6 +147,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                         viewModel.getNavigationMapRoute().removeRoute();
                     }
                     editSearch.setVisibility(View.VISIBLE);
+                    viewModel.setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
                     mapView.getMapAsync(new OnMapReadyCallback() {
                         @Override
                         public void onMapReady(MapboxMap mapboxMap) {
@@ -169,7 +176,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                 @Override
                 public void onClick(View view) {
                     editSearch.setVisibility(View.GONE);
-                    placesBox.setVisibility(View.VISIBLE);
+                    routeBox.setVisibility(View.VISIBLE);
                     routeBtn.setVisibility(View.GONE);
                     editDestination.clearFocus();
                     editOrigin.clearFocus();
@@ -219,6 +226,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                     if(MotionEvent.ACTION_UP == event.getAction()){
                         String text = editOrigin.getText().toString().trim();
                         viewHolder.editSearchRoutes.setText(text);
+                        viewHolder.editSearchRoutes.setHint(R.string.search_origin);
                         viewHolder.editOrigin.setFocusable(false);
                         viewHolder.editSearchRoutes.requestFocus();
                         viewHolder.editSearchRoutes.setSelection(text.length());
@@ -237,6 +245,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                     if(MotionEvent.ACTION_UP == event.getAction()){
                         String text = editDestination.getText().toString().trim();
                         viewHolder.editSearchRoutes.setText(text);
+                        viewHolder.editSearchRoutes.setHint(R.string.search_destination);
                         viewHolder.editDestination.setFocusable(false);
                         viewHolder.editSearchRoutes.requestFocus();
                         viewHolder.editSearchRoutes.setSelection(text.length());
@@ -406,16 +415,18 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
 
     @Override
     public void onBackPressed() {
+        //The view for changing either the destination or origin is being displayed
         if (viewHolder.mapLayout.getVisibility() == View.GONE){
             this.viewHolder.routeSearchLayout.setVisibility(View.GONE);
             this.viewHolder.mapLayout.setVisibility(View.VISIBLE);
             this.viewHolder.editSearchRoutes.setText("");
         }
+        //The views for starting a route and for changing the route mode are being displayed.
         else if (viewHolder.editSearch.getVisibility() == View.GONE ||
                 viewHolder.routeBtn.getVisibility() == View.VISIBLE){
             this.viewHolder.editDestination.setText("");
             this.viewHolder.editOrigin.setText("");
-            this.viewHolder.placesBox.setVisibility(View.GONE);
+            this.viewHolder.routeBox.setVisibility(View.GONE);
             this.viewHolder.routeBtn.setVisibility(View.GONE);
             if (this.viewHolder.featureMarker != null){
                 this.viewHolder.mapboxMap.removeMarker(this.viewHolder.featureMarker);
@@ -427,6 +438,7 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
                 viewModel.getNavigationMapRoute().removeRoute();
             }
             this.viewHolder.editSearch.setVisibility(View.VISIBLE);
+            this.viewModel.setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
             this.viewHolder.mapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(MapboxMap mapboxMap) {
