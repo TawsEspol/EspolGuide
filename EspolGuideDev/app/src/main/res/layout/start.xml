@@ -10,10 +10,12 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_width="225dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="40dp"
         android:layout_marginBottom="40dp"
+        android:layout_marginLeft="5dp"
+        android:layout_gravity="center_horizontal"
         app:srcCompat="@drawable/logo" />
 
 
@@ -57,6 +59,13 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         />
+
+    <com.google.android.gms.common.SignInButton
+        style = "@style/googl_login_btn"
+        android:id="@+id/googlAuthbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
 
     <!-- Child linear layout with horizontal orientation -->
 
