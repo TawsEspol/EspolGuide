@@ -47,18 +47,18 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    compile 'org.osmdroid:osmdroid-android:5.6.5'
-    compile(name: 'osmbonuspack_6.4', ext: 'aar')
-    compile 'org.apache.commons:commons-lang3:3.3.2'
-    compile 'com.google.code.gson:gson:2.7'
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    compile 'com.loopj.android:android-async-http:1.4.9'
-    compile 'com.google.code.ksoap2-android:ksoap2-android:3.6.1'
+    implementation 'org.osmdroid:osmdroid-android:5.6.5'
+    implementation (name: 'osmbonuspack_6.4', ext: 'aar')
+    implementation 'org.apache.commons:commons-lang3:3.3.2'
+    implementation 'com.google.code.gson:gson:2.7'
+    implementation 'com.squareup.okhttp3:okhttp:3.4.1'
+    implementation 'com.loopj.android:android-async-http:1.4.9'
+    implementation 'com.google.code.ksoap2-android:ksoap2-android:3.6.1'
     implementation 'com.android.support:multidex:1.0.3'
 
     //HTTP requests dependencies
-    compile 'com.android.volley:volley:1.0.0'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'com.android.volley:volley:1.0.0'
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
 
 
     implementation ('com.mapbox.mapboxsdk:mapbox-android-sdk:6.1.2@aar') {
@@ -67,5 +67,7 @@ dependencies {
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.13.0'
 
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
+
+    implementation 'com.google.android.gms:play-services-auth:15.0.1'
 
 }
