@@ -3,6 +3,7 @@ package espol.edu.ec.espolguide.viewModels;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.view.View;
 import android.widget.EditText;
 
 import org.ksoap2.SoapEnvelope;
@@ -21,6 +22,10 @@ import espol.edu.ec.espolguide.utils.Constants;
 
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 /**
  * Created by fabricio on 19/05/18.
  */
@@ -32,6 +37,11 @@ public class LoginViewModel extends Observable {
     public static String AUTH_REQUEST_FAILED_HTTP = "auth_request_failed_http";
     public static String AUTH_WRONG_CREDENTIALS = "auth_wrong_credentials";
     public static String NAMESPACE = "http://tempuri.org/";
+    public static String GOOGL_AUTH_REQUEST_STARTED = "google_auth_request_started";
+    public static String GOOGL_AUTH_REQUEST_SUCCEED = "google_auth_request_succeed";
+    public static String GOOGL_AUTH_REQUEST_FAILED_CONNECTION = "google_auth_request_failed_connection";
+    public static String GOOGL_AUTH_REQUEST_FAILED_HTTP = "google_auth_request_failed_http";
+    public static String GOOGL_AUTH_WRONG_CREDENTIALS = "google_auth_wrong_credentials";
 
 
     private LoginActivity activity;
@@ -45,6 +55,18 @@ public class LoginViewModel extends Observable {
         notifyObservers(AUTH_REQUEST_STARTED);
         new Auth().execute(new AuthScreen(activity, activity.getViewHolder().username,
                 activity.getViewHolder().password));
+    }
+
+    public void google_auth(GoogleApiClient mGoogleSignInClient) {
+        setChanged();
+        notifyObservers(GOOGL_AUTH_REQUEST_STARTED);
+        signIn(mGoogleSignInClient);
+
+    }
+
+    private void signIn(GoogleApiClient mGoogleSignInClient) {
+        Intent signInIntent = com.google.android.gms.auth.api.Auth.GoogleSignInApi.getSignInIntent(mGoogleSignInClient);
+        activity.startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
     }
 
     private class AuthScreen {
