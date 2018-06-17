@@ -3,7 +3,6 @@ package espol.edu.ec.espolguide.viewModels;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.view.View;
 import android.widget.EditText;
 
 import org.ksoap2.SoapEnvelope;
@@ -20,11 +19,12 @@ import espol.edu.ec.espolguide.LoginActivity;
 import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.utils.Constants;
 
-import android.widget.Toast;
-
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.facebook.AccessToken;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 
 /**
  * Created by fabricio on 19/05/18.
@@ -40,8 +40,11 @@ public class LoginViewModel extends Observable {
     public static String GOOGL_AUTH_REQUEST_STARTED = "google_auth_request_started";
     public static String GOOGL_AUTH_REQUEST_SUCCEED = "google_auth_request_succeed";
     public static String GOOGL_AUTH_REQUEST_FAILED_CONNECTION = "google_auth_request_failed_connection";
+    // the following method willbe used for the backend server authentication
     public static String GOOGL_AUTH_REQUEST_FAILED_HTTP = "google_auth_request_failed_http";
     public static String GOOGL_AUTH_WRONG_CREDENTIALS = "google_auth_wrong_credentials";
+    public static String FB_AUTHENTICATION = "facebook_authentication";
+    public static String GOOGL_AUTHENTICATION = "google_authentication";
 
 
     private LoginActivity activity;
@@ -61,14 +64,75 @@ public class LoginViewModel extends Observable {
         setChanged();
         notifyObservers(GOOGL_AUTH_REQUEST_STARTED);
         signIn(mGoogleSignInClient);
-
     }
 
     private void signIn(GoogleApiClient mGoogleSignInClient) {
-        Intent signInIntent = com.google.android.gms.auth.api.Auth.GoogleSignInApi.getSignInIntent(mGoogleSignInClient);
-        activity.startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
+        if (!Constants.isNetworkAvailable(activity.getApplicationContext())) {
+            setChanged();
+            notifyObservers(GOOGL_AUTH_REQUEST_FAILED_CONNECTION);
+        }else{
+            Intent signInIntent = com.google.android.gms.auth.api.Auth.GoogleSignInApi.getSignInIntent(mGoogleSignInClient);
+            activity.startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
+        }
     }
 
+    public void handleFbSession(){
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+        if (isLoggedIn){
+            setChanged();
+            notifyObservers(FB_AUTHENTICATION);
+            Intent intent;
+            intent = new Intent(activity, MapActivity.class);
+            activity.startActivity(intent);
+            activity.finish();
+        }
+    }
+
+    public void handleSignInResult(GoogleSignInResult result) {
+        if (result.isSuccess()) {
+            setChanged();
+            notifyObservers(GOOGL_AUTH_REQUEST_SUCCEED);
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = result.getSignInAccount();
+            //con este account puedes manejar la data.
+            //System.out.println(acct.getEmail());
+            //System.out.println(acct.getIdToken());
+            updateUI();
+        } else {
+            setChanged();
+            notifyObservers(GOOGL_AUTH_WRONG_CREDENTIALS);
+            // Signed out, show unauthenticated UI.
+        }
+    }
+
+    private void updateUI() {
+        Intent intent;
+        intent = new Intent(activity, MapActivity.class);
+        activity.startActivity(intent);
+        activity.finish();
+    }
+    public void handleGoogleSession(GoogleApiClient mGoogleSignInClient) {
+        OptionalPendingResult<GoogleSignInResult> opr = com.google.android.gms.auth.api.Auth.GoogleSignInApi.silentSignIn(mGoogleSignInClient);
+        if (opr.isDone()) {
+            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+            // and the GoogleSignInResult will be available instantly.
+            setChanged();
+            notifyObservers(GOOGL_AUTHENTICATION);
+            GoogleSignInResult result = opr.get();
+            handleSignInResult(result);
+        } else {
+            // If the user has not previously signed in on this device or the sign-in has expired,
+            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
+            // single sign-on will occur in this branch.
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(GoogleSignInResult googleSignInResult) {
+                    handleSignInResult(googleSignInResult);
+                }
+            });
+        }
+    }
     private class AuthScreen {
         Context context;
         EditText usr;
