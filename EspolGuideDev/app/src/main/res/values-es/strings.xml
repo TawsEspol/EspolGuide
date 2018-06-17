@@ -16,11 +16,15 @@
     <string name="error_on_getting_location">Error obteniendo su ubicación...</string>
     <string name="error_on_calculating_route">Error calculando la ruta...</string>
 
+    <string name="google_wrong_credentials_msg">Credenciales Google incorrectas...</string>
+    <string name="google_auth">Authenticado con Google</string>
+
     <string name="your_location">Tu ubicación</string>
     <string name="search_origin">Buscar origen</string>
     <string name="search_destination">Buscar destino</string>
 
     <string name="facebook_app_id"></string>
     <string name="fb_login_protocol_scheme"></string>
+    <string name="fb_auth">Autenticado con Facebook</string>
 
 </resources>
