@@ -361,4 +361,13 @@
                 />
         </LinearLayout>
     </FrameLayout>
+    <ImageButton
+        android:id="@+id/drawerBtn"
+        android:layout_width="25dp"
+        android:layout_height="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/ic_drawer"
+        android:backgroundTint="@android:color/transparent"
+        android:tint="@color/first" />
 </FrameLayout>

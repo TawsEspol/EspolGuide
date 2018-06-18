@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/functions_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/map_op"
+            android:title="Mostrar mapa" />
+        <item
+            android:id="@+id/events_op"
+            android:title="Eventos" />
+
+        <item
+            android:id="@+id/courses_op"
+            android:title="Mis materias" />
+
+        <item
+            android:id="@+id/favorites_op"
+            android:title="Sitios favoritos" />
+    </group>
+
+    <group android:id="@+id/others_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/link_op"
+            android:title="Vincular cuenta ESPOL" />
+        <item
+            android:id="@+id/logout_op"
+            android:title="Logout" />
+    </group>
+</menu>

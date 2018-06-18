@@ -7,15 +7,20 @@ import java.util.Observer;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -42,7 +47,7 @@ import com.mapbox.android.core.permissions.PermissionsListener;
 * Created by galo on 29/12/17.
 */
 
-public class MapActivity extends AppCompatActivity implements Observer, LocationEngineListener, PermissionsListener{
+public class MapActivity extends BaseActivity implements Observer, LocationEngineListener, PermissionsListener{
         ViewHolder viewHolder;
         MapViewModel viewModel;
 
@@ -59,7 +64,12 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, getString(R.string.access_token));
-        setContentView(R.layout.activity_map);
+
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
+        getLayoutInflater().inflate(R.layout.activity_map, contentFrameLayout);
+
+//        setContentView(R.layout.activity_map);
+
         this.viewHolder = new ViewHolder();
         this.viewModel = new MapViewModel(this);
         this.viewModel.setMapOnClickListener();
@@ -94,12 +104,15 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
         public ImageButton walkBtn;
         public ImageButton carBtn;
 
+        public ImageView drawerBtn;
+
         public ViewHolder(){
             findViews();
             setBackButtonListener();
             setClosePoiButtonListener();
             setDrawRouteButtonListener();
             setEditTextListeners();
+            setDrawerBtnListener();
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
@@ -122,6 +135,20 @@ public class MapActivity extends AppCompatActivity implements Observer, Location
             backBtn = (ImageButton) findViewById(R.id.back_button);
             walkBtn = (ImageButton) findViewById(R.id.walk_button);
             carBtn = (ImageButton) findViewById(R.id.car_button);
+
+            drawerBtn = (ImageView) findViewById(R.id.drawerBtn);
+        }
+
+        private void setDrawerBtnListener(){
+            drawerBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ViewGroup viewGroup = (ViewGroup) ((ViewGroup) MapActivity.this
+                            .findViewById(android.R.id.content)).getChildAt(0);
+                    DrawerLayout drawerLayout = (DrawerLayout) viewGroup;
+                    drawerLayout.openDrawer(Gravity.LEFT);
+                }
+            });
         }
 
         public void setMapboxMap(MapboxMap mapboxMap){
