@@ -177,6 +177,10 @@
         <item name="android:gravity">right</item>
     </style>
 
+    <style name="navigationView" >
+        <item name="android:listDivider">@color/fourth</item>
+        <item name="android:textColorSecondary">@color/fourth</item>
+    </style>
 
 </resources>
 

@@ -22,6 +22,7 @@
         app:menu="@menu/drawer_menu"
         app:headerLayout="@layout/navigation_drawer_header"
         android:background="@color/white"
+        android:theme="@style/navigationView"
         app:itemTextColor="@color/first">
     </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>

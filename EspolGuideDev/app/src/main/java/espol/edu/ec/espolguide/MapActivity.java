@@ -160,6 +160,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
                     editSearch.setText("");
                     routeBox.setVisibility(View.GONE);
                     routeBtn.setVisibility(View.GONE);
+                    drawerBtn.setVisibility(View.VISIBLE);
                     if (featureMarker != null){
                         mapboxMap.removeMarker(featureMarker);
                     }
@@ -200,6 +201,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
                 public void onClick(View view) {
                     editSearch.setVisibility(View.GONE);
                     routeBox.setVisibility(View.VISIBLE);
+                    drawerBtn.setVisibility(View.GONE);
                     routeBtn.setVisibility(View.GONE);
                     editDestination.clearFocus();
                     editOrigin.clearFocus();
@@ -443,10 +445,12 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             this.viewHolder.routeSearchLayout.setVisibility(View.GONE);
             this.viewHolder.mapLayout.setVisibility(View.VISIBLE);
             this.viewHolder.editSearchRoutes.setText("");
+            this.viewHolder.drawerBtn.setVisibility(View.VISIBLE);
         }
         //The views for starting a route and for changing the route mode are being displayed.
         else if (viewHolder.editSearch.getVisibility() == View.GONE ||
                 viewHolder.routeBtn.getVisibility() == View.VISIBLE){
+            this.viewHolder.drawerBtn.setVisibility(View.VISIBLE);
             this.viewHolder.editDestination.setText("");
             this.viewHolder.editOrigin.setText("");
             this.viewHolder.routeBox.setVisibility(View.GONE);
