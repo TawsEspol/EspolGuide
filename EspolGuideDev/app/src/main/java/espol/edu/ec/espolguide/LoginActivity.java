@@ -28,6 +28,7 @@ import com.mapbox.mapboxsdk.Mapbox;
 import java.util.Observable;
 import java.util.Observer;
 
+import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SessionHelper;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.viewModels.LoginViewModel;
@@ -36,11 +37,11 @@ import espol.edu.ec.espolguide.viewModels.LoginViewModel;
  * Created by fabricio on 19/05/18.
  */
 
-public class LoginActivity extends AppCompatActivity implements Observer {
+public class LoginActivity extends BaseActivity implements Observer {
     ViewHolder viewHolder;
     LoginViewModel viewModel;
     private CallbackManager callbackManager;
-    GoogleApiClient mGoogleSignInClient;
+    private GoogleApiClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -57,7 +58,8 @@ public class LoginActivity extends AppCompatActivity implements Observer {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        setContentView(R.layout.start);
+        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
+        getLayoutInflater().inflate(R.layout.start, contentFrameLayout);
 
         this.viewHolder = new ViewHolder(this);
         this.viewModel = new LoginViewModel(this);
@@ -79,6 +81,14 @@ public class LoginActivity extends AppCompatActivity implements Observer {
             setAuthButtonListener();
             setFbLogin();
             setGoogleAuthButtonListener();
+            checkToLinkStatus();
+        }
+
+        public void checkToLinkStatus(){
+            Bundle bundle = getIntent().getExtras();
+            if(bundle.containsKey(Constants.TO_LINK_ACCOUNT)){
+                this.fbAuthBtn.setVisibility(View.INVISIBLE);
+            }
         }
 
         private void setFbLogin() {
@@ -127,17 +137,10 @@ public class LoginActivity extends AppCompatActivity implements Observer {
             this.googlAuthBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    viewModel.google_auth(mGoogleSignInClient);
+                    viewModel.googleAuth(mGoogleSignInClient);
                 }
             });
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        viewModel.handleFbSession();
-        viewModel.handleGoogleSession(mGoogleSignInClient);
     }
 
     @Override
@@ -157,6 +160,10 @@ public class LoginActivity extends AppCompatActivity implements Observer {
         return this.viewHolder;
     }
 
+    public GoogleApiClient getGoogleApiClient(){
+        return this.mGoogleSignInClient;
+    }
+
     @Override
     public void update(Observable observable, Object arg) {
         String message = (String)arg;
@@ -169,7 +176,7 @@ public class LoginActivity extends AppCompatActivity implements Observer {
             this.viewHolder.username.setText("");
             this.viewHolder.password.setText("");
             String espolUsername = this.getViewHolder().username.getText().toString().trim();
-            SessionHelper.saveEspolSession(this, espolUsername);
+            SessionHelper.saveEspolSession(getApplicationContext(), espolUsername);
             this.finish();
         }
 
@@ -223,7 +230,7 @@ public class LoginActivity extends AppCompatActivity implements Observer {
                 }
             });
         }
-        else if (message == viewModel.GOOGL_AUTHENTICATION) {
+        else if (message == viewModel.GOOGLE_AUTHENTICATION) {
             LoginActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     Toast.makeText(LoginActivity.this, getResources().getString(R.string.google_auth),
@@ -232,9 +239,12 @@ public class LoginActivity extends AppCompatActivity implements Observer {
             });
         }
         else if (message == viewModel.IS_ESPOL_LOGGED_IN) {
-            Intent intent = new Intent(this, MapActivity.class);
-            this.startActivity(intent);
-            this.finish();
+            Bundle bundle = getIntent().getExtras();
+            if(!bundle.containsKey(Constants.TO_LINK_ACCOUNT)){
+                Intent intent = new Intent(this, MapActivity.class);
+                this.startActivity(intent);
+                this.finish();
+            }
         }
         else if (message == viewModel.IS_NOT_LOGGED_IN) {
 

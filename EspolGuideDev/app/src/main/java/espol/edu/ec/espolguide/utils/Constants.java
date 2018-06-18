@@ -31,6 +31,9 @@ public class Constants {
 
     public static final Integer RC_SIGN_IN = 1;
 
+    public final static String TO_LINK_ACCOUNT = "to_link_account";
+    public final static String SELECTED_OPTION = "selected_option";
+
     public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();

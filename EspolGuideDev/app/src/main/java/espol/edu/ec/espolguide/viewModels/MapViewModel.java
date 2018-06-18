@@ -57,7 +57,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Observable;
 
-
 public class MapViewModel extends Observable{
     public static String NAMES_REQUEST_STARTED = "names_request_started";
     public static String NAMES_REQUEST_SUCCEEDED = "names_request_succeeded";

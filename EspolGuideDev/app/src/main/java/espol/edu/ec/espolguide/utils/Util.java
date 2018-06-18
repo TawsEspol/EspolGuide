@@ -3,8 +3,11 @@ package espol.edu.ec.espolguide.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
@@ -22,5 +25,15 @@ public class Util {
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
+    public static void openDrawer(Activity activity){
+        ViewGroup viewGroup = (ViewGroup) ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
+        DrawerLayout drawerLayout = (DrawerLayout) viewGroup;
+        drawerLayout.openDrawer(Gravity.LEFT);
+    }
 
+    public static void closeDrawer(Activity activity){
+        ViewGroup viewGroup = (ViewGroup) ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
+        DrawerLayout drawerLayout = (DrawerLayout) viewGroup;
+        drawerLayout.closeDrawer(Gravity.LEFT);
+    }
 }

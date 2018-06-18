@@ -45,7 +45,7 @@ public class LoginViewModel extends Observable {
     public static String GOOGL_AUTH_REQUEST_FAILED_HTTP = "google_auth_request_failed_http";
     public static String GOOGL_AUTH_WRONG_CREDENTIALS = "google_auth_wrong_credentials";
     public static String FB_AUTHENTICATION = "facebook_authentication";
-    public static String GOOGL_AUTHENTICATION = "google_authentication";
+    public static String GOOGLE_AUTHENTICATION = "google_authentication";
     public static String IS_ESPOL_LOGGED_IN = "is_espol_logged_in";
     public static String IS_NOT_LOGGED_IN = "is_not_logged_in";
 
@@ -62,13 +62,13 @@ public class LoginViewModel extends Observable {
                 activity.getViewHolder().password));
     }
 
-    public void google_auth(GoogleApiClient mGoogleSignInClient) {
+    public void googleAuth(GoogleApiClient mGoogleSignInClient) {
         setChanged();
         notifyObservers(GOOGL_AUTH_REQUEST_STARTED);
-        signIn(mGoogleSignInClient);
+        googleSignIn(mGoogleSignInClient);
     }
 
-    private void signIn(GoogleApiClient mGoogleSignInClient) {
+    private void googleSignIn(GoogleApiClient mGoogleSignInClient) {
         if (!Constants.isNetworkAvailable(activity.getApplicationContext())) {
             setChanged();
             notifyObservers(GOOGL_AUTH_REQUEST_FAILED_CONNECTION);
@@ -120,7 +120,7 @@ public class LoginViewModel extends Observable {
             // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
             // and the GoogleSignInResult will be available instantly.
             setChanged();
-            notifyObservers(GOOGL_AUTHENTICATION);
+            notifyObservers(GOOGLE_AUTHENTICATION);
             GoogleSignInResult result = opr.get();
             handleSignInResult(result);
         } else {
@@ -205,13 +205,13 @@ public class LoginViewModel extends Observable {
     }
 
     public void checkSessions(){
-        if(SessionHelper.isEspolLoggedIn(activity)){
+        if(SessionHelper.isEspolLoggedIn(activity.getApplicationContext())){
             setChanged();
             notifyObservers(IS_ESPOL_LOGGED_IN);
         }
         else{
-            setChanged();
-            notifyObservers(IS_NOT_LOGGED_IN);
+            handleFbSession();
+            handleGoogleSession(activity.getGoogleApiClient());
         }
     }
 }

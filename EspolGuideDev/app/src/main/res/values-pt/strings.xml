@@ -23,6 +23,8 @@
     <string name="search_origin">Procurar uma origem</string>
     <string name="search_destination">Procurar um destino</string>
 
+    <string name="greeting">Ola</string>
+
     <string name="facebook_app_id"></string>
     <string name="fb_login_protocol_scheme"></string>
     <string name="fb_auth">Autenticado com Facebook</string>

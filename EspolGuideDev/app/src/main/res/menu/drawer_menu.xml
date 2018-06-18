@@ -4,27 +4,31 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/map_op"
-            android:title="Mostrar mapa" />
+            android:title="@string/map_menu_op" />
+
         <item
             android:id="@+id/events_op"
-            android:title="Eventos" />
+            android:title="@string/events_menu_op" />
 
         <item
             android:id="@+id/courses_op"
-            android:title="Mis materias" />
+            android:title="@string/courses_menu_op" />
 
         <item
             android:id="@+id/favorites_op"
-            android:title="Sitios favoritos" />
+            android:title="@string/favorites_menu_op" />
+
     </group>
 
     <group android:id="@+id/others_group"
         android:checkableBehavior="single">
         <item
             android:id="@+id/link_op"
-            android:title="Vincular cuenta ESPOL" />
+            android:title="@string/link_menu_op" />
+
         <item
             android:id="@+id/logout_op"
-            android:title="Logout" />
+            android:title="@string/logout_menu_op" />
+
     </group>
 </menu>

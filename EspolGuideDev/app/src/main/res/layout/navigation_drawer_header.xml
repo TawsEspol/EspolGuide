@@ -21,9 +21,10 @@
                 app:civ_border_width="2dp"
                 app:civ_border_color="@color/first"/>
             <TextView
+                android:id="@+id/greeting_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="¡Hola, gadacast!"
+                android:text="@string/greeting"
                 android:layout_marginTop="20dp"
                 android:textColor="@color/first"/>
         </LinearLayout>

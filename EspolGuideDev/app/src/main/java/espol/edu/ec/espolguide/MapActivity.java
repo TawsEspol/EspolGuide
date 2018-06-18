@@ -68,8 +68,6 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
         getLayoutInflater().inflate(R.layout.activity_map, contentFrameLayout);
 
-//        setContentView(R.layout.activity_map);
-
         this.viewHolder = new ViewHolder();
         this.viewModel = new MapViewModel(this);
         this.viewModel.setMapOnClickListener();
@@ -77,6 +75,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         this.viewModel.makeNamesRequest();
         this.viewModel.setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
         this.viewModel.setRouteModeButtonsListeners();
+        this.disableMenuOption();
     }
 
     public class ViewHolder{
@@ -143,10 +142,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             drawerBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ViewGroup viewGroup = (ViewGroup) ((ViewGroup) MapActivity.this
-                            .findViewById(android.R.id.content)).getChildAt(0);
-                    DrawerLayout drawerLayout = (DrawerLayout) viewGroup;
-                    drawerLayout.openDrawer(Gravity.LEFT);
+                    Util.openDrawer(MapActivity.this);
                 }
             });
         }
@@ -535,5 +531,15 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
     public ViewHolder getViewHolder(){
         return this.viewHolder;
+    }
+
+    public void disableMenuOption(){
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        try{
+            navigationView.getMenu().findItem(R.id.map_op).setEnabled(false);
+            navigationView.getMenu().findItem(R.id.map_op).setChecked(true);
+        }catch (Exception e){
+            e.getStackTrace();
+        }
     }
 }
