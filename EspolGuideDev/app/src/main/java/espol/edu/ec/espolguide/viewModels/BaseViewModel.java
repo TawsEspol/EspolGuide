@@ -28,6 +28,7 @@ public class BaseViewModel extends Observable{
         else{
             setChanged();
             notifyObservers(ESPOL_USER_AUTHENTICATED);
+            activity.hideExternalUsersMenu();
         }
     }
 }

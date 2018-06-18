@@ -29,7 +29,7 @@
     <string name="events_menu_op">Eventos</string>
     <string name="courses_menu_op">Mis Materias</string>
     <string name="favorites_menu_op">Mis Lugares Favoritos</string>
-    <string name="link_menu_op">Vicular Cuenta ESPOL</string>
+    <string name="link_menu_op">Vincular Cuenta ESPOL</string>
     <string name="logout_menu_op">Desconectarse</string>
 
     <string name="facebook_app_id"></string>

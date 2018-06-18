@@ -151,6 +151,11 @@ public class BaseActivity extends AppCompatActivity implements Observer {
         navMenu.findItem(R.id.favorites_op).setVisible(false);
     }
 
+    public void hideExternalUsersMenu() {
+        Menu navMenu = this.getBaseViewHolder().navigationView.getMenu();
+        navMenu.findItem(R.id.link_op).setVisible(false);
+    }
+
     public void handleSelectedOptionUI(){
         Bundle bundle = getIntent().getExtras();
         if(bundle.containsKey(Constants.SELECTED_OPTION)){
