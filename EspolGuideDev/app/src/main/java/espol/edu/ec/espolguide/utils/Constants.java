@@ -34,6 +34,11 @@ public class Constants {
     public final static String TO_LINK_ACCOUNT = "to_link_account";
     public final static String SELECTED_OPTION = "selected_option";
 
+    public final static String CODE_GTSI_FIELD = "code_gtsi";
+    public final static String BLOCKNAME_FIELD = "name";
+    public final static String ACADEMIC_UNIT_FIELD = "unity";
+    public final static String DESCRIPTION_FIELD = "descriptio";
+
     public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();

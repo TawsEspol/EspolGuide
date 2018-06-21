@@ -359,10 +359,16 @@ public class MapViewModel extends Observable{
                                 String blockName = "";
                                 String academicUnit = "";
                                 String description = "";
-                                if (feature.properties() != null && feature.properties().has("code_gtsi")) {
-                                    blockName = feature.getStringProperty("name").toString();
-                                    academicUnit = feature.getStringProperty("unity").toString();
-                                    description = feature.getStringProperty("descriptio").toString();
+                                if (feature.properties() != null && hasEspolAttributes(feature)) {
+                                    if(feature.properties().has(Constants.BLOCKNAME_FIELD)){
+                                        blockName = feature.getStringProperty(Constants.BLOCKNAME_FIELD).toString();
+                                    }
+                                    if(feature.properties().has(Constants.ACADEMIC_UNIT_FIELD)){
+                                        academicUnit = feature.getStringProperty(Constants.ACADEMIC_UNIT_FIELD).toString();
+                                    }
+                                    if(feature.properties().has(Constants.DESCRIPTION_FIELD)){
+                                        description = feature.getStringProperty(Constants.DESCRIPTION_FIELD).toString();
+                                    }
                                     new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description, activity,
                                             activity.getViewHolder().info)).show();
                                     setChanged();
@@ -379,6 +385,13 @@ public class MapViewModel extends Observable{
                 });
             }
         });
+    }
+
+    public boolean hasEspolAttributes(Feature feature){
+        return (feature.properties().has(Constants.CODE_GTSI_FIELD) ||
+                feature.properties().has(Constants.BLOCKNAME_FIELD) ||
+                feature.properties().has(Constants.ACADEMIC_UNIT_FIELD) ||
+                feature.properties().has(Constants.DESCRIPTION_FIELD));
     }
 
     @SuppressWarnings( {"MissingPermission"})

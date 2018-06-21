@@ -74,8 +74,10 @@ public class BaseActivity extends AppCompatActivity implements Observer {
         viewHolder.navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                Menu navMenu = getBaseViewHolder().navigationView.getMenu();
-                Util.closeDrawer(BaseActivity.this);
+                if(item.isChecked()){
+                    Util.closeDrawer(BaseActivity.this);
+                    return true;
+                }
                 switch (item.getItemId()) {
                     case R.id.map_op:
                         Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
@@ -110,7 +112,6 @@ public class BaseActivity extends AppCompatActivity implements Observer {
                 return false;
             }
         });
-
     }
 
     @Override
@@ -159,12 +160,11 @@ public class BaseActivity extends AppCompatActivity implements Observer {
     public void handleSelectedOptionUI(){
         Bundle bundle = getIntent().getExtras();
         if(bundle.containsKey(Constants.SELECTED_OPTION)){
-            restartAllItems(viewHolder.navigationView.getMenu());
+            unCheckAllItems(viewHolder.navigationView.getMenu());
             int id = -1;
             try{
                 id = bundle.getInt(Constants.SELECTED_OPTION);
                 viewHolder.navigationView.getMenu().findItem(id).setChecked(true);
-                viewHolder.navigationView.getMenu().findItem(id).setEnabled(false);
             }catch (Exception e){
                 e.getStackTrace();
             }
@@ -174,20 +174,9 @@ public class BaseActivity extends AppCompatActivity implements Observer {
         }
     }
 
-    public void restartAllItems(Menu navMenu){
-        unCheckAllItems(navMenu);
-        enableAllItems(navMenu);
-    }
-
     public void unCheckAllItems(Menu navMenu){
         for(int i = 0; i<navMenu.size(); i++){
             navMenu.getItem(i).setChecked(false);
-        }
-    }
-
-    public void enableAllItems(Menu navMenu){
-        for(int i = 0; i<navMenu.size(); i++){
-            navMenu.getItem(i).setEnabled(true);
         }
     }
 }

@@ -3,7 +3,7 @@ package espol.edu.ec.espolguide;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.NavigationView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,7 +30,7 @@ import java.util.Observer;
 
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SessionHelper;
-import espol.edu.ec.espolguide.utils.Constants;
+import espol.edu.ec.espolguide.utils.Util;
 import espol.edu.ec.espolguide.viewModels.LoginViewModel;
 
 /**
@@ -74,6 +74,8 @@ public class LoginActivity extends BaseActivity implements Observer {
         public LoginButton fbAuthBtn;
         public SignInButton googlAuthBtn;
         public Activity activity;
+        private Activity ctx;
+        NavigationView navigationView;
 
         public ViewHolder(Activity activity) {
             this.activity = activity;
@@ -87,12 +89,15 @@ public class LoginActivity extends BaseActivity implements Observer {
         public void checkToLinkStatus(){
             Bundle bundle = getIntent().getExtras();
             if(bundle.containsKey(Constants.TO_LINK_ACCOUNT)){
+                Util.allowSwipeGesture(LoginActivity.this);
                 this.fbAuthBtn.setVisibility(View.INVISIBLE);
+            }
+            else{
+                Util.lockSwipeGesture(LoginActivity.this);
             }
         }
 
         private void setFbLogin() {
-
             callbackManager = CallbackManager.Factory.create();
 
             fbAuthBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -122,6 +127,7 @@ public class LoginActivity extends BaseActivity implements Observer {
             authBtn = (Button) findViewById(R.id.buttonAuth);
             fbAuthBtn = (LoginButton) findViewById(R.id.fbAuthBtn);
             googlAuthBtn = (SignInButton) findViewById(R.id.googlAuthbutton);
+            navigationView = (NavigationView) findViewById(R.id.navigation_view);
         }
 
         private void setAuthButtonListener() {
@@ -173,10 +179,10 @@ public class LoginActivity extends BaseActivity implements Observer {
         else if (message == viewModel.AUTH_REQUEST_SUCCEED) {
             Intent intent = new Intent(this, MapActivity.class);
             this.startActivity(intent);
-            this.viewHolder.username.setText("");
-            this.viewHolder.password.setText("");
             String espolUsername = this.getViewHolder().username.getText().toString().trim();
             SessionHelper.saveEspolSession(getApplicationContext(), espolUsername);
+            this.viewHolder.username.setText("");
+            this.viewHolder.password.setText("");
             this.finish();
         }
 
@@ -206,7 +212,6 @@ public class LoginActivity extends BaseActivity implements Observer {
         }
         else if (message == viewModel.AUTH_WRONG_CREDENTIALS) {
             this.viewHolder.username.setText("");
-            this.viewHolder.password.setText("");
             LoginActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     Toast.makeText(LoginActivity.this, getResources().getString(R.string.wrong_credentials_msg),

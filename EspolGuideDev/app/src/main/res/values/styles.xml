@@ -8,7 +8,6 @@
         <item name="colorAccent">@color/third</item>
     </style>
 
-
     <style name="barra_busqueda_pois" parent="AppTheme" >
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -18,7 +17,6 @@
         <item name="android:layout_marginRight">25dip</item>
         <item name="android:layout_marginLeft">25dip</item>
         <item name="android:layout_gravity">left|top</item>
-
         <item name="android:background">@drawable/shape_searchview_poi</item>
     </style>
 
@@ -54,11 +52,9 @@
         <item name="android:paddingRight">20dp</item>
         <item name="android:paddingTop">5dp</item>
         <item name="android:paddingBottom">5dp</item>
-        <item name="android:layout_marginTop">45dp</item>
-        <item name="android:layout_marginRight">120dp</item>
-        <item name="android:layout_marginLeft">120dp</item>
+        <item name="android:layout_marginTop">35dp</item>
         <item name="android:layout_marginBottom">10dp</item>
-        <item name="android:layout_gravity">left|top</item>
+        <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:background">@drawable/login_button</item>
     </style>
 
@@ -69,11 +65,11 @@
         <item name="android:paddingRight">20dp</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
-        <item name="android:layout_marginTop">10dp</item>
-        <item name="android:layout_marginRight">120dp</item>
         <item name="android:layout_marginLeft">120dp</item>
+        <item name="android:layout_marginRight">120dp</item>
+        <item name="android:layout_marginTop">10dp</item>
         <item name="android:layout_marginBottom">10dp</item>
-        <item name="android:layout_gravity">left|top</item>
+        <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:background">@drawable/login_button</item>
     </style>
 
@@ -84,8 +80,6 @@
         <item name="android:paddingRight">20dp</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
-        <item name="android:layout_marginRight">80dp</item>
-        <item name="android:layout_marginLeft">80dp</item>
         <item name="android:layout_marginBottom">10dp</item>
         <item name="android:layout_gravity">center_horizontal</item>
     </style>

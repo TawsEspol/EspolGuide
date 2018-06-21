@@ -36,4 +36,16 @@ public class Util {
         DrawerLayout drawerLayout = (DrawerLayout) viewGroup;
         drawerLayout.closeDrawer(Gravity.LEFT);
     }
+
+    public static void lockSwipeGesture(Activity activity){
+        ViewGroup viewGroup = (ViewGroup) ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
+        DrawerLayout drawerLayout = (DrawerLayout) viewGroup;
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
+    public static void allowSwipeGesture(Activity activity){
+        ViewGroup viewGroup = (ViewGroup) ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
+        DrawerLayout drawerLayout = (DrawerLayout) viewGroup;
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+    }
 }

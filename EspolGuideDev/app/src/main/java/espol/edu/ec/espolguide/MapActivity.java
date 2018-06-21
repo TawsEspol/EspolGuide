@@ -540,7 +540,6 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
     public void disableMenuOption(){
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         try{
-            navigationView.getMenu().findItem(R.id.map_op).setEnabled(false);
             navigationView.getMenu().findItem(R.id.map_op).setChecked(true);
         }catch (Exception e){
             e.getStackTrace();
