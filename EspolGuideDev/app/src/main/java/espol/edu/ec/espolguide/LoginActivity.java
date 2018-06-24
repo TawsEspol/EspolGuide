@@ -211,7 +211,7 @@ public class LoginActivity extends BaseActivity implements Observer {
             });
         }
         else if (message == viewModel.AUTH_WRONG_CREDENTIALS) {
-            this.viewHolder.username.setText("");
+            this.viewHolder.password.setText("");
             LoginActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     Toast.makeText(LoginActivity.this, getResources().getString(R.string.wrong_credentials_msg),
