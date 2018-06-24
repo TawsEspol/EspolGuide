@@ -28,19 +28,21 @@ public class PoiInfo extends AppCompatActivity implements Observer {
     private String academicUnit;
     private int favoritesCount;
     private String description;
+    private String codeInfrastructure;
     private ArrayList<String> alternativeNames = new ArrayList<String>();
     private PoiInfoViewModel viewModel;
 
-    public PoiInfo(String blockName, String academicUnit, String description, Context ctx, View view){
+    public PoiInfo(String blockName, String academicUnit, String description, String codeInfrastructure,
+                   Context ctx, View view){
         this.ctx = ctx;
         this.view = view;
         viewModel = new PoiInfoViewModel(this);
         viewModel.addObserver(this);
-        setName(blockName);
-        setAcademicUnit(academicUnit);
-        setDescription(description);
+        this.name = blockName;
+        this.academicUnit = academicUnit;
+        this.description = description;
+        this.codeInfrastructure = codeInfrastructure;
     }
-
 
     @Override
     public void update(Observable o, Object arg) {
@@ -142,5 +144,13 @@ public class PoiInfo extends AppCompatActivity implements Observer {
 
     public void setAlternativeNames(ArrayList<String> alternativeNames) {
         this.alternativeNames = alternativeNames;
+    }
+
+    public String getCodeInfrastructure(){
+        return this.codeInfrastructure;
+    }
+
+    public void setCodeInfrastructure(String codeInfrastructure){
+        this.codeInfrastructure = codeInfrastructure;
     }
 }

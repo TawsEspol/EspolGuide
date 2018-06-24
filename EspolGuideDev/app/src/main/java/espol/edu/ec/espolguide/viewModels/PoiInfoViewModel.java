@@ -59,16 +59,8 @@ public class PoiInfoViewModel extends Observable {
             Drawable d = Drawable.createFromStream(is, "photoBlock");
             return d;
         } catch (Exception e) {
-
             setChanged();
             notifyObservers(POI_PHOTO_REQUEST_FAILED_HTTP);
-            /*try {
-                return Drawable.createFromStream((InputStream) new URL(Constants.getBlockPhoto()+"63").getContent(), "photoBlock");
-            } catch (IOException e1) {
-                setChanged();
-                notifyObservers(POI_PHOTO_REQUEST_FAILED_CONNECTION);
-                return null;
-            }*/
             return null;
         }
     }
@@ -83,19 +75,19 @@ public class PoiInfoViewModel extends Observable {
         academicUnit.setText(activity.getacAdemicUnit());
         TextView description = (TextView) ((ViewGroup)linear.getChildAt(2)).getChildAt(0);
         description.setText(activity.getDescription());
-        new Counter().execute(new PhotoData(activity.getCtx(),imageView,activity.getName()));
+        new Counter().execute(new PhotoData(activity.getCtx(),imageView, activity.getCodeInfrastructure()));
         activity.getView().setVisibility(View.VISIBLE);
     }
 
     private class PhotoData{
         Context context;
         ImageView imgvw;
-        String id_;
+        String id;
 
-        public PhotoData(Context ctx, ImageView imgvw, String id_) {
+        public PhotoData(Context ctx, ImageView imgvw, String id) {
             this.context = ctx;
             this.imgvw = imgvw;
-            this.id_ = id_;
+            this.id = id;
         }
     }
 
@@ -107,7 +99,7 @@ public class PoiInfoViewModel extends Observable {
         @Override
         protected Drawable doInBackground(PhotoData... datas) {
             context = datas[0].context;
-            identifier = datas[0].id_;
+            identifier = datas[0].id;
             iv = datas[0].imgvw;
             Drawable d;
             if (!Constants.isNetworkAvailable(context)) {
@@ -124,21 +116,7 @@ public class PoiInfoViewModel extends Observable {
         @Override
         protected void onPostExecute(Drawable d) {
             super.onPostExecute(d);
-            /*
-            Bitmap myBitmap = ((BitmapDrawable) d).getBitmap();
-
-            // Llama al método encargado de cortar en forma cuadrada a la imagen.
-            Bitmap croppedImage = ImageHelper.cropBitmapToSquare(myBitmap);
-
-            // Llama al método encargado de redondear las esquinas de la imagen
-            // previamente cortada. Recibe como parámetros el mapa de bits y el tamaño // de sus lados en pixeles.
-            Bitmap roundedCornersImage = ImageHelper.getRoundedCornerBitmap(
-                    croppedImage, 140);
-
-            // Asigna el mapa de bits resultante a la vista ImageView que lo mostrará.
-            iv.setImageBitmap(roundedCornersImage);*/
             iv.setImageDrawable(d);
-
         }
     }
 

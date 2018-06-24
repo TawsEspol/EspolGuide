@@ -191,6 +191,8 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
                 public void onClick(View view) {
                     final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
                     info.setVisibility(View.GONE);
+                    ImageView photo = (ImageView) findViewById(R.id.flag);
+                    photo.setImageResource(android.R.color.transparent);
                 }
             });
         }

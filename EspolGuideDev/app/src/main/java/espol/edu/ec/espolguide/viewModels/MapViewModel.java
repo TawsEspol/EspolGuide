@@ -359,6 +359,7 @@ public class MapViewModel extends Observable{
                                 String blockName = "";
                                 String academicUnit = "";
                                 String description = "";
+                                String codeInfrastructure = "";
                                 if (feature.properties() != null && hasEspolAttributes(feature)) {
                                     if(feature.properties().has(Constants.BLOCKNAME_FIELD)){
                                         blockName = feature.getStringProperty(Constants.BLOCKNAME_FIELD).toString();
@@ -366,11 +367,14 @@ public class MapViewModel extends Observable{
                                     if(feature.properties().has(Constants.ACADEMIC_UNIT_FIELD)){
                                         academicUnit = feature.getStringProperty(Constants.ACADEMIC_UNIT_FIELD).toString();
                                     }
+                                    if(feature.properties().has(Constants.CODE_INFRASTRUCTURE)){
+                                        codeInfrastructure = feature.getStringProperty(Constants.CODE_INFRASTRUCTURE).toString();
+                                    }
                                     if(feature.properties().has(Constants.DESCRIPTION_FIELD)){
                                         description = feature.getStringProperty(Constants.DESCRIPTION_FIELD).toString();
                                     }
-                                    new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description, activity,
-                                            activity.getViewHolder().info)).show();
+                                    new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description,
+                                            codeInfrastructure, activity, activity.getViewHolder().info)).show();
                                     setChanged();
                                     notifyObservers(POI_INFO_REQUEST_SUCCEEDED);
                                 }
@@ -391,6 +395,7 @@ public class MapViewModel extends Observable{
         return (feature.properties().has(Constants.CODE_GTSI_FIELD) ||
                 feature.properties().has(Constants.BLOCKNAME_FIELD) ||
                 feature.properties().has(Constants.ACADEMIC_UNIT_FIELD) ||
+                feature.properties().has(Constants.CODE_INFRASTRUCTURE) ||
                 feature.properties().has(Constants.DESCRIPTION_FIELD));
     }
 
