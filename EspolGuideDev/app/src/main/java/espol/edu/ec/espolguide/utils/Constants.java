@@ -40,6 +40,11 @@ public class Constants {
     public final static String DESCRIPTION_FIELD = "descriptio";
     public final static String CODE_INFRASTRUCTURE = "code_infra";
 
+    public final static int ROUTE_ZOOM_PADDING_LEFT = 80;
+    public final static int ROUTE_ZOOM_PADDING_TOP = 350;
+    public final static int ROUTE_ZOOM_PADDING_RIGHT = 80;
+    public final static int ROUTE_ZOOM_PADDING_BOTTOM = 0;
+
     public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();

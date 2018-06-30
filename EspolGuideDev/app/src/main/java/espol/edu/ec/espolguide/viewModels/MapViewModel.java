@@ -25,11 +25,13 @@ import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
@@ -53,6 +55,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Observable;
@@ -305,7 +308,6 @@ public class MapViewModel extends Observable{
                                 Log.e(getTAG(), "No routes found");
                                 return;
                             }
-
                             setCurrentRoute(response.body().routes().get(0));
                             if(activity.getViewHolder().featureMarker != null){
                                 activity.getViewHolder().mapboxMap.removeMarker(activity.getViewHolder().featureMarker);
@@ -323,6 +325,7 @@ public class MapViewModel extends Observable{
                                 setNavigationMapRoute(new NavigationMapRoute(null, activity.getViewHolder().mapView, activity.getViewHolder().mapboxMap, R.style.NavigationMapRoute));
                             }
                             getNavigationMapRoute().addRoute(getCurrentRoute());
+                            setRouteZoom();
                             setChanged();
                             notifyObservers(ROUTE_REQUEST_SUCCEEDED);
                         }
@@ -389,6 +392,26 @@ public class MapViewModel extends Observable{
                 });
             }
         });
+    }
+
+    public void setRouteZoom(){
+        LineString lineString = LineString.fromPolyline(getCurrentRoute().geometry(), 6);
+        List<Point> coordinates = lineString.coordinates();
+        if(coordinates.size() > 1 &&
+                !coordinates.get(0).equals(coordinates.get(coordinates.size()-1))){
+            LinkedList<LatLng> points = new LinkedList<>();
+            for (int i = 0; i < coordinates.size(); i++) {
+                Double latitude = coordinates.get(i).latitude();
+                Double longitude = coordinates.get(i).longitude();
+                points.add(new LatLng(latitude, longitude));
+            }
+            LatLngBounds latLngBounds = new LatLngBounds.Builder()
+                    .includes(points)
+                    .build();
+            activity.getViewHolder().mapboxMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds,
+                    Constants.ROUTE_ZOOM_PADDING_LEFT, Constants.ROUTE_ZOOM_PADDING_TOP,
+                    Constants.ROUTE_ZOOM_PADDING_RIGHT, Constants.ROUTE_ZOOM_PADDING_BOTTOM));
+        }
     }
 
     public boolean hasEspolAttributes(Feature feature){
