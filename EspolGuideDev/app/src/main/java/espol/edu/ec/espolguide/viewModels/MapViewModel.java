@@ -321,8 +321,8 @@ public class MapViewModel extends Observable{
                             if (getNavigationMapRoute() != null) {
                                 getNavigationMapRoute().removeRoute();
                             } else {
-
-                                setNavigationMapRoute(new NavigationMapRoute(null, activity.getViewHolder().mapView, activity.getViewHolder().mapboxMap, R.style.NavigationMapRoute));
+                                setNavigationMapRoute(new NavigationMapRoute(null, activity.getViewHolder().mapView,
+                                        activity.getViewHolder().mapboxMap, R.style.CustomNavigationMapRoute));
                             }
                             getNavigationMapRoute().addRoute(getCurrentRoute());
                             setRouteZoom();

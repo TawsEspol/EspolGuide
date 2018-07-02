@@ -176,5 +176,10 @@
         <item name="android:textColorSecondary">@color/fourth</item>
     </style>
 
+    <style name="CustomNavigationMapRoute" parent="NavigationMapRoute">
+        <item name="routeColor">@color/second</item>
+        <item name="routeScale">0.57</item>
+        <item name="routeShieldColor">@color/first</item>
+    </style>
 </resources>
 
