@@ -426,7 +426,7 @@ public class MapViewModel extends Observable{
     public void enableLocationPlugin() {
         // Check if permissions are enabled and if not request
         if (PermissionsManager.areLocationPermissionsGranted(activity)) {
-            // Create an instance of LOST location engine
+            // Create an instance of location engine
             initializeLocationEngine();
             if(this.getLocationPlugin() == null){
                 this.setLocationPlugin(new LocationLayerPlugin(activity.getViewHolder().mapView, activity.getViewHolder().mapboxMap,
@@ -443,7 +443,8 @@ public class MapViewModel extends Observable{
     public void initializeLocationEngine() {
         LocationEngineProvider locationEngineProvider = new LocationEngineProvider(activity);
         this.setLocationEngine(locationEngineProvider.obtainBestLocationEngineAvailable());
-        this.getLocationEngine().setPriority(LocationEnginePriority.LOW_POWER);
+        //Obtains the location with a 100m accuracy
+        this.getLocationEngine().setPriority(LocationEnginePriority.BALANCED_POWER_ACCURACY);
         this.getLocationEngine().activate();
 
         Location lastLocation = this.getLocationEngine().getLastLocation();
