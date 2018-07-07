@@ -93,6 +93,9 @@ public class BaseActivity extends AppCompatActivity implements Observer {
                         break;
 
                     case R.id.favorites_op:
+                        Intent favIntent = new Intent(getApplicationContext(), FavoritesActivity.class);
+                        favIntent.putExtra(Constants.SELECTED_OPTION, R.id.favorites_op);
+                        startActivity(favIntent);
                         break;
 
                     case R.id.link_op:
