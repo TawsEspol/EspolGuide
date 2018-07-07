@@ -9,14 +9,10 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -45,12 +41,12 @@ import com.mapbox.android.core.location.LocationEngineListener;
 import com.mapbox.android.core.permissions.PermissionsListener;
 
 /**
-* Created by galo on 29/12/17.
-*/
+ * Created by galo on 29/12/17.
+ */
 
-public class MapActivity extends BaseActivity implements Observer, LocationEngineListener, PermissionsListener{
-        ViewHolder viewHolder;
-        MapViewModel viewModel;
+public class MapActivity extends BaseActivity implements Observer, LocationEngineListener, PermissionsListener {
+    ViewHolder viewHolder;
+    MapViewModel viewModel;
 
     private LatLng selectedOrigin;
     private LatLng selectedDestination;
@@ -60,6 +56,8 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
     private Point originPosition;
     private Point destinationPosition;
+
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -73,11 +71,11 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         this.viewModel = new MapViewModel(this);
         this.viewModel.setMapOnClickListener();
         this.viewModel.addObserver(this);
-        this.viewModel.enableLocationPlugin();
         this.viewModel.makeNamesRequest();
         this.viewModel.setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
         this.viewModel.setRouteModeButtonsListeners();
         this.disableMenuOption();
+        this.viewModel.getInitialPosition();
     }
 
     public class ViewHolder{
@@ -363,7 +361,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
     @Override
     public void onPermissionResult(boolean granted) {
         if (granted) {
-            viewModel.enableLocationPlugin();
+            viewModel.getInitialPosition();
         } else {
             finish();
         }
@@ -379,7 +377,6 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
     public void onLocationChanged(Location location) {
         if (location != null) {
             setOriginLocation(location);
-            viewModel.setCameraPosition(location);
             viewModel.getLocationEngine().removeLocationEngineListener(this);
         }
     }

@@ -1,10 +1,13 @@
 package espol.edu.ec.espolguide.viewModels;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.PointF;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,6 +20,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEnginePriority;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -97,6 +103,9 @@ public class MapViewModel extends Observable{
     private NavigationMapRoute navigationMapRoute;
     private MapActivity activity;
     private String selectedRouteMode;
+
+    private FusedLocationProviderClient mFusedLocationClient;
+
 
     public MapViewModel(MapActivity activity) { this.activity = activity; }
 
@@ -472,11 +481,9 @@ public class MapViewModel extends Observable{
         //Obtains the location with a 100m accuracy
         this.getLocationEngine().setPriority(LocationEnginePriority.BALANCED_POWER_ACCURACY);
         this.getLocationEngine().activate();
-
         Location lastLocation = this.getLocationEngine().getLastLocation();
         if (lastLocation != null) {
             activity.setOriginLocation(lastLocation);
-            this.setCameraPosition(lastLocation);
         } else {
             this.getLocationEngine().addLocationEngineListener(activity);
         }
@@ -531,8 +538,7 @@ public class MapViewModel extends Observable{
             if (!Constants.isNetworkAvailable(activity)) {
                 setChanged();
                 notifyObservers(REQUEST_FAILED_CONNECTION);
-            }
-            else {
+            } else {
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                         COORDINATES_WS + codeGtsi, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -583,5 +589,28 @@ public class MapViewModel extends Observable{
             }
             return null;
         }
+
+    }
+
+    public void getInitialPosition(){
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                // Logic to handle location object
+                                activity.setOriginLocation(location);
+                            }
+                        }
+                    });
+            return;
+        }
+
     }
 }
