@@ -70,7 +70,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         this.viewModel = new MapViewModel(this);
         this.viewModel.setMapOnClickListener();
         this.viewModel.addObserver(this);
-        this.viewModel.makeNamesRequest();
+       // this.viewModel.makeNamesRequest();
         this.viewModel.setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
         this.viewModel.setRouteModeButtonsListeners();
         this.disableMenuOption();

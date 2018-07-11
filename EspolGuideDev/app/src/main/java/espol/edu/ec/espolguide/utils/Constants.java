@@ -51,15 +51,26 @@ public class Constants {
     }
 
     public static String getAlternativeNamesURL(){
-        return SERVER_URL + "/nombresAlternativo/";
+        return SERVER_URL + "/alternativeNames/";
     }
 
     public static String getBlockInfoURL(){
         return SERVER_URL + "/infoBloque/";
     }
 
-    public static String getBlockPhoto(){
+    public static String getBlockPhotoURL(){
         return SERVER_URL + "/photoBlock/";
     }
 
+    public static String getAddFavoriteURL(){
+        return SERVER_URL + "/addFavorite/";
+    }
+
+    public static String getGetFavoritesURL(){
+        return SERVER_URL + "/getFavorites/";
+    }
+
+    public static String getLoginURL(){
+        return SERVER_URL + "/login/";
+    }
 }

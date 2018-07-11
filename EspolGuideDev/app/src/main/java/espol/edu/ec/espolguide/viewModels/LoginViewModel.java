@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.EditText;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
@@ -13,13 +15,23 @@ import org.ksoap2.transport.HttpTransportSE;
 import org.kxml2.kdom.Element;
 import org.kxml2.kdom.Node;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Observable;
 
 import espol.edu.ec.espolguide.LoginActivity;
 import espol.edu.ec.espolguide.MapActivity;
+import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SessionHelper;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.AccessToken;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -34,13 +46,11 @@ import com.google.android.gms.common.api.ResultCallback;
 public class LoginViewModel extends Observable {
     public static String AUTH_REQUEST_STARTED = "auth_request_started";
     public static String AUTH_REQUEST_SUCCEED = "auth_request_succeed";
-    public static String AUTH_REQUEST_FAILED_CONNECTION = "auth_request_failed_connection";
     public static String AUTH_REQUEST_FAILED_HTTP = "auth_request_failed_http";
     public static String AUTH_WRONG_CREDENTIALS = "auth_wrong_credentials";
     public static String NAMESPACE = "http://tempuri.org/";
     public static String GOOGL_AUTH_REQUEST_STARTED = "google_auth_request_started";
     public static String GOOGL_AUTH_REQUEST_SUCCEED = "google_auth_request_succeed";
-    public static String GOOGL_AUTH_REQUEST_FAILED_CONNECTION = "google_auth_request_failed_connection";
     // the following method willbe used for the backend server authentication
     public static String GOOGL_AUTH_REQUEST_FAILED_HTTP = "google_auth_request_failed_http";
     public static String GOOGL_AUTH_WRONG_CREDENTIALS = "google_auth_wrong_credentials";
@@ -48,6 +58,12 @@ public class LoginViewModel extends Observable {
     public static String GOOGLE_AUTHENTICATION = "google_authentication";
     public static String IS_ESPOL_LOGGED_IN = "is_espol_logged_in";
     public static String IS_NOT_LOGGED_IN = "is_not_logged_in";
+    public static String EG_LOGIN_REQUEST_STARTED = "eg_login_request_started";
+    public static String EG_LOGIN_REQUEST_SUCCEED = "eg_login_request_succeed";
+    public static String EG_LOGIN_REQUEST_FAILED_HTTP = "eg_login_request_failed_http";
+    public static String REQUEST_FAILED_CONNECTION = "request_failed_connection";
+
+    private String EG_LOGIN_WS = Constants.getLoginURL();
 
     private LoginActivity activity;
 
@@ -71,7 +87,7 @@ public class LoginViewModel extends Observable {
     private void googleSignIn(GoogleApiClient mGoogleSignInClient) {
         if (!Constants.isNetworkAvailable(activity.getApplicationContext())) {
             setChanged();
-            notifyObservers(GOOGL_AUTH_REQUEST_FAILED_CONNECTION);
+            notifyObservers(REQUEST_FAILED_CONNECTION);
         }else{
             Intent signInIntent = com.google.android.gms.auth.api.Auth.GoogleSignInApi.getSignInIntent(mGoogleSignInClient);
             activity.startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
@@ -156,7 +172,7 @@ public class LoginViewModel extends Observable {
             ctx = auths[0].context;
             if (!Constants.isNetworkAvailable(ctx)) {
                 setChanged();
-                notifyObservers(AUTH_REQUEST_FAILED_CONNECTION);
+                notifyObservers(REQUEST_FAILED_CONNECTION);
             } else {
                 try {
                 SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.AUTH_METHOD_NAME);
@@ -212,6 +228,69 @@ public class LoginViewModel extends Observable {
         else{
             handleFbSession();
             handleGoogleSession(activity.getGoogleApiClient());
+        }
+    }
+
+    public void makeEgLoginRequest(String username){
+        setChanged();
+        notifyObservers(EG_LOGIN_REQUEST_STARTED);
+        new EgLogin().execute(username);
+    }
+
+    private class EgLogin extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... strings) {
+            String username = strings[0];
+            if (!Constants.isNetworkAvailable(activity)) {
+                setChanged();
+                notifyObservers(REQUEST_FAILED_CONNECTION);
+            } else {
+                JSONObject jsonBody = new JSONObject();
+                JSONObject data = new JSONObject();
+                try{
+                    data.put("username", username);
+                    jsonBody.put("data", data);
+                }
+                catch (Exception e){ ;
+                }
+                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                        EG_LOGIN_WS, jsonBody, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        String token;
+                        System.out.println("KEYSSSSSSSSSSS::::: " + response.keys().toString());
+                        try {
+                            if(response.has("access-token")){
+                                token = response.getString("access-token");
+                                System.out.println("======================== NO ME CAI ========================");
+                                System.out.println(token);
+                            }
+                        } catch (JSONException e) {
+                            System.out.println("======================== EN EL CATCH ========================");
+                            e.printStackTrace();
+                        }
+                        setChanged();
+                        notifyObservers(EG_LOGIN_REQUEST_SUCCEED);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("tag", "Error: " + error.getMessage());
+                        setChanged();
+                        notifyObservers(EG_LOGIN_REQUEST_FAILED_HTTP);
+                        System.out.println("===================== ON ERROR REPSONSE =================");
+                    }
+                }){
+/**                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String,String> params = new HashMap<String, String>();
+                    params.put("Content-Type","application/x-www-form-urlencoded");
+                    return params;
+                }*/
+                };
+                AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
+            }
+            return null;
         }
     }
 }

@@ -1,39 +1,19 @@
 package espol.edu.ec.espolguide.viewModels;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import espol.edu.ec.espolguide.PoiInfo;
-import espol.edu.ec.espolguide.R;
-import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
-import espol.edu.ec.espolguide.utils.Util;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Observable;
-
-import static espol.edu.ec.espolguide.utils.Constants.getBlockInfoURL;
-import static espol.edu.ec.espolguide.utils.Constants.isNetworkAvailable;
 
 public class PoiInfoViewModel extends Observable {
     public static String POI_INFO_REQUEST_STARTED = "poi_info_request_started";
@@ -108,7 +88,7 @@ public class PoiInfoViewModel extends Observable {
                 notifyObservers(POI_PHOTO_REQUEST_FAILED_CONNECTION);
             }
             else {
-                d = LoadImage(Constants.getBlockPhoto()+ identifier);
+                d = LoadImage(Constants.getBlockPhotoURL()+ identifier);
             }
             return d;
         }

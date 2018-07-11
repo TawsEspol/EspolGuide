@@ -2,7 +2,6 @@ package espol.edu.ec.espolguide;
 
 import android.os.Bundle;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -21,8 +20,8 @@ public class FavoritesActivity extends BaseActivity implements Observer {
         this.viewHolder = new ViewHolder();
         this.viewModel = new FavoritesViewModel(this);
         this.viewModel.addObserver(this);
-
     }
+
     private class ViewHolder{
 
         public ViewHolder(){

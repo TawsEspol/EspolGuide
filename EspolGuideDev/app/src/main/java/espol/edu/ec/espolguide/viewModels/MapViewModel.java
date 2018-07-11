@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -60,10 +61,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Observable;
 
 public class MapViewModel extends Observable{
@@ -80,6 +83,26 @@ public class MapViewModel extends Observable{
     public static String ROUTE_REQUEST_STARTED = "route_request_started";
     public static String ROUTE_REQUEST_SUCCEEDED = "route_request_succeeded";
     public static String ROUTE_REQUEST_FAILED = "route_request_failed";
+
+
+
+
+
+
+    public static String GET_FAVORITES_REQUEST_STARTED = "get_favorites_request_started";
+    public static String GET_FAVORITES_REQUEST_SUCCEEDED = "get_favorites_request_succeeded";
+    public static String GET_FAVORITES_REQUEST_FAILED_CONNECTION = "get_favorites_request_failed_connection";
+    public static String GET_FAVORITES_REQUEST_FAILED_HTTP = "get_favorites_request_failed_http";
+    public static String GET_FAVORITES_REQUEST_FAILED_LOADING = "get_favorites_request_failed_loading";
+    public static String ADD_FAVORITES_REQUEST_STARTED = "add_favorites_request_started";
+    public static String ADD_FAVORITES_REQUEST_SUCCEEDED = "add_favorites_request_succeeded";
+    public static String ADD_FAVORITES_REQUEST_FAILED_CONNECTION = "add_favorites_request_failed_connection";
+    public static String ADD_FAVORITES_REQUEST_FAILED_HTTP = "add_favorites_request_failed_http";
+    public static String ADD_FAVORITES_REQUEST_FAILED_LOADING = "add_favorites_request_failed_loading";
+    final private String ADD_FAVORITE_WS = Constants.getAddFavoriteURL();
+    final private String GET_FAVORITES_WS = Constants.getGetFavoritesURL();
+    private ArrayList<String> favoriteBlocks;
+
 
     final private String POIS_NAMES_WS = Constants.getAlternativeNamesURL();
     final private ArrayList<String> namesItems = new ArrayList<>();
@@ -174,6 +197,7 @@ public class MapViewModel extends Observable{
                         Iterator<String> iter = response.keys();
                         while (iter.hasNext()) {
                             String identifier = iter.next();
+                            System.out.println("===============" + identifier + "===============");
                             Integer numIdentifier = Integer.getInteger(identifier.substring(6));
                             if (numIdentifier == null || numIdentifier <= 69) {
                                 try {
@@ -486,11 +510,6 @@ public class MapViewModel extends Observable{
         });
     }
 
-    public void setCameraPosition(Location location) {
-        activity.getViewHolder().mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(location.getLatitude(), location.getLongitude()), Constants.FAR_AWAY_ZOOM));
-    }
-
     public void getInitialPosition(){
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) !=
@@ -510,6 +529,103 @@ public class MapViewModel extends Observable{
                     });
             return;
         }
+    }
 
+    public void makeGetFavoritesRequest(){
+        setChanged();
+        notifyObservers(GET_FAVORITES_REQUEST_STARTED);
+        new FavoritesGetter().execute();
+    }
+
+    public void makeAddFavoriteRequest(String codeGtsi){
+        setChanged();
+        notifyObservers(ADD_FAVORITES_REQUEST_STARTED);
+        new FavoriteAdder().execute(codeGtsi);
+    }
+
+    private class FavoritesGetter extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (!Constants.isNetworkAvailable(activity)) {
+                setChanged();
+                notifyObservers(GET_FAVORITES_REQUEST_FAILED_CONNECTION);
+            }
+            else {
+                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                        GET_FAVORITES_WS, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try{
+                            Iterator<String> iter = response.keys();
+                        }
+                        catch (Exception e){
+                            setChanged();
+                            notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
+                        }
+                        setChanged();
+                        notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("tag", "Error: " + error.getMessage());
+                        setChanged();
+                        notifyObservers(GET_FAVORITES_REQUEST_FAILED_HTTP);
+                    }
+                });
+                AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
+            }
+            return null;
+        }
+    }
+
+    private class FavoriteAdder extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... strings) {
+            String codeGtsi = strings[0];
+            if (!Constants.isNetworkAvailable(activity)) {
+                setChanged();
+                notifyObservers(ADD_FAVORITES_REQUEST_FAILED_CONNECTION);
+            }
+            else {
+                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                        ADD_FAVORITE_WS, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try{
+                            Iterator<String> iter = response.keys();
+                        }
+                        catch (Exception e){
+                            setChanged();
+                            notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
+                        }
+
+                        setChanged();
+                        notifyObservers(ADD_FAVORITES_REQUEST_SUCCEEDED);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("tag", "Error: " + error.getMessage());
+                        setChanged();
+                        notifyObservers(ADD_FAVORITES_REQUEST_FAILED_HTTP);
+                    }
+                }) {
+                    /**
+                     * Passing some request headers
+                     */
+/**                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        HashMap<String, String> headers = new HashMap<String, String>();
+                        //headers.put("Content-Type", "application/json");
+                        headers.put("access-token", );
+                        return headers;
+                    }*/
+
+                };
+                AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
+            }
+            return null;
+        }
     }
 }
