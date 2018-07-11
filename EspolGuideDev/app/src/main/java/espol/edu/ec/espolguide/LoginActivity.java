@@ -180,7 +180,8 @@ public class LoginActivity extends BaseActivity implements Observer {
             Intent intent = new Intent(this, MapActivity.class);
             this.startActivity(intent);
             String espolUsername = this.getViewHolder().username.getText().toString().trim();
-            SessionHelper.saveEspolSession(getApplicationContext(), espolUsername);
+            //SessionHelper.saveEspolSession(getApplicationContext(), espolUsername);
+            viewModel.makeEgLoginRequest(espolUsername);
             this.viewHolder.username.setText("");
             this.viewHolder.password.setText("");
             this.finish();
@@ -192,7 +193,7 @@ public class LoginActivity extends BaseActivity implements Observer {
             this.finish();
         }
 
-        else if (message == viewModel.AUTH_REQUEST_FAILED_CONNECTION || message == viewModel.GOOGL_AUTH_REQUEST_FAILED_CONNECTION) {
+        else if (message == viewModel.REQUEST_FAILED_CONNECTION) {
             LoginActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     Toast.makeText(LoginActivity.this, getResources().getString(R.string.failed_connection_msg),
@@ -252,6 +253,15 @@ public class LoginActivity extends BaseActivity implements Observer {
             }
         }
         else if (message == viewModel.IS_NOT_LOGGED_IN) {
+
+        }
+        else if (message == viewModel.EG_LOGIN_REQUEST_STARTED) {
+
+        }
+        else if (message == viewModel.EG_LOGIN_REQUEST_SUCCEED) {
+
+        }
+        else if (message == viewModel.EG_LOGIN_REQUEST_FAILED_HTTP) {
 
         }
     }

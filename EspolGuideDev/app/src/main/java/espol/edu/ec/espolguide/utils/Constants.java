@@ -74,7 +74,7 @@ public class Constants {
         return SERVER_URL + "/infoBloque/";
     }
 
-    public static String getBlockPhoto(){
+    public static String getBlockPhotoURL(){
         return SERVER_URL + "/photoBlock/";
     }
 
@@ -82,4 +82,15 @@ public class Constants {
         return SERVER_URL + "/coordinates/";
     }
 
+    public static String getAddFavoriteURL(){
+        return SERVER_URL + "/addFavorite/";
+    }
+
+    public static String getGetFavoritesURL(){
+        return SERVER_URL + "/getFavorites/";
+    }
+
+    public static String getLoginURL(){
+        return SERVER_URL + "/login/";
+    }
 }
