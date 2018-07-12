@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -73,6 +74,11 @@ public class SessionHelper {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putStringSet(FAVORITES, favorites);
         editor.commit();
+    }
+
+    public static Set getFavoritePois(Context context){
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPref.getStringSet(FAVORITES, new HashSet<>());
     }
 
     public static boolean isFacebookLoggedIn(Activity activity){

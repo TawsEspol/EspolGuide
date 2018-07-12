@@ -56,7 +56,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
     private Point originPosition;
     private Point destinationPosition;
 
-
+    private String selectedPoi = "";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -70,7 +70,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         this.viewModel = new MapViewModel(this);
         this.viewModel.setMapOnClickListener();
         this.viewModel.addObserver(this);
-       // this.viewModel.makeNamesRequest();
+        this.viewModel.makeNamesRequest();
         this.viewModel.setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
         this.viewModel.setRouteModeButtonsListeners();
         this.disableMenuOption();
@@ -104,6 +104,8 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
         public ImageView drawerBtn;
 
+        public Button favBtn;
+
         public ViewHolder(){
             findViews();
             setBackButtonListener();
@@ -135,6 +137,17 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             carBtn = (ImageButton) findViewById(R.id.car_button);
 
             drawerBtn = (ImageView) findViewById(R.id.drawerBtn);
+            favBtn = (Button) findViewById(R.id.fav_button);
+
+        }
+
+        private void setFavBtnListener(){
+            this.favBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    viewModel.makeAddFavoriteRequest(getSelectedPoi());
+                }
+            });
         }
 
         private void setDrawerBtnListener(){
@@ -553,5 +566,13 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         }catch (Exception e){
             e.getStackTrace();
         }
+    }
+
+    public void setSelectedPoi(String selectedPoi){
+        this.selectedPoi = selectedPoi;
+    }
+
+    public String getSelectedPoi(){
+        return this.selectedPoi;
     }
 }

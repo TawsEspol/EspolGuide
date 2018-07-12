@@ -282,16 +282,8 @@ public class LoginViewModel extends Observable {
                         VolleyLog.d("tag", "Error: " + error.getMessage());
                         setChanged();
                         notifyObservers(REQUEST_FAILED_HTTP);
-                        System.out.println("======================== ERROR ON RESPONSE ========================");
                     }
-                }){
-/**                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String,String> params = new HashMap<String, String>();
-                    params.put("Content-Type","application/x-www-form-urlencoded");
-                    return params;
-                }*/
-                };
+                });
                 AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
             }
             return null;
@@ -334,17 +326,19 @@ public class LoginViewModel extends Observable {
                                 Set<String> favoritesSet = new HashSet<>();
                                 favoritesSet.addAll(favoritesList);
                                 SessionHelper.saveFavoritePois(activity, favoritesSet);
+                                setChanged();
+                                notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
                             }
                             catch (Exception e){
                                 setChanged();
                                 notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
                             }
-                            setChanged();
-                            notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
+                            System.out.println("======================== ERROR EN RESPONSE ========================");
+
                             VolleyLog.d("tag", "Error: " + error.getMessage());
                             setChanged();
                             notifyObservers(REQUEST_FAILED_HTTP);
@@ -356,7 +350,6 @@ public class LoginViewModel extends Observable {
                         @Override
                         public Map<String, String> getHeaders() throws AuthFailureError {
                             HashMap<String, String> headers = new HashMap<String, String>();
-                            //headers.put("Content-Type", "application/json");
                             headers.put(Constants.ACCESS_TOKEN_HEADER_KEY, accessToken);
                             return headers;
                         }

@@ -180,7 +180,7 @@ public class LoginActivity extends BaseActivity implements Observer {
             Intent intent = new Intent(this, MapActivity.class);
             this.startActivity(intent);
             String espolUsername = this.getViewHolder().username.getText().toString().trim();
-            //SessionHelper.saveEspolSession(getApplicationContext(), espolUsername);
+            SessionHelper.saveEspolSession(getApplicationContext(), espolUsername);
             viewModel.makeEgLoginRequest(espolUsername);
             this.viewHolder.username.setText("");
             this.viewHolder.password.setText("");
@@ -259,6 +259,7 @@ public class LoginActivity extends BaseActivity implements Observer {
 
         }
         else if (message == viewModel.EG_LOGIN_REQUEST_SUCCEED) {
+            System.out.println("======================== FUNCIONA EL PATRON ========================");
             viewModel.makeGetFavoritesRequest();
         }
         else if (message == viewModel.GET_FAVORITES_REQUEST_STARTED) {
