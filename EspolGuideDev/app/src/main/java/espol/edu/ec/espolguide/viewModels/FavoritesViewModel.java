@@ -34,9 +34,6 @@ public class FavoritesViewModel extends Observable {
     public static String ADD_FAVORITES_REQUEST_FAILED_HTTP = "add_favorites_request_failed_http";
     public static String ADD_FAVORITES_REQUEST_FAILED_LOADING = "add_favorites_request_failed_loading";
 
-    final private String ADD_FAVORITE_WS = Constants.getAddFavoriteURL();
-    final private String GET_FAVORITES_WS = Constants.getGetFavoritesURL();
-
     private FavoritesActivity activity;
     private ArrayList<String> favoriteBlocks;
 
@@ -58,7 +55,7 @@ public class FavoritesViewModel extends Observable {
             }
             else {
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                        GET_FAVORITES_WS, null, new Response.Listener<JSONObject>() {
+                        "LALALALA", null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try{

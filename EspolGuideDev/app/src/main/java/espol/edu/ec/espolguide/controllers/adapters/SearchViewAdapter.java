@@ -43,7 +43,7 @@ import java.io.Serializable;
  */
 
 public class SearchViewAdapter extends BaseAdapter {
-    final String BLOCK_INFO_WS = Constants.getBlockInfoURL();
+    final String COORDINATES_WS = Constants.getCoordinatesURL();
     Context mContext;
     LayoutInflater inflater;
     private List<String> pois = null;
@@ -56,17 +56,20 @@ public class SearchViewAdapter extends BaseAdapter {
 
     public class ViewHolder {
         String id;
+        String codeGtsi;
         TextView name;
         TextView alternativeName;
 
         public String getIdNumber(){
-            String id_number = this.id.substring(6);
-            System.out.println(id_number);
-            return id_number;
+            return this.id;
         }
 
         public String getId(){
             return this.id;
+        }
+
+        public String getCodeGtsi(){
+            return this.codeGtsi;
         }
     }
 
@@ -144,6 +147,9 @@ public class SearchViewAdapter extends BaseAdapter {
         holder.name.setText(name1);
         holder.alternativeName.setText(name2);
         holder.id = parts[0];
+
+        holder.codeGtsi = parts[3];
+
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -153,20 +159,13 @@ public class SearchViewAdapter extends BaseAdapter {
                             Toast.LENGTH_LONG).show();
                 } else {
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                            BLOCK_INFO_WS + holder.getIdNumber(), null, new Response.Listener<JSONObject>() {
+                            COORDINATES_WS + holder.getCodeGtsi(), null, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             MapActivity mapActivity = (MapActivity) mContext;
                             try {
-                                JSONArray features = response.getJSONArray("features");
-                                JSONObject jsonObj = (JSONObject) features.get(0);
-                                JSONObject jsonObjGeometry = jsonObj.getJSONObject("geometry");
-                                JSONArray coordinate1 = jsonObjGeometry.getJSONArray("coordinates").getJSONArray(0);
-                                JSONArray pointCoord = coordinate1.getJSONArray(0);
-                                System.out.println("=========ID: " + holder.getIdNumber() + " ========");
-                                System.out.println("***********Name: " + name1 + " ********");
-                                double lat = pointCoord.getDouble(0);
-                                double lon = pointCoord.getDouble(1);
+                                double lat = response.getDouble("lat");
+                                double lon = response.getDouble("long");
                                 LatLng point = new LatLng(lat, lon);
                                 mapActivity.setSelectedDestination(point);
                                 mapActivity.getViewHolder().editDestination.setText(name1);

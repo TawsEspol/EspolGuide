@@ -54,6 +54,7 @@ import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.controllers.adapters.RouteAdapter;
 import espol.edu.ec.espolguide.controllers.adapters.SearchViewAdapter;
 import espol.edu.ec.espolguide.utils.Constants;
+import espol.edu.ec.espolguide.utils.SessionHelper;
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -63,12 +64,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Set;
 
 public class MapViewModel extends Observable{
     public static String NAMES_REQUEST_STARTED = "names_request_started";
@@ -209,10 +212,13 @@ public class MapViewModel extends Observable{
                         Iterator<String> iter = response.keys();
                         while (iter.hasNext()) {
                             String identifier = iter.next();
+                            System.out.println("===============" + identifier + "===============");
+                            if (identifier != null) {
                                 try {
                                     String blockString = "";
                                     JSONObject blockInfo = (JSONObject) response.get(identifier);
                                     String blockName = (String) blockInfo.getString(Constants.BLOCKNAME_FIELD);
+                                    String type = (String) blockInfo.getString(Constants.TYPE_FIELD);
                                     String codeGtsi = (String) blockInfo.getString(Constants.CODE_GTSI_FIELD);
                                     JSONArray alternativeNames = blockInfo.getJSONArray(Constants.ALTERNATIVE_NAMES_FIELD);
                                     int totalAlternatives = alternativeNames.length();
@@ -281,6 +287,7 @@ public class MapViewModel extends Observable{
                         setChanged();
                         notifyObservers(NAMES_REQUEST_SUCCEEDED);
                     }
+                }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
@@ -422,6 +429,11 @@ public class MapViewModel extends Observable{
                                     }
                                     if(feature.properties().has(Constants.DESCRIPTION_FIELD)){
                                         description = feature.getStringProperty(Constants.DESCRIPTION_FIELD).toString();
+                                    }
+                                    if(feature.properties().has(Constants.CODE_GTSI_FIELD)){
+                                        String codeGtsi = feature.getStringProperty(Constants.CODE_GTSI_FIELD).toString();
+                                        activity.setSelectedPoi(codeGtsi);
+                                        makeAddFavoriteRequest(codeGtsi);
                                     }
                                     new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description,
                                             codeInfrastructure, activity, activity.getViewHolder().info)).show();
@@ -634,48 +646,71 @@ public class MapViewModel extends Observable{
     private class FavoriteAdder extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... strings) {
-            String codeGtsi = strings[0];
-            if (!Constants.isNetworkAvailable(activity)) {
+            String codeGtsi = activity.getSelectedPoi();
+            if(!SessionHelper.hasAccessToken(activity)){
                 setChanged();
-                notifyObservers(REQUEST_FAILED_CONNECTION);
+                notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
             }
-            else {
-                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                        FAVORITES_WS, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try{
-                            Iterator<String> iter = response.keys();
+            else{
+                if (!Constants.isNetworkAvailable(activity)) {
+                    setChanged();
+                    notifyObservers(REQUEST_FAILED_CONNECTION);
+                }
+                else {
+                    JSONObject jsonBody = new JSONObject();
+                    try{
+                        jsonBody.put(Constants.CODE_GTSI_KEY, codeGtsi);
+                    }
+                    catch (Exception e){ ;
+                    }
+                    String accessToken = SessionHelper.getAccessToken(activity);
+                    JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                            FAVORITES_WS, jsonBody, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try{
+                                JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
+                                ArrayList<String> favoritesList = new ArrayList<String>();
+                                if (jsonArray != null) {
+                                    int len = jsonArray.length();
+                                    for (int i=0;i<len;i++){
+                                        favoritesList.add(jsonArray.get(i).toString());
+                                    }
+                                }
+                                Set<String> favoritesSet = new HashSet<>();
+                                favoritesSet.addAll(favoritesList);
+                                SessionHelper.saveFavoritePois(activity, favoritesSet);
+                                setChanged();
+                                notifyObservers(ADD_FAVORITES_REQUEST_SUCCEEDED);
+                            }
+                            catch (Exception e){
+                                setChanged();
+                                notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
+                            }
                         }
-                        catch (Exception e){
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            VolleyLog.d("tag", "Error: " + error.getMessage());
+                            System.out.println("ERROR EN RESPUESTA");
                             setChanged();
-                            notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
+                            notifyObservers(REQUEST_FAILED_HTTP);
+                        }
+                    }) {
+                        /**
+                         * Passing some request headers
+                         */
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            HashMap<String, String> headers = new HashMap<String, String>();
+                            //headers.put("Content-Type", "application/json");
+                            headers.put(Constants.ACCESS_TOKEN_HEADER_KEY, accessToken);
+                            return headers;
                         }
 
-                        setChanged();
-                        notifyObservers(ADD_FAVORITES_REQUEST_SUCCEEDED);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d("tag", "Error: " + error.getMessage());
-                        setChanged();
-                        notifyObservers(REQUEST_FAILED_HTTP);
-                    }
-                }) {
-                    /**
-                     * Passing some request headers
-                     */
-/**                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        HashMap<String, String> headers = new HashMap<String, String>();
-                        //headers.put("Content-Type", "application/json");
-                        headers.put("access-token", );
-                        return headers;
-                    }*/
-
-                };
-                AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
+                    };
+                    AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
+                }
             }
             return null;
         }

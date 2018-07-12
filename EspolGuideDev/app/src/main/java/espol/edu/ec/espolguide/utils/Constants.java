@@ -59,14 +59,16 @@ public class Constants {
     public final static String LATITUDE_KEY = "lat";
     public final static String LONGITUDE_KEY = "long";
 
-    public final static String ALTERNATIVE_NAMES_FIELD = "alternative_names";
 
     public final static String ACCESS_TOKEN_KEY = "access-token";
     public final static String ACCESS_TOKEN_HEADER_KEY = "access-token";
     public final static String DATA_KEY = "data";
     public final static String USERNAME_KEY = "username";
     public final static String CODES_GTSI_KEY = "codes_gtsi";
+    public final static String CODE_GTSI_KEY = "code_gtsi";
 
+    public final static String TYPE_FIELD = "type";
+    public final static String ALTERNATIVE_NAMES_FIELD = "alternative_names";
 
     public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
@@ -75,10 +77,6 @@ public class Constants {
 
     public static String getAlternativeNamesURL(){
         return SERVER_URL + "/alternativeNames/";
-    }
-
-    public static String getBlockInfoURL(){
-        return SERVER_URL + "/infoBloque/";
     }
 
     public static String getBlockPhotoURL(){
@@ -104,4 +102,5 @@ public class Constants {
     public static String getLoginURL(){
         return SERVER_URL + "/login/";
     }
+
 }

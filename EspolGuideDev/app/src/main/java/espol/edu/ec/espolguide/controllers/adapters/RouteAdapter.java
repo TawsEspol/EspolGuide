@@ -31,7 +31,7 @@ import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.Util;
 
 public class RouteAdapter extends BaseAdapter {
-    final String BLOCK_INFO_WS = Constants.getBlockInfoURL();
+    final String COORDINATES_WS = Constants.getCoordinatesURL();
     Context mContext;
     LayoutInflater inflater;
     private List<String> pois = null;
@@ -42,17 +42,16 @@ public class RouteAdapter extends BaseAdapter {
 
     public class ViewHolder {
         String id;
+        String codeGtsi;
         TextView name;
         TextView alternativeName;
 
-        public String getIdNumber(){
-            String id_number = this.id.substring(6);
-            System.out.println(id_number);
-            return id_number;
-        }
-
         public String getId(){
             return this.id;
+        }
+
+        public String getCodeGtsi(){
+            return this.codeGtsi;
         }
     }
 
@@ -118,6 +117,8 @@ public class RouteAdapter extends BaseAdapter {
         holder.name.setText(name1);
         holder.alternativeName.setText(name2);
         holder.id = parts[0];
+        holder.codeGtsi = parts[3];
+
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -128,21 +129,13 @@ public class RouteAdapter extends BaseAdapter {
                 } else {
 
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                            BLOCK_INFO_WS + holder.getIdNumber(), null, new Response.Listener<JSONObject>() {
+                            COORDINATES_WS + holder.getCodeGtsi(), null, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-
-                                JSONArray features = response.getJSONArray("features");
-                                JSONObject jsonObj = (JSONObject) features.get(0);
-                                JSONObject jsonObjGeometry = jsonObj.getJSONObject("geometry");
-                                JSONArray coordinate1 = jsonObjGeometry.getJSONArray("coordinates").getJSONArray(0);
-                                JSONArray pointCoord = coordinate1.getJSONArray(0);
-                                System.out.println("=========ID: " + holder.getIdNumber() + " ========");
-                                System.out.println("***********Name: " + name1 + " ********");
+                                double selectedLat = response.getDouble("lat");
+                                double selectedLng = response.getDouble("long");
                                 pois.clear();
-                                double selectedLat = pointCoord.getDouble(0);
-                                double selectedLng = pointCoord.getDouble(1);
                                 MapActivity activity = (MapActivity) mContext;
                                 if(activity.getSelectedEditText() == Constants.FROM_ORIGIN){
                                     LatLng selectedOrigin = new LatLng(selectedLat, selectedLng);
