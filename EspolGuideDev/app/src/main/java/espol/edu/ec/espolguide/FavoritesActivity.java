@@ -8,6 +8,10 @@ import java.util.Observer;
 
 import espol.edu.ec.espolguide.viewModels.FavoritesViewModel;
 
+/**
+ * Created by galo on 04/07/18.
+ */
+
 public class FavoritesActivity extends BaseActivity implements Observer {
     private FavoritesViewModel viewModel;
     private ViewHolder viewHolder;
