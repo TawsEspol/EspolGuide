@@ -294,7 +294,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         if (message == viewModel.NAMES_REQUEST_STARTED) {
 
         }
-        if (message == viewModel.NAMES_REQUEST_FAILED_CONNECTION) {
+        if (message == viewModel.REQUEST_FAILED_CONNECTION) {
             MapActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
@@ -310,7 +310,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
                 }
             });
         }
-        if (message == viewModel.NAMES_REQUEST_FAILED_HTTP) {
+        if (message == viewModel.REQUEST_FAILED_HTTP) {
             MapActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     Toast.makeText(MapActivity.this, getResources().getString(R.string.http_error_msg),
@@ -346,6 +346,15 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
                             Toast.LENGTH_LONG).show();
                 }
             });
+        }
+        if (message == viewModel.ADD_FAVORITES_REQUEST_STARTED) {
+
+        }
+        if (message == viewModel.ADD_FAVORITES_REQUEST_SUCCEEDED) {
+
+        }
+        if (message == viewModel.ADD_FAVORITES_REQUEST_FAILED_LOADING) {
+
         }
     }
 

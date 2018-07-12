@@ -73,42 +73,34 @@ import java.util.Observable;
 public class MapViewModel extends Observable{
     public static String NAMES_REQUEST_STARTED = "names_request_started";
     public static String NAMES_REQUEST_SUCCEEDED = "names_request_succeeded";
-    public static String NAMES_REQUEST_FAILED_CONNECTION = "names_request_failed_connection";
-    public static String NAMES_REQUEST_FAILED_HTTP = "names_request_failed_http";
     public static String NAMES_REQUEST_FAILED_LOADING = "names_request_failed_loading";
-
     public static String POI_INFO_REQUEST_STARTED = "poi_info_request_started";
     public static String POI_INFO_REQUEST_SUCCEEDED = "poi_info_request_succeeded";
     public static String POI_INFO_REQUEST_FAILED_LOADING = "poi_info_request_failed_loading";
-
     public static String ROUTE_REQUEST_STARTED = "route_request_started";
     public static String ROUTE_REQUEST_SUCCEEDED = "route_request_succeeded";
     public static String ROUTE_REQUEST_FAILED = "route_request_failed";
-
-    public static String REQUEST_FAILED_HTTP = "request_failed_http";
-    public static String REQUEST_FAILED_CONNECTION = "request_failed_connection";
+    
     public static String MAP_CENTERING_REQUEST_STARTED = "map_centering_request_started";
     public static String MAP_CENTERING_REQUEST_SUCCEEDED = "map_centering_request_succeeded";
     public static String MAP_CENTERING_REQUEST_FAILED_LOADING = "map_centering_request_failed_loading";
 
     final String COORDINATES_WS = Constants.getCoordinatesURL();
 
-
-
-
-
     public static String GET_FAVORITES_REQUEST_STARTED = "get_favorites_request_started";
     public static String GET_FAVORITES_REQUEST_SUCCEEDED = "get_favorites_request_succeeded";
     public static String GET_FAVORITES_REQUEST_FAILED_CONNECTION = "get_favorites_request_failed_connection";
     public static String GET_FAVORITES_REQUEST_FAILED_HTTP = "get_favorites_request_failed_http";
     public static String GET_FAVORITES_REQUEST_FAILED_LOADING = "get_favorites_request_failed_loading";
+
     public static String ADD_FAVORITES_REQUEST_STARTED = "add_favorites_request_started";
     public static String ADD_FAVORITES_REQUEST_SUCCEEDED = "add_favorites_request_succeeded";
-    public static String ADD_FAVORITES_REQUEST_FAILED_CONNECTION = "add_favorites_request_failed_connection";
-    public static String ADD_FAVORITES_REQUEST_FAILED_HTTP = "add_favorites_request_failed_http";
     public static String ADD_FAVORITES_REQUEST_FAILED_LOADING = "add_favorites_request_failed_loading";
-    final private String ADD_FAVORITE_WS = Constants.getAddFavoriteURL();
-    final private String GET_FAVORITES_WS = Constants.getGetFavoritesURL();
+    public static String REQUEST_FAILED_HTTP = "request_failed_http";
+    public static String REQUEST_FAILED_CONNECTION = "request_failed_connection";
+
+    final private String FAVORITES_WS = Constants.getFavoritesURL();
+
     private ArrayList<String> favoriteBlocks;
 
 
@@ -633,52 +625,10 @@ public class MapViewModel extends Observable{
         }
     }
 
-    public void makeGetFavoritesRequest(){
-        setChanged();
-        notifyObservers(GET_FAVORITES_REQUEST_STARTED);
-        new FavoritesGetter().execute();
-    }
-
     public void makeAddFavoriteRequest(String codeGtsi){
         setChanged();
         notifyObservers(ADD_FAVORITES_REQUEST_STARTED);
         new FavoriteAdder().execute(codeGtsi);
-    }
-
-    private class FavoritesGetter extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (!Constants.isNetworkAvailable(activity)) {
-                setChanged();
-                notifyObservers(GET_FAVORITES_REQUEST_FAILED_CONNECTION);
-            }
-            else {
-                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                        GET_FAVORITES_WS, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try{
-                            Iterator<String> iter = response.keys();
-                        }
-                        catch (Exception e){
-                            setChanged();
-                            notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
-                        }
-                        setChanged();
-                        notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d("tag", "Error: " + error.getMessage());
-                        setChanged();
-                        notifyObservers(GET_FAVORITES_REQUEST_FAILED_HTTP);
-                    }
-                });
-                AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
-            }
-            return null;
-        }
     }
 
     private class FavoriteAdder extends AsyncTask<String, Void, Void> {
@@ -687,11 +637,11 @@ public class MapViewModel extends Observable{
             String codeGtsi = strings[0];
             if (!Constants.isNetworkAvailable(activity)) {
                 setChanged();
-                notifyObservers(ADD_FAVORITES_REQUEST_FAILED_CONNECTION);
+                notifyObservers(REQUEST_FAILED_CONNECTION);
             }
             else {
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                        ADD_FAVORITE_WS, null, new Response.Listener<JSONObject>() {
+                        FAVORITES_WS, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try{
@@ -710,7 +660,7 @@ public class MapViewModel extends Observable{
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("tag", "Error: " + error.getMessage());
                         setChanged();
-                        notifyObservers(ADD_FAVORITES_REQUEST_FAILED_HTTP);
+                        notifyObservers(REQUEST_FAILED_HTTP);
                     }
                 }) {
                     /**

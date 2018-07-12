@@ -3,8 +3,10 @@ package espol.edu.ec.espolguide.viewModels;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.view.View;
 import android.widget.EditText;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
@@ -15,10 +17,13 @@ import org.ksoap2.transport.HttpTransportSE;
 import org.kxml2.kdom.Element;
 import org.kxml2.kdom.Node;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Set;
 
 import espol.edu.ec.espolguide.LoginActivity;
 import espol.edu.ec.espolguide.MapActivity;
@@ -46,13 +51,10 @@ import com.google.android.gms.common.api.ResultCallback;
 public class LoginViewModel extends Observable {
     public static String AUTH_REQUEST_STARTED = "auth_request_started";
     public static String AUTH_REQUEST_SUCCEED = "auth_request_succeed";
-    public static String AUTH_REQUEST_FAILED_HTTP = "auth_request_failed_http";
     public static String AUTH_WRONG_CREDENTIALS = "auth_wrong_credentials";
     public static String NAMESPACE = "http://tempuri.org/";
     public static String GOOGL_AUTH_REQUEST_STARTED = "google_auth_request_started";
     public static String GOOGL_AUTH_REQUEST_SUCCEED = "google_auth_request_succeed";
-    // the following method willbe used for the backend server authentication
-    public static String GOOGL_AUTH_REQUEST_FAILED_HTTP = "google_auth_request_failed_http";
     public static String GOOGL_AUTH_WRONG_CREDENTIALS = "google_auth_wrong_credentials";
     public static String FB_AUTHENTICATION = "facebook_authentication";
     public static String GOOGLE_AUTHENTICATION = "google_authentication";
@@ -60,10 +62,14 @@ public class LoginViewModel extends Observable {
     public static String IS_NOT_LOGGED_IN = "is_not_logged_in";
     public static String EG_LOGIN_REQUEST_STARTED = "eg_login_request_started";
     public static String EG_LOGIN_REQUEST_SUCCEED = "eg_login_request_succeed";
-    public static String EG_LOGIN_REQUEST_FAILED_HTTP = "eg_login_request_failed_http";
     public static String REQUEST_FAILED_CONNECTION = "request_failed_connection";
+    public static String REQUEST_FAILED_HTTP = "request_failed_http";
+    public static String GET_FAVORITES_REQUEST_STARTED = "get_favorites_request_started";
+    public static String GET_FAVORITES_REQUEST_SUCCEEDED = "get_favorites_request_succeeded";
+    public static String GET_FAVORITES_REQUEST_FAILED_LOADING = "get_favorites_request_failed_loading";
 
     private String EG_LOGIN_WS = Constants.getLoginURL();
+    private String FAVORITES_WS = Constants.getFavoritesURL();
 
     private LoginActivity activity;
 
@@ -190,7 +196,7 @@ public class LoginViewModel extends Observable {
                 return result;
                 } catch (Exception e) {
                     setChanged();
-                    notifyObservers(AUTH_REQUEST_FAILED_HTTP);
+                    notifyObservers(REQUEST_FAILED_HTTP);
                 }
             }
             return false;
@@ -248,8 +254,8 @@ public class LoginViewModel extends Observable {
                 JSONObject jsonBody = new JSONObject();
                 JSONObject data = new JSONObject();
                 try{
-                    data.put("username", username);
-                    jsonBody.put("data", data);
+                    data.put(Constants.USERNAME_KEY, username);
+                    jsonBody.put(Constants.DATA_KEY, data);
                 }
                 catch (Exception e){ ;
                 }
@@ -257,28 +263,26 @@ public class LoginViewModel extends Observable {
                         EG_LOGIN_WS, jsonBody, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        String token;
-                        System.out.println("KEYSSSSSSSSSSS::::: " + response.keys().toString());
+                        String accessToken;
                         try {
-                            if(response.has("access-token")){
-                                token = response.getString("access-token");
-                                System.out.println("======================== NO ME CAI ========================");
-                                System.out.println(token);
+                            if(response.has(Constants.ACCESS_TOKEN_KEY)){
+                                accessToken = response.getString(Constants.ACCESS_TOKEN_KEY);
+                                System.out.println(accessToken);
+                                SessionHelper.saveAccessToken(activity, accessToken);
+                                setChanged();
+                                notifyObservers(EG_LOGIN_REQUEST_SUCCEED);
                             }
                         } catch (JSONException e) {
-                            System.out.println("======================== EN EL CATCH ========================");
                             e.printStackTrace();
                         }
-                        setChanged();
-                        notifyObservers(EG_LOGIN_REQUEST_SUCCEED);
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("tag", "Error: " + error.getMessage());
                         setChanged();
-                        notifyObservers(EG_LOGIN_REQUEST_FAILED_HTTP);
-                        System.out.println("===================== ON ERROR REPSONSE =================");
+                        notifyObservers(REQUEST_FAILED_HTTP);
+                        System.out.println("======================== ERROR ON RESPONSE ========================");
                     }
                 }){
 /**                    @Override
@@ -289,6 +293,77 @@ public class LoginViewModel extends Observable {
                 }*/
                 };
                 AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
+            }
+            return null;
+        }
+    }
+
+    public void makeGetFavoritesRequest(){
+        setChanged();
+        notifyObservers(GET_FAVORITES_REQUEST_STARTED);
+        new FavoritesGetter().execute();
+    }
+
+    private class FavoritesGetter extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if(!SessionHelper.hasAccessToken(activity)){
+                setChanged();
+                notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
+            }
+            else{
+                String accessToken = SessionHelper.getAccessToken(activity);
+                if (!Constants.isNetworkAvailable(activity)) {
+                    setChanged();
+                    notifyObservers(REQUEST_FAILED_CONNECTION);
+                }
+                else {
+                    JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                            FAVORITES_WS, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try{
+                                JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
+                                ArrayList<String> favoritesList = new ArrayList<String>();
+                                if (jsonArray != null) {
+                                    int len = jsonArray.length();
+                                    for (int i=0;i<len;i++){
+                                        favoritesList.add(jsonArray.get(i).toString());
+                                    }
+                                }
+                                Set<String> favoritesSet = new HashSet<>();
+                                favoritesSet.addAll(favoritesList);
+                                SessionHelper.saveFavoritePois(activity, favoritesSet);
+                            }
+                            catch (Exception e){
+                                setChanged();
+                                notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
+                            }
+                            setChanged();
+                            notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            VolleyLog.d("tag", "Error: " + error.getMessage());
+                            setChanged();
+                            notifyObservers(REQUEST_FAILED_HTTP);
+                        }
+                    }){
+                        /**
+                         * Passing some request headers
+                         */
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            HashMap<String, String> headers = new HashMap<String, String>();
+                            //headers.put("Content-Type", "application/json");
+                            headers.put(Constants.ACCESS_TOKEN_HEADER_KEY, accessToken);
+                            return headers;
+                        }
+
+                    };
+                    AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
+                }
             }
             return null;
         }

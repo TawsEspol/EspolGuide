@@ -61,6 +61,13 @@ public class Constants {
 
     public final static String ALTERNATIVE_NAMES_FIELD = "alternative_names";
 
+    public final static String ACCESS_TOKEN_KEY = "access-token";
+    public final static String ACCESS_TOKEN_HEADER_KEY = "access-token";
+    public final static String DATA_KEY = "data";
+    public final static String USERNAME_KEY = "username";
+    public final static String CODES_GTSI_KEY = "codes_gtsi";
+
+
     public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
@@ -86,8 +93,12 @@ public class Constants {
         return SERVER_URL + "/addFavorite/";
     }
 
-    public static String getGetFavoritesURL(){
+    public static String getGetFavoritesURL() {
         return SERVER_URL + "/getFavorites/";
+    }
+
+    public static String getFavoritesURL(){
+        return SERVER_URL + "/favorites/";
     }
 
     public static String getLoginURL(){

@@ -220,7 +220,7 @@ public class LoginActivity extends BaseActivity implements Observer {
                 }
             });
         }
-        else if (message == viewModel.AUTH_REQUEST_FAILED_HTTP) {
+        else if (message == viewModel.REQUEST_FAILED_HTTP) {
             LoginActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     Toast.makeText(LoginActivity.this, getResources().getString(R.string.http_error_msg),
@@ -259,10 +259,21 @@ public class LoginActivity extends BaseActivity implements Observer {
 
         }
         else if (message == viewModel.EG_LOGIN_REQUEST_SUCCEED) {
+            viewModel.makeGetFavoritesRequest();
+        }
+        else if (message == viewModel.GET_FAVORITES_REQUEST_STARTED) {
 
         }
-        else if (message == viewModel.EG_LOGIN_REQUEST_FAILED_HTTP) {
+        else if (message == viewModel.GET_FAVORITES_REQUEST_SUCCEEDED) {
 
+        }
+        else if (message == viewModel.GET_FAVORITES_REQUEST_FAILED_LOADING) {
+            LoginActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.error_on_loading_favorites),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }

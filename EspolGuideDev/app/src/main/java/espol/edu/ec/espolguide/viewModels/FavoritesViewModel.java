@@ -18,6 +18,10 @@ import espol.edu.ec.espolguide.FavoritesActivity;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
 
+/**
+ * Created by galo on 04/07/18.
+ */
+
 public class FavoritesViewModel extends Observable {
     public static String GET_FAVORITES_REQUEST_STARTED = "get_favorites_request_started";
     public static String GET_FAVORITES_REQUEST_SUCCEEDED = "get_favorites_request_succeeded";
@@ -79,45 +83,6 @@ public class FavoritesViewModel extends Observable {
                 AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
             }
         return null;
-        }
-    }
-
-    private class FavoriteAdder extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            setChanged();
-            notifyObservers(ADD_FAVORITES_REQUEST_STARTED);
-            if (!Constants.isNetworkAvailable(activity)) {
-                setChanged();
-                notifyObservers(ADD_FAVORITES_REQUEST_FAILED_CONNECTION);
-            }
-            else {
-                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                        ADD_FAVORITE_WS, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try{
-                            Iterator<String> iter = response.keys();
-                        }
-                        catch (Exception e){
-                            setChanged();
-                            notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
-                        }
-
-                        setChanged();
-                        notifyObservers(ADD_FAVORITES_REQUEST_SUCCEEDED);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d("tag", "Error: " + error.getMessage());
-                        setChanged();
-                        notifyObservers(ADD_FAVORITES_REQUEST_FAILED_HTTP);
-                    }
-                });
-                AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
-            }
-            return null;
         }
     }
 }
