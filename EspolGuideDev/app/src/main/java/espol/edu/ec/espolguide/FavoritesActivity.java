@@ -2,6 +2,7 @@ package espol.edu.ec.espolguide;
 
 import android.os.Bundle;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -24,16 +25,18 @@ public class FavoritesActivity extends BaseActivity implements Observer {
         this.viewHolder = new ViewHolder();
         this.viewModel = new FavoritesViewModel(this);
         this.viewModel.addObserver(this);
+        this.viewModel.loadFavorites();
     }
 
-    private class ViewHolder{
+    public class ViewHolder{
+        public ListView favoritesLv;
 
         public ViewHolder(){
             findViews();
         }
 
         public void findViews(){
-            return;
+            favoritesLv = (ListView) findViewById(R.id.favorites_lv);
         }
     }
 
@@ -56,7 +59,31 @@ public class FavoritesActivity extends BaseActivity implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         String message = (String)arg;
-        if (message == "") {
+        if (message == viewModel.LOAD_FAVORITES_STARTED) {
+
+        }
+        if (message == viewModel.LOAD_FAVORITES_SUCCEEDED) {
+
+        }
+        if (message == viewModel.FAVORITES_NOT_FOUND) {
+
+        }
+        if (message == viewModel.LOAD_FAVORITES_FAILED) {
+
+        }
+        if (message == viewModel.REQUEST_FAILED_CONNECTION) {
+
+        }
+        if (message == viewModel.REQUEST_FAILED_HTTP) {
+
+        }
+        if (message == viewModel.GET_FAVORITES_REQUEST_STARTED) {
+
+        }
+        if (message == viewModel.GET_FAVORITES_REQUEST_SUCCEEDED) {
+
+        }
+        if (message == viewModel.GET_FAVORITES_REQUEST_FAILED_LOADING) {
 
         }
     }
