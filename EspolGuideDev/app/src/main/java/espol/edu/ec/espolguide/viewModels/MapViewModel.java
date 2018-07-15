@@ -405,7 +405,7 @@ public class MapViewModel extends Observable{
                                     if(feature.properties().has(Constants.CODE_GTSI_FIELD)){
                                         String codeGtsi = feature.getStringProperty(Constants.CODE_GTSI_FIELD).toString();
                                         activity.setSelectedPoi(codeGtsi);
-                                        makeAddFavoriteRequest(codeGtsi);
+                                        //makeAddFavoriteRequest(codeGtsi);
                                     }
                                     new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description,
                                             codeInfrastructure, activity, activity.getViewHolder().info)).show();

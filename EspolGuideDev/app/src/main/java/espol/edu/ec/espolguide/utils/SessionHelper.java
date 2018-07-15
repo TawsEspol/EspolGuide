@@ -81,6 +81,14 @@ public class SessionHelper {
         return sharedPref.getStringSet(FAVORITES, new HashSet<>());
     }
 
+    public static boolean hasFavorites(Context context){
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        if(sharedPref.contains(FAVORITES)){
+            return true;
+        }
+        return false;
+    }
+
     public static boolean isFacebookLoggedIn(Activity activity){
         return true;
     }

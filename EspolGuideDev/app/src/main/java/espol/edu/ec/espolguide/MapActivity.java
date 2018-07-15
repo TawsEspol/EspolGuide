@@ -104,8 +104,6 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
         public ImageView drawerBtn;
 
-        public Button favBtn;
-
         public ViewHolder(){
             findViews();
             setBackButtonListener();
@@ -137,17 +135,6 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             carBtn = (ImageButton) findViewById(R.id.car_button);
 
             drawerBtn = (ImageView) findViewById(R.id.drawerBtn);
-            favBtn = (Button) findViewById(R.id.fav_button);
-
-        }
-
-        private void setFavBtnListener(){
-            this.favBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    viewModel.makeAddFavoriteRequest(getSelectedPoi());
-                }
-            });
         }
 
         private void setDrawerBtnListener(){

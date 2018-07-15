@@ -2,40 +2,52 @@ package espol.edu.ec.espolguide.viewModels;
 
 import android.os.AsyncTask;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Observable;
+import java.util.Set;
 
 import espol.edu.ec.espolguide.FavoritesActivity;
 import espol.edu.ec.espolguide.controllers.AppController;
+import espol.edu.ec.espolguide.controllers.adapters.FavoriteAdapter;
 import espol.edu.ec.espolguide.utils.Constants;
+import espol.edu.ec.espolguide.utils.SessionHelper;
 
 /**
  * Created by galo on 04/07/18.
  */
 
 public class FavoritesViewModel extends Observable {
+    public static String LOAD_FAVORITES_STARTED = "load_favorites_started";
+    public static String LOAD_FAVORITES_SUCCEEDED = "load_favorites_succeeded";
+    public static String FAVORITES_NOT_FOUND = "favorites_not_found";
+    public static String LOAD_FAVORITES_FAILED = "load_favorites_failed";
+
+
+    public static String REQUEST_FAILED_CONNECTION = "request_failed_connection";
+    public static String REQUEST_FAILED_HTTP = "request_failed_http";
     public static String GET_FAVORITES_REQUEST_STARTED = "get_favorites_request_started";
     public static String GET_FAVORITES_REQUEST_SUCCEEDED = "get_favorites_request_succeeded";
-    public static String GET_FAVORITES_REQUEST_FAILED_CONNECTION = "get_favorites_request_failed_connection";
-    public static String GET_FAVORITES_REQUEST_FAILED_HTTP = "get_favorites_request_failed_http";
     public static String GET_FAVORITES_REQUEST_FAILED_LOADING = "get_favorites_request_failed_loading";
-    public static String ADD_FAVORITES_REQUEST_STARTED = "add_favorites_request_started";
-    public static String ADD_FAVORITES_REQUEST_SUCCEEDED = "add_favorites_request_succeeded";
-    public static String ADD_FAVORITES_REQUEST_FAILED_CONNECTION = "add_favorites_request_failed_connection";
-    public static String ADD_FAVORITES_REQUEST_FAILED_HTTP = "add_favorites_request_failed_http";
-    public static String ADD_FAVORITES_REQUEST_FAILED_LOADING = "add_favorites_request_failed_loading";
 
+
+    private String FAVORITES_WS = Constants.getFavoritesURL();
+    private ArrayList<String> favoritePlaces = new ArrayList<>();
+    private FavoriteAdapter favoriteAdapter;
     private FavoritesActivity activity;
-    private ArrayList<String> favoriteBlocks;
 
     public FavoritesViewModel(FavoritesActivity activity){
         this.activity = activity;
@@ -49,37 +61,125 @@ public class FavoritesViewModel extends Observable {
     private class FavoritesGetter extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
-            if (!Constants.isNetworkAvailable(activity)) {
+            if(!SessionHelper.hasAccessToken(activity)){
                 setChanged();
-                notifyObservers(GET_FAVORITES_REQUEST_FAILED_CONNECTION);
+                notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
             }
-            else {
-                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                        "LALALALA", null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try{
-                            Iterator<String> iter = response.keys();
+            else{
+                String accessToken = SessionHelper.getAccessToken(activity);
+                if (!Constants.isNetworkAvailable(activity)) {
+                    setChanged();
+                    notifyObservers(REQUEST_FAILED_CONNECTION);
+                }
+                else {
+                    JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                            FAVORITES_WS, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try{
+                                JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
+                                ArrayList<String> favoritesList = new ArrayList<String>();
+                                if (jsonArray != null) {
+                                    int len = jsonArray.length();
+                                    for (int i=0;i<len;i++){
+                                        favoritesList.add(jsonArray.get(i).toString());
+                                    }
+                                }
+                                Set<String> favoritesSet = new HashSet<>();
+                                favoritesSet.addAll(favoritesList);
+                                SessionHelper.saveFavoritePois(activity, favoritesSet);
+                                setChanged();
+                                notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
+                            }
+                            catch (Exception e){
+                                setChanged();
+                                notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
+                            }
                         }
-                        catch (Exception e){
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            System.out.println("======================== ERROR EN RESPONSE ========================");
+
+                            VolleyLog.d("tag", "Error: " + error.getMessage());
                             setChanged();
-                            notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
+                            notifyObservers(REQUEST_FAILED_HTTP);
+                        }
+                    }){
+                        /**
+                         * Passing some request headers
+                         */
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            HashMap<String, String> headers = new HashMap<String, String>();
+                            headers.put(Constants.ACCESS_TOKEN_HEADER_KEY, accessToken);
+                            return headers;
                         }
 
-                        setChanged();
-                        notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d("tag", "Error: " + error.getMessage());
-                        setChanged();
-                        notifyObservers(GET_FAVORITES_REQUEST_FAILED_HTTP);
-                    }
-                });
-                AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
+                    };
+                    AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
+                }
             }
-        return null;
+            return null;
+        }
+    }
+
+    public void loadFavorites(){
+        setChanged();
+        notifyObservers(LOAD_FAVORITES_STARTED);
+        new FavoritesLoader().execute();    }
+
+    private class FavoritesLoader extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if(!SessionHelper.hasFavorites(activity)){
+                setChanged();
+                notifyObservers(FAVORITES_NOT_FOUND);
+            }
+            else{
+                Set<String> favoritesSet = SessionHelper.getFavoritePois(activity);
+                favoritePlaces.addAll(favoritesSet);
+                System.out.println("************* MIS ELEMENTOS *****************");
+                for(int i=0; i<favoritePlaces.size(); i++){
+                    System.out.println(favoritePlaces.get(i));
+                }
+                favoriteAdapter = new FavoriteAdapter(activity, favoritePlaces);
+                activity.getViewHolder().favoritesLv.setAdapter(favoriteAdapter);
+
+                //displayFavorites();
+                setChanged();
+                notifyObservers(LOAD_FAVORITES_SUCCEEDED);
+            }
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+            //favoriteAdapter.notifyDataSetChanged();
+            // HIDE THE SPINNER AFTER LOADING FEEDS
+            //linlaHeaderProgress.setVisibility(View.GONE);
+        }
+    }
+
+    public ArrayList<String> getFavoritePlaces(){
+        return this.favoritePlaces;
+    }
+
+    public void setFavoritePlaces(ArrayList<String> favoritePlaces){
+        this.favoritePlaces = favoritePlaces;
+    }
+
+    public FavoriteAdapter getFavoriteAdapter() {
+        return this.favoriteAdapter;
+    }
+
+    public void setFavoriteAdapter(FavoriteAdapter favoriteAdapter){
+        this.favoriteAdapter = favoriteAdapter;
+    }
+
+    public void displayFavorites(){
+        if(favoritePlaces.size() > 0){
+            activity.getViewHolder().favoritesLv.setAdapter(this.favoriteAdapter);
+            //this.favoriteAdapter.notifyDataSetChanged();
         }
     }
 }
