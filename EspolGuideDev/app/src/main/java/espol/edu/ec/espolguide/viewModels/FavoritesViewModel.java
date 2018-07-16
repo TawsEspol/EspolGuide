@@ -1,5 +1,6 @@
 package espol.edu.ec.espolguide.viewModels;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.android.volley.AuthFailureError;
@@ -21,6 +22,8 @@ import java.util.Observable;
 import java.util.Set;
 
 import espol.edu.ec.espolguide.FavoritesActivity;
+import espol.edu.ec.espolguide.MapActivity;
+import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.controllers.adapters.FavoriteAdapter;
 import espol.edu.ec.espolguide.utils.Constants;
@@ -56,7 +59,10 @@ public class FavoritesViewModel extends Observable {
     public void makeGetFavoritesRequest(){
         setChanged();
         notifyObservers(GET_FAVORITES_REQUEST_STARTED);
-        new FavoritesGetter().execute();    }
+        new FavoritesGetter().execute();
+    }
+
+
 
     private class FavoritesGetter extends AsyncTask<Void, Void, Void> {
         @Override
@@ -99,8 +105,6 @@ public class FavoritesViewModel extends Observable {
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            System.out.println("======================== ERROR EN RESPONSE ========================");
-
                             VolleyLog.d("tag", "Error: " + error.getMessage());
                             setChanged();
                             notifyObservers(REQUEST_FAILED_HTTP);
@@ -139,24 +143,12 @@ public class FavoritesViewModel extends Observable {
             else{
                 Set<String> favoritesSet = SessionHelper.getFavoritePois(activity);
                 favoritePlaces.addAll(favoritesSet);
-                System.out.println("************* MIS ELEMENTOS *****************");
-                for(int i=0; i<favoritePlaces.size(); i++){
-                    System.out.println(favoritePlaces.get(i));
-                }
                 favoriteAdapter = new FavoriteAdapter(activity, favoritePlaces);
                 activity.getViewHolder().favoritesLv.setAdapter(favoriteAdapter);
-
-                //displayFavorites();
                 setChanged();
                 notifyObservers(LOAD_FAVORITES_SUCCEEDED);
             }
             return null;
-        }
-
-        protected void onPostExecute(Void result) {
-            //favoriteAdapter.notifyDataSetChanged();
-            // HIDE THE SPINNER AFTER LOADING FEEDS
-            //linlaHeaderProgress.setVisibility(View.GONE);
         }
     }
 
@@ -174,12 +166,5 @@ public class FavoritesViewModel extends Observable {
 
     public void setFavoriteAdapter(FavoriteAdapter favoriteAdapter){
         this.favoriteAdapter = favoriteAdapter;
-    }
-
-    public void displayFavorites(){
-        if(favoritePlaces.size() > 0){
-            activity.getViewHolder().favoritesLv.setAdapter(this.favoriteAdapter);
-            //this.favoriteAdapter.notifyDataSetChanged();
-        }
     }
 }

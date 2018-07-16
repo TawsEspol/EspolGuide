@@ -55,6 +55,8 @@ public class Constants {
     public final static String TYPE_FIELD = "type";
     public final static String ALTERNATIVE_NAMES_FIELD = "alternative_names";
 
+    public final static String SELECTED_GTSI_CODE = "selected_gtsi_code";
+
     public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
@@ -79,4 +81,9 @@ public class Constants {
     public static String getCoordinatesURL(){
         return SERVER_URL + "/coordinates/";
     }
+
+    public static String getBuildingInfoURL(){
+        return SERVER_URL + "/buildingInfo/";
+    }
+
 }
