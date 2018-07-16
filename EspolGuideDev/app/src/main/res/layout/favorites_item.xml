@@ -2,12 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp">
     <TextView
         android:id="@+id/favorite_gtsi_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="LALALA" />
+        android:text=""
+        android:textColor="@color/first"
+        android:background="@color/white"/>
 </LinearLayout>
 
 

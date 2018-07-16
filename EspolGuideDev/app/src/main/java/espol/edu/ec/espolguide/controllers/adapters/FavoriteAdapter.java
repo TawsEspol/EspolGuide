@@ -1,7 +1,8 @@
 package espol.edu.ec.espolguide.controllers.adapters;
 
-
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.R;
+import espol.edu.ec.espolguide.utils.Constants;
 
 /**
  * Created by galo on 12/07/18.
@@ -82,9 +85,22 @@ public class FavoriteAdapter extends BaseAdapter {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                goToBuilding(holder.getCodeGtsi());
             }
         });
         return view;
+    }
+
+    public Activity getActivity(){
+        return (Activity) this.mContext;
+    }
+
+    public void goToBuilding(String codeGtsi){
+        Intent mapIntent = new Intent(getActivity().getApplicationContext(), MapActivity.class);
+        mapIntent.putExtra(Constants.SELECTED_OPTION, R.id.map_op);
+        mapIntent.putExtra(Constants.SELECTED_GTSI_CODE, codeGtsi);
+        mapIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        getActivity().startActivity(mapIntent);
+        getActivity().finish();
     }
 }

@@ -55,7 +55,6 @@ public class Constants {
     public final static String COLOR_FIFTH = "#F17300";
 
     public final static int SUBJECTS_REQUEST_CODE = 2;
-    public final static String SELECTED_GTSI_CODE = "selected_gtsi_code";
     public final static String LATITUDE_KEY = "lat";
     public final static String LONGITUDE_KEY = "long";
 
@@ -70,6 +69,8 @@ public class Constants {
     public final static String TYPE_FIELD = "type";
     public final static String ALTERNATIVE_NAMES_FIELD = "alternative_names";
 
+    public final static String SELECTED_GTSI_CODE = "selected_gtsi_code";
+
     public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
@@ -83,9 +84,6 @@ public class Constants {
         return SERVER_URL + "/photoBlock/";
     }
 
-    public static String getCoordinatesURL(){
-        return SERVER_URL + "/coordinates/";
-    }
 
     public static String getAddFavoriteURL(){
         return SERVER_URL + "/addFavorite/";
@@ -103,4 +101,12 @@ public class Constants {
         return SERVER_URL + "/login/";
     }
 
+
+    public static String getCoordinatesURL(){
+        return SERVER_URL + "/coordinates/";
+    }
+
+    public static String getBuildingInfoURL() {
+        return SERVER_URL + "/buildingInfo/";
+    }
 }
