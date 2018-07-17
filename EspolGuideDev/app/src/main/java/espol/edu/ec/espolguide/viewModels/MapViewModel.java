@@ -84,12 +84,6 @@ public class MapViewModel extends Observable{
     public static String ROUTE_REQUEST_STARTED = "route_request_started";
     public static String ROUTE_REQUEST_SUCCEEDED = "route_request_succeeded";
     public static String ROUTE_REQUEST_FAILED = "route_request_failed";
-    
-    public static String MAP_CENTERING_REQUEST_STARTED = "map_centering_request_started";
-    public static String MAP_CENTERING_REQUEST_SUCCEEDED = "map_centering_request_succeeded";
-    public static String MAP_CENTERING_REQUEST_FAILED_LOADING = "map_centering_request_failed_loading";
-
-    final String COORDINATES_WS = Constants.getCoordinatesURL();
 
     public static String GET_FAVORITES_REQUEST_STARTED = "get_favorites_request_started";
     public static String GET_FAVORITES_REQUEST_SUCCEEDED = "get_favorites_request_succeeded";
@@ -542,16 +536,7 @@ public class MapViewModel extends Observable{
         });
     }
 
-    public void setCameraPosition(Location location) {
-        activity.getViewHolder().mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(location.getLatitude(), location.getLongitude()), Constants.FAR_AWAY_ZOOM));
-    }
 
-    public void centerMapOnResult(String codeGtsi){
-        setChanged();
-        notifyObservers(MAP_CENTERING_REQUEST_STARTED);
-        new MapCentering().execute(codeGtsi);
-    }
 
     /**
      * Auxiliar class that handles the map zoom and centering.
@@ -622,6 +607,14 @@ public class MapViewModel extends Observable{
 
     }
 
+    /**
+     * Method that retrieves user's location at the onCreate Activity's state.
+     *
+     * This method retrieves the user's at the very beginning of the application's launching
+     * in order to avoid location's issues later, when drawing a route.
+     *
+     * @return The method returns nothing.
+     */
     public void getInitialPosition(){
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) !=
@@ -643,6 +636,12 @@ public class MapViewModel extends Observable{
         }
     }
 
+    /**
+     * Method that instances a FavoriteAdder class.
+     *
+     * @param codeGtsi The MapCentering URL request parameter.
+     * @return The method returns nothing.
+     */
     public void makeAddFavoriteRequest(String codeGtsi){
         setChanged();
         notifyObservers(ADD_FAVORITES_REQUEST_STARTED);
@@ -721,71 +720,22 @@ public class MapViewModel extends Observable{
         }
     }
 
+    /**
+     * Method that instances a MapCentering class.
+     *
+     * @param codeGtsi The MapCentering URL request parameter.
+     * @return The method returns nothing.
+     */
     public void centerMapOnResult(String codeGtsi){
         setChanged();
         notifyObservers(MAP_CENTERING_REQUEST_STARTED);
         new MapCentering().execute(codeGtsi);
     }
 
-    private class MapCentering extends AsyncTask<String, Void, Void> {
-        @Override
-        protected Void doInBackground(String... strings) {
-            String codeGtsi = strings[0];
-            if (!Constants.isNetworkAvailable(activity)) {
-                setChanged();
-                notifyObservers(REQUEST_FAILED_CONNECTION);
-            }
-            else {
-                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                        COORDINATES_WS + codeGtsi, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            double lat = response.getDouble(Constants.LATITUDE_KEY);
-                            double lon = response.getDouble(Constants.LONGITUDE_KEY);
-                            LatLng point = new LatLng(lat, lon);
-                            activity.setSelectedDestination(point);
-                            activity.getViewHolder().editDestination.setText(codeGtsi);
-                            activity.getViewHolder().editSearch.setText(codeGtsi);
-                            activity.getViewHolder().editSearch.clearFocus();
-                            activity.getViewHolder().mapView.getMapAsync(new OnMapReadyCallback() {
-                                @Override
-                                public void onMapReady(MapboxMap mapboxMap) {
-                                    if (activity.getViewHolder().featureMarker != null) {
-                                        mapboxMap.removeMarker(activity.getViewHolder().featureMarker);
-                                    }
-                                    activity.getViewHolder().featureMarker = mapboxMap.addMarker(new MarkerOptions()
-                                            .position(point)
-                                    );
-                                    mapboxMap.setCameraPosition(new CameraPosition.Builder()
-                                            .target(point)
-                                            .zoom(Constants.CLOSE_ZOOM)
-                                            .build());
-                                }
-                            });
-                            adapter.getPois().clear();
-                            setChanged();
-                            notifyObservers(MAP_CENTERING_REQUEST_SUCCEEDED);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            setChanged();
-                            notifyObservers(MAP_CENTERING_REQUEST_FAILED_LOADING);
-                        } finally {
-                            System.gc();
-                            activity.getViewHolder().routeBtn.setVisibility(View.VISIBLE);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        setChanged();
-                        notifyObservers(REQUEST_FAILED_HTTP);
-                    }
-                });
-                AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
-            }
-        return null;
-        }
+    public void setCameraPosition(Location location) {
+        activity.getViewHolder().mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(location.getLatitude(), location.getLongitude()), Constants.FAR_AWAY_ZOOM));
     }
+
 
 }
