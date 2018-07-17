@@ -16,6 +16,8 @@ import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.utils.Constants;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * Created by galo on 12/07/18.
  */
@@ -99,8 +101,7 @@ public class FavoriteAdapter extends BaseAdapter {
         Intent mapIntent = new Intent(getActivity().getApplicationContext(), MapActivity.class);
         mapIntent.putExtra(Constants.SELECTED_OPTION, R.id.map_op);
         mapIntent.putExtra(Constants.SELECTED_GTSI_CODE, codeGtsi);
-        mapIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-        getActivity().startActivity(mapIntent);
+        getActivity().setResult(RESULT_OK, mapIntent);
         getActivity().finish();
     }
 }

@@ -39,13 +39,11 @@ public class FavoritesViewModel extends Observable {
     public static String FAVORITES_NOT_FOUND = "favorites_not_found";
     public static String LOAD_FAVORITES_FAILED = "load_favorites_failed";
 
-
     public static String REQUEST_FAILED_CONNECTION = "request_failed_connection";
     public static String REQUEST_FAILED_HTTP = "request_failed_http";
     public static String GET_FAVORITES_REQUEST_STARTED = "get_favorites_request_started";
     public static String GET_FAVORITES_REQUEST_SUCCEEDED = "get_favorites_request_succeeded";
     public static String GET_FAVORITES_REQUEST_FAILED_LOADING = "get_favorites_request_failed_loading";
-
 
     private String FAVORITES_WS = Constants.getFavoritesURL();
     private ArrayList<String> favoritePlaces = new ArrayList<>();
@@ -61,8 +59,6 @@ public class FavoritesViewModel extends Observable {
         notifyObservers(GET_FAVORITES_REQUEST_STARTED);
         new FavoritesGetter().execute();
     }
-
-
 
     private class FavoritesGetter extends AsyncTask<Void, Void, Void> {
         @Override
