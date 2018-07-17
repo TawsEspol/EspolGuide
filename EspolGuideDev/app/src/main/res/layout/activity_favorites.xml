@@ -12,16 +12,15 @@
         android:background="@color/first"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:contentInsetStartWithNavigation="0dp"/>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
     <ListView
         android:id="@+id/favorites_lv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="15dp"
         android:background="@color/white"
-        android:divider="@color/third"
-        android:dividerHeight="2.0dp"/>
+        android:divider="@color/fourth"
+        android:dividerHeight="1.4dp"/>
 </LinearLayout>
