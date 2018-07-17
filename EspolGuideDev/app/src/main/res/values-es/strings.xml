@@ -8,6 +8,10 @@
     <string name="password">Contraseña</string>
     <string name="login">Ingresar</string>
 
+    <string name="name">Nombre</string>
+    <string name="unity">Unidad</string>
+    <string name="description">Descripción</string>
+
     <string name="failed_connection_msg">Conexión a Internet no disponible</string>
     <string name="http_error_msg">Error al conectarse con el servidor</string>
     <string name="loading_pois_names_error_msg">Error cargando nombres de sitios...</string>

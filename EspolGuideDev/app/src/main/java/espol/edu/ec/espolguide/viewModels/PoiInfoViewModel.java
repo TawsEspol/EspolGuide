@@ -46,16 +46,10 @@ public class PoiInfoViewModel extends Observable {
     }
 
     public void show() {
-        ViewGroup nextChild = (ViewGroup) ((ViewGroup)activity.getView()).getChildAt(0);
-        ViewGroup linear = (ViewGroup) ((ViewGroup)activity.getView()).getChildAt(1);
-        ImageView imageView = (ImageView) nextChild.getChildAt(1);
-        TextView name = (TextView) ((ViewGroup)linear.getChildAt(0)).getChildAt(0);
-        name.setText(activity.getName());
-        TextView academicUnit = (TextView) ((ViewGroup)linear.getChildAt(1)).getChildAt(0);
-        academicUnit.setText(activity.getacAdemicUnit());
-        TextView description = (TextView) ((ViewGroup)linear.getChildAt(2)).getChildAt(0);
-        description.setText(activity.getDescription());
-        new Counter().execute(new PhotoData(activity.getCtx(),imageView, activity.getCodeInfrastructure()));
+        activity.getViewHolder().nameTv.setText(activity.getName());
+        activity.getViewHolder().unityTv.setText(activity.getacAdemicUnit());
+        activity.getViewHolder().descriptionTv.setText(activity.getDescription());
+        new Counter().execute(new PhotoData(activity.getCtx(), activity.getViewHolder().photo, activity.getCodeInfrastructure()));
         activity.getView().setVisibility(View.VISIBLE);
     }
 
@@ -70,7 +64,6 @@ public class PoiInfoViewModel extends Observable {
             this.id = id;
         }
     }
-
 
     private class Counter extends AsyncTask<PhotoData, Void, Drawable> {
         Context context;
