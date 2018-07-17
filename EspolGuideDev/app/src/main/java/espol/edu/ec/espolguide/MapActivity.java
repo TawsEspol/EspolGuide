@@ -578,4 +578,19 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
     public String getSelectedPoi(){
         return this.selectedPoi;
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.FAVORITES_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                if(data.getExtras().containsKey(Constants.SELECTED_GTSI_CODE)){
+                    String codeGtsi = data.getExtras().getString(Constants.SELECTED_GTSI_CODE);
+                    viewModel.centerMapOnResult(codeGtsi);
+                }
+            }
+            else if (resultCode == RESULT_CANCELED) {
+                // Write the code if there's no result
+            }
+        }
+    }
 }

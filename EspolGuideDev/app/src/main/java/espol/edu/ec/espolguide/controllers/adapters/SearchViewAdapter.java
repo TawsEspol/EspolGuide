@@ -164,12 +164,11 @@ public class SearchViewAdapter extends BaseAdapter {
                         public void onResponse(JSONObject response) {
                             MapActivity mapActivity = (MapActivity) mContext;
                             try {
-                                double lat = response.getDouble("lat");
-                                double lon = response.getDouble("long");
+                                double lat = response.getDouble(Constants.LATITUDE_KEY);
+                                double lon = response.getDouble(Constants.LONGITUDE_KEY);
                                 LatLng point = new LatLng(lat, lon);
                                 mapActivity.setSelectedDestination(point);
                                 mapActivity.getViewHolder().editDestination.setText(name1);
-                                System.out.println(point.toString() + " --------------------");
                                 TextView f = (TextView) bar;
                                 f.setText(name1);
                                 pois.clear();

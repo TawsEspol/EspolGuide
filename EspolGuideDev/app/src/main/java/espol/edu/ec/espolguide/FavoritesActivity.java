@@ -1,12 +1,16 @@
 package espol.edu.ec.espolguide;
 
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import java.util.Observable;
 import java.util.Observer;
 
+import espol.edu.ec.espolguide.utils.Util;
 import espol.edu.ec.espolguide.viewModels.FavoritesViewModel;
 
 /**
@@ -26,17 +30,28 @@ public class FavoritesActivity extends BaseActivity implements Observer {
         this.viewModel = new FavoritesViewModel(this);
         this.viewModel.addObserver(this);
         this.viewModel.loadFavorites();
+        this.viewHolder.favToolbar.setNavigationIcon(R.drawable.ic_left_arrow);
+        setSupportActionBar(this.viewHolder.favToolbar);
+        Util.lockSwipeGesture(this);
     }
 
     public class ViewHolder{
         public ListView favoritesLv;
+        public Toolbar favToolbar;
 
         public ViewHolder(){
             findViews();
+            setActivityTitle();
         }
 
         public void findViews(){
             favoritesLv = (ListView) findViewById(R.id.favorites_lv);
+            favToolbar = (Toolbar) findViewById(R.id.fav_toolbar);
+        }
+
+        public void setActivityTitle(){
+            String activityName = (String) getApplicationContext().getString(R.string.favorites_menu_op);
+            favToolbar.setTitle(activityName);
         }
     }
 
@@ -86,5 +101,25 @@ public class FavoritesActivity extends BaseActivity implements Observer {
         if (message == viewModel.GET_FAVORITES_REQUEST_FAILED_LOADING) {
 
         }
+    }
+
+/**    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.favorites_actions, menu);
+        return true;
+    }*/
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
