@@ -30,8 +30,6 @@ public class FavoritesActivity extends BaseActivity implements Observer {
         this.viewModel = new FavoritesViewModel(this);
         this.viewModel.addObserver(this);
         this.viewModel.loadFavorites();
-        this.viewHolder.favToolbar.setNavigationIcon(R.drawable.ic_left_arrow);
-        setSupportActionBar(this.viewHolder.favToolbar);
         Util.lockSwipeGesture(this);
     }
 
@@ -42,6 +40,8 @@ public class FavoritesActivity extends BaseActivity implements Observer {
         public ViewHolder(){
             findViews();
             setActivityTitle();
+            this.favToolbar.setNavigationIcon(R.drawable.ic_left_arrow);
+            setSupportActionBar(this.favToolbar);
         }
 
         public void findViews(){
@@ -103,23 +103,13 @@ public class FavoritesActivity extends BaseActivity implements Observer {
         }
     }
 
-/**    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.favorites_actions, menu);
-        return true;
-    }*/
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
             finish();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
