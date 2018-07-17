@@ -265,7 +265,8 @@ public class MapViewModel extends Observable{
                                 // TODO Auto-generated method stub
                             }
                         });
-
+                        setChanged();
+                        notifyObservers(NAMES_REQUEST_SUCCEEDED);
                     }
                 }, new Response.ErrorListener() {
                     @Override

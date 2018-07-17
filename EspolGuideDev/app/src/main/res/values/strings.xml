@@ -8,6 +8,10 @@
     <string name="password">Password</string>
     <string name="login">Login</string>
 
+    <string name="name">Name</string>
+    <string name="unity">Unity</string>
+    <string name="description">Description</string>
+
     <string name="failed_connection_msg">Internet connection not available</string>
     <string name="http_error_msg">Error on connecting with server</string>
     <string name="loading_pois_names_error_msg">Error on loading place names...</string>

@@ -30,12 +30,14 @@ public class PoiInfo extends AppCompatActivity implements Observer {
     private String description;
     private String codeInfrastructure;
     private ArrayList<String> alternativeNames = new ArrayList<String>();
+    private ViewHolder viewHolder;
     private PoiInfoViewModel viewModel;
 
     public PoiInfo(String blockName, String academicUnit, String description, String codeInfrastructure,
                    Context ctx, View view){
         this.ctx = ctx;
         this.view = view;
+        this.viewHolder = new ViewHolder();
         viewModel = new PoiInfoViewModel(this);
         viewModel.addObserver(this);
         this.name = blockName;
@@ -80,6 +82,29 @@ public class PoiInfo extends AppCompatActivity implements Observer {
                 }
             });
         }
+    }
+
+    public class ViewHolder{
+        public TextView nameTv;
+        public TextView unityTv;
+        public TextView descriptionTv;
+        public ImageView photo;
+
+        public ViewHolder(){
+            findViews();
+        }
+
+        public void findViews(){
+            Activity parentActivity = (Activity) ctx;
+            nameTv = (TextView) parentActivity.findViewById(R.id.name_tv);
+            unityTv = (TextView) parentActivity.findViewById(R.id.unity_tv);
+            descriptionTv = (TextView) parentActivity.findViewById(R.id.description_tv);
+            photo = (ImageView) parentActivity.findViewById(R.id.flag);
+        }
+    }
+
+    public ViewHolder getViewHolder(){
+        return this.viewHolder;
     }
 
     public Context getCtx(){
