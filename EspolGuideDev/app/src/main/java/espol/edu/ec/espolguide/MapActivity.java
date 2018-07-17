@@ -44,6 +44,16 @@ import com.mapbox.android.core.permissions.PermissionsListener;
  * Created by galo on 29/12/17.
  */
 
+
+/**
+ * Activity for loading Map layout resources.
+ *
+ * This activity is used to display the Map layout resources. It uses the Observator
+ * software design pattern.
+ *
+ * @author Galo Castillo
+ * @since apolo 0.1
+ */
 public class MapActivity extends BaseActivity implements Observer, LocationEngineListener, PermissionsListener {
     ViewHolder viewHolder;
     MapViewModel viewModel;
@@ -351,7 +361,9 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
         }
         if (message == viewModel.ADD_FAVORITES_REQUEST_SUCCEEDED) {
-
+            /**
+             *
+             */
         }
         if (message == viewModel.ADD_FAVORITES_REQUEST_FAILED_LOADING) {
 
@@ -564,6 +576,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
     public String getSelectedPoi(){
         return this.selectedPoi;
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -515,6 +515,14 @@ public class MapViewModel extends Observable{
         });
     }
 
+    /**
+     * Method that retrieves user's location at the onCreate Activity's state.
+     *
+     * This method retrieves the user's at the very beginning of the application's launching
+     * in order to avoid location's issues later, when drawing a route.
+     *
+     * @return The method returns nothing.
+     */
     public void getInitialPosition(){
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) !=
@@ -536,6 +544,12 @@ public class MapViewModel extends Observable{
         }
     }
 
+    /**
+     * Method that instances a FavoriteAdder class.
+     *
+     * @param codeGtsi The MapCentering URL request parameter.
+     * @return The method returns nothing.
+     */
     public void makeAddFavoriteRequest(String codeGtsi){
         setChanged();
         notifyObservers(ADD_FAVORITES_REQUEST_STARTED);
@@ -614,6 +628,12 @@ public class MapViewModel extends Observable{
         }
     }
 
+    /**
+     * Method that instances a MapCentering class.
+     *
+     * @param codeGtsi The MapCentering URL request parameter.
+     * @return The method returns nothing.
+     */
     public void centerMapOnResult(String codeGtsi){
         setChanged();
         notifyObservers(MAP_CENTERING_REQUEST_STARTED);
