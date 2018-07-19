@@ -90,6 +90,10 @@ public class BaseActivity extends AppCompatActivity implements Observer {
                         break;
 
                     case R.id.courses_op:
+                        Intent subjIntent = new Intent(getApplicationContext(), SubjectsActivity.class);
+                        subjIntent.putExtra(Constants.SELECTED_OPTION, R.id.courses_op);
+                        startActivity(subjIntent);
+                        finish();
                         break;
 
                     case R.id.favorites_op:
