@@ -36,4 +36,7 @@
     <string name="fb_login_protocol_scheme"></string>
     <string name="fb_auth">Autenticado con Facebook</string>
 
+    <string name="lectures">Clases</string>
+    <string name="exams">Exámenes</string>
+
 </resources>
