@@ -25,6 +25,9 @@ public class Constants {
     public final static String AUTH_METHOD_NAME = "autenticacion";
     public final static String AUTH_SOAP_ACTION = "http://tempuri.org/autenticacion";
 
+    public final static String SUBJ_METHOD_NAME = "consultaCursoxUsuario";
+    public final static String SUBJ_SOAP_ACTION = "http://tempuri.org/consultaCursoxUsuario";
+
     public final static String SOAP_HEADER = "GTSIAuthSoapHeader";
     public final static String USER_SOAP_HEADER = "taws";
     public final static String KEY_SOAP_HEADER = "jmMH2VY17PHPmUq2w7E2o7W4I2O9d16u";

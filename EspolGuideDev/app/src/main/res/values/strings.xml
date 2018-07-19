@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">EspolGuide</string>
-    <string name="access_token"></string>
+    <string name="access_token">pk.eyJ1IjoibWd1YXJhbmQiLCJhIjoiY2poZ214bWlsMWxrcTNhbzF0OWJndWQ1NiJ9.-aRR2ELQWpsAfW1WMT7cFA</string>
 
     <string name="university_name">ESPOL</string>
     <string name="search_poi_hint">Search in ESPOL</string>
@@ -37,8 +37,12 @@
     <string name="link_menu_op">Link to ESPOL account</string>
     <string name="logout_menu_op">Logout</string>
 
-    <string name="facebook_app_id"></string>
-    <string name="fb_login_protocol_scheme"></string>
+    <string name="facebook_app_id">1817432011899179</string>
+    <string name="fb_login_protocol_scheme">fb1817432011899179</string>
     <string name="fb_auth">Authenticated with Facebook</string>
+
+    <string name="lectures">Lectures</string>
+    <string name="exams">Exams</string>
+
 </resources>
 
