@@ -15,8 +15,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -132,6 +132,14 @@ public class MapViewModel extends Observable{
         new Nombres().execute(activity);
     }
 
+    /**
+     * Method that returns the class permissionsManager attribute.
+     *
+     * This method is used for obtaining the permissionsManager class attribute.
+     *
+     * @author Galo Castillo
+     * @return The method returns an instance of PermissionsManager used as class attribute.
+     */
     public PermissionsManager getPermissionsManager() {
         return permissionsManager;
     }
@@ -140,6 +148,14 @@ public class MapViewModel extends Observable{
         this.permissionsManager = permissionsManager;
     }
 
+    /**
+     * Method that returns the class locationPlugin attribute.
+     *
+     * This method is used for obtaining the locationPlugin class attribute.
+     *
+     * @author Galo Castillo
+     * @return The method returns an instance of LocationLayerPlugin used as class attribute.
+     */
     public LocationLayerPlugin getLocationPlugin() {
         return locationPlugin;
     }
@@ -148,6 +164,14 @@ public class MapViewModel extends Observable{
         this.locationPlugin = locationPlugin;
     }
 
+    /**
+     * Method that returns the class locationEngine attribute.
+     *
+     * This method is used for obtaining the locationEngine class attribute.
+     *
+     * @author Galo Castillo
+     * @return The method returns an instance of LocationEngine used as class attribute.
+     */
     public LocationEngine getLocationEngine() {
         return locationEngine;
     }
@@ -448,6 +472,7 @@ public class MapViewModel extends Observable{
                                     if(feature.properties().has(Constants.CODE_GTSI_FIELD)){
                                         String codeGtsi = feature.getStringProperty(Constants.CODE_GTSI_FIELD).toString();
                                         activity.setSelectedPoi(codeGtsi);
+                                        setSelectedPoiCoords();
                                         //makeAddFavoriteRequest(codeGtsi);
                                     }
                                     updateFavBtnColor(activity.getSelectedPoi());
@@ -469,13 +494,48 @@ public class MapViewModel extends Observable{
         });
     }
 
+    public void setSelectedPoiCoords(){
+        if (!Constants.isNetworkAvailable(activity)){
+            Toast.makeText(activity, activity.getResources().getString(R.string.failed_connection_msg),
+                    Toast.LENGTH_LONG).show();
+        } else {
+            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                    COORDINATES_WS + activity.getSelectedPoi(), null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        double lat = response.getDouble(Constants.LATITUDE_KEY);
+                        double lon = response.getDouble(Constants.LONGITUDE_KEY);
+                        LatLng point = new LatLng(lat, lon);
+                        activity.setSelectedDestination(point);
+                        activity.getViewHolder().editDestination.setText(activity.getSelectedPoi());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(activity, activity.getResources().getString(R.string.loading_poi_info_error_msg),
+                                Toast.LENGTH_LONG).show();
+                    } finally {
+                        System.gc();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.d("tag", "Error: " + error.getMessage());
+                    Toast.makeText(activity, activity.getResources().getString(R.string.http_error_msg),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+            AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
+        }
+    }
+
     public void updateFavBtnColor(String codeGtsi){
         Integer colorInt;
         if(SessionHelper.isFavorite(activity, codeGtsi)){
             colorInt = ContextCompat.getColor(activity, R.color.fifth);
         }
         else{
-            colorInt = ContextCompat.getColor(activity, R.color.first);
+            colorInt = ContextCompat.getColor(activity, R.color.third);
         }
         ImageViewCompat.setImageTintList(activity.getViewHolder().favBtn, ColorStateList.valueOf(colorInt));
     }
@@ -746,7 +806,6 @@ public class MapViewModel extends Observable{
                                     int jsonArrayLen = jsonArray.length();
                                     for (int i=0; i<jsonArrayLen; i++){
                                         favoritesSet.add(jsonArray.get(i).toString());
-                                        System.out.println("================== SAVED POIS ===============");
                                         System.out.println(jsonArray.get(i).toString());
                                     }
                                 }
