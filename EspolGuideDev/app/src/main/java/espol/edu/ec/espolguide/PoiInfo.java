@@ -5,6 +5,8 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -89,9 +91,11 @@ public class PoiInfo extends AppCompatActivity implements Observer {
         public TextView unityTv;
         public TextView descriptionTv;
         public ImageView photo;
+        public Button poiRoute;
 
         public ViewHolder(){
             findViews();
+            setPoiRouteListener();
         }
 
         public void findViews(){
@@ -100,6 +104,18 @@ public class PoiInfo extends AppCompatActivity implements Observer {
             unityTv = (TextView) parentActivity.findViewById(R.id.unity_tv);
             //descriptionTv = (TextView) parentActivity.findViewById(R.id.description_tv);
             photo = (ImageView) parentActivity.findViewById(R.id.flag);
+            poiRoute = (Button) parentActivity.findViewById(R.id.poi_route_btn);
+        }
+
+        public void setPoiRouteListener(){
+            this.poiRoute.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MapActivity parentActivity = (MapActivity) ctx;
+                    parentActivity.getViewHolder().closePoiInfo();
+                    parentActivity.getViewHolder().drawRoute();
+                }
+            });
         }
     }
 

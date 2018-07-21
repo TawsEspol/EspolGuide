@@ -211,57 +211,65 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             this.closePoiInfoBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    viewModel.setMapOnClickListener();
-                    final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
-                    info.setVisibility(View.GONE);
-                    ImageView photo = (ImageView) findViewById(R.id.flag);
-                    photo.setImageResource(android.R.color.transparent);
-                    if(!isRouteModeViewDisplayed()){
-                        getViewHolder().editSearch.setVisibility(View.VISIBLE);
-                    }
+                    closePoiInfo();
                 }
             });
+        }
+
+        public void closePoiInfo(){
+            viewModel.setMapOnClickListener();
+            final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
+            info.setVisibility(View.GONE);
+            ImageView photo = (ImageView) findViewById(R.id.flag);
+            photo.setImageResource(android.R.color.transparent);
+            if(!isRouteModeViewDisplayed()){
+                getViewHolder().editSearch.setVisibility(View.VISIBLE);
+            }
         }
 
         private void setDrawRouteButtonListener(){
             this.routeBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    editSearch.setVisibility(View.GONE);
-                    routeBox.setVisibility(View.VISIBLE);
-                    drawerBtn.setVisibility(View.GONE);
-                    routeBtn.setVisibility(View.GONE);
-                    editDestination.clearFocus();
-                    editOrigin.clearFocus();
-                    editOrigin.setText(getResources().getString(R.string.your_location));
-                    viewModel.enableLocationPlugin();
-                    try{
-                        setSelectedOrigin(new LatLng(getOriginLocation().getLatitude(), getOriginLocation().getLongitude()));
-                        setOriginPosition(Point.fromLngLat(getSelectedOrigin().getLongitude(), getSelectedOrigin().getLatitude()));
-                        setDestinationPosition(Point.fromLngLat(getSelectedDestination().getLongitude(), getSelectedDestination().getLatitude()));
-                        viewModel.getRoute(getOriginPosition(), getDestinationPosition());
-                    }
-                    catch(Exception e){
-                        if (!Constants.isNetworkAvailable(MapActivity.this)) {
-                            MapActivity.this.runOnUiThread(new Runnable() {
-                                public void run() {
-                                    Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
-                                            Toast.LENGTH_LONG).show();
-
-                                }
-                            });
-                        }
-                        else{
-                            MapActivity.this.runOnUiThread(new Runnable() {
-                                public void run() {
-                                    Toast.makeText(MapActivity.this, getResources().getString(R.string.error_on_getting_location),
-                                            Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        }
-                    }
+                    drawRoute();
                 }
             });
+        }
+
+        public void drawRoute(){
+            editSearch.setVisibility(View.GONE);
+            routeBox.setVisibility(View.VISIBLE);
+            drawerBtn.setVisibility(View.GONE);
+            routeBtn.setVisibility(View.GONE);
+            editDestination.clearFocus();
+            editOrigin.clearFocus();
+            editOrigin.setText(getResources().getString(R.string.your_location));
+            viewModel.enableLocationPlugin();
+            try{
+                setSelectedOrigin(new LatLng(getOriginLocation().getLatitude(), getOriginLocation().getLongitude()));
+                setOriginPosition(Point.fromLngLat(getSelectedOrigin().getLongitude(), getSelectedOrigin().getLatitude()));
+                setDestinationPosition(Point.fromLngLat(getSelectedDestination().getLongitude(), getSelectedDestination().getLatitude()));
+                viewModel.getRoute(getOriginPosition(), getDestinationPosition());
+            }
+            catch(Exception e){
+                if (!Constants.isNetworkAvailable(MapActivity.this)) {
+                    MapActivity.this.runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
+                                    Toast.LENGTH_LONG).show();
+
+                        }
+                    });
+                }
+                else{
+                    MapActivity.this.runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(MapActivity.this, getResources().getString(R.string.error_on_getting_location),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
         }
 
         private void setEditTextListeners(){
