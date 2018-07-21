@@ -48,7 +48,7 @@ public class PoiInfoViewModel extends Observable {
     public void show() {
         activity.getViewHolder().nameTv.setText(activity.getName());
         activity.getViewHolder().unityTv.setText(activity.getacAdemicUnit());
-        activity.getViewHolder().descriptionTv.setText(activity.getDescription());
+        //activity.getViewHolder().descriptionTv.setText(activity.getDescription());
         new Counter().execute(new PhotoData(activity.getCtx(), activity.getViewHolder().photo, activity.getCodeInfrastructure()));
         activity.getView().setVisibility(View.VISIBLE);
     }

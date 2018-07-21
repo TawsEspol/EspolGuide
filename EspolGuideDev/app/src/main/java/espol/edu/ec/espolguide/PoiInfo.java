@@ -98,7 +98,7 @@ public class PoiInfo extends AppCompatActivity implements Observer {
             Activity parentActivity = (Activity) ctx;
             nameTv = (TextView) parentActivity.findViewById(R.id.name_tv);
             unityTv = (TextView) parentActivity.findViewById(R.id.unity_tv);
-            descriptionTv = (TextView) parentActivity.findViewById(R.id.description_tv);
+            //descriptionTv = (TextView) parentActivity.findViewById(R.id.description_tv);
             photo = (ImageView) parentActivity.findViewById(R.id.flag);
         }
     }

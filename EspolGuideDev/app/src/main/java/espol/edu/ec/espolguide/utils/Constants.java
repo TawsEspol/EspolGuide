@@ -78,6 +78,10 @@ public class Constants {
         return SERVER_URL + "/favorites/";
     }
 
+    public static String getDeleteFavoriteURL(){
+        return SERVER_URL + "/deleteFavorite/";
+    }
+
     public static String getLoginURL(){
         return SERVER_URL + "/login/";
     }
