@@ -55,9 +55,6 @@ public class Constants {
     public final static String COLOR_FIFTH = "#F17300";
 
     public final static int SUBJECTS_REQUEST_CODE = 2;
-    public final static String LATITUDE_KEY = "lat";
-    public final static String LONGITUDE_KEY = "long";
-
 
     public final static String ACCESS_TOKEN_KEY = "access-token";
     public final static String ACCESS_TOKEN_HEADER_KEY = "access-token";
@@ -99,6 +96,10 @@ public class Constants {
 
     public static String getFavoritesURL(){
         return SERVER_URL + "/favorites/";
+    }
+
+    public static String getDeleteFavoriteURL(){
+        return SERVER_URL + "/deleteFavorite/";
     }
 
     public static String getLoginURL(){

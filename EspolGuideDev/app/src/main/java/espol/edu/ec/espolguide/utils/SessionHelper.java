@@ -83,8 +83,18 @@ public class SessionHelper {
 
     public static boolean hasFavorites(Context context){
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        if(sharedPref.contains(FAVORITES)){
+        if(isEspolLoggedIn(context) && sharedPref.contains(FAVORITES)){
             return true;
+        }
+        return false;
+    }
+
+    public static boolean isFavorite(Context context, String codeGtsi){
+        if(isEspolLoggedIn(context) && hasFavorites(context)){
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            if(sharedPref.getStringSet(FAVORITES, new HashSet<>()).contains(codeGtsi)){
+                return true;
+            }
         }
         return false;
     }

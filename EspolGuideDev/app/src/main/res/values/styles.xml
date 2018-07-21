@@ -159,6 +159,16 @@
         <!--item name="android:background">@drawable/shape_data</item-->
     </style>
 
+    <style name="summarized_data" parent="AppTheme">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">12dip</item>
+        <item name="android:textSize">16dip</item>
+        <item name="android:textColor">@color/second</item>
+        <item name="android:gravity">left</item>
+        <!--item name="android:background">@drawable/shape_data</item-->
+    </style>
+
     <style name="property" parent="AppTheme">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>

@@ -51,7 +51,7 @@ import com.mapbox.android.core.permissions.PermissionsListener;
  * This activity is used to display the Map layout resources. It uses the Observator
  * software design pattern.
  *
- * @author Galo Castillo
+ * @autho Galo Castillo
  * @since apolo 0.1
  */
 public class MapActivity extends BaseActivity implements Observer, LocationEngineListener, PermissionsListener {
@@ -86,6 +86,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         this.viewModel.setRouteModeButtonsListeners();
         this.disableMenuOption();
         this.viewModel.getInitialPosition();
+        this.viewHolder.setFavBtnListener();
     }
 
     public class ViewHolder{
@@ -96,6 +97,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         public Button closePoiInfoBtn;
         public Marker featureMarker;
         public MapboxMap mapboxMap;
+        public ImageButton favBtn;
 
         public EditText editOrigin;
         public EditText editDestination;
@@ -146,6 +148,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             carBtn = (ImageButton) findViewById(R.id.car_button);
 
             drawerBtn = (ImageView) findViewById(R.id.drawerBtn);
+            favBtn = (ImageButton) findViewById(R.id.favoriteBtn);
         }
 
         private void setDrawerBtnListener(){
@@ -153,6 +156,15 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
                 @Override
                 public void onClick(View v) {
                     Util.openDrawer(MapActivity.this);
+                }
+            });
+        }
+
+        private void setFavBtnListener(){
+            this.favBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    viewModel.makeUpdateFavoriteRequest(selectedPoi);
                 }
             });
         }
@@ -199,10 +211,14 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             this.closePoiInfoBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    viewModel.setMapOnClickListener();
                     final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
                     info.setVisibility(View.GONE);
                     ImageView photo = (ImageView) findViewById(R.id.flag);
                     photo.setImageResource(android.R.color.transparent);
+                    if(!isRouteModeViewDisplayed()){
+                        getViewHolder().editSearch.setVisibility(View.VISIBLE);
+                    }
                 }
             });
         }
@@ -332,7 +348,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
         }
         if (message == viewModel.POI_INFO_REQUEST_SUCCEEDED) {
-
+            getViewHolder().editSearch.setVisibility(View.GONE);
         }
         if (message == viewModel.POI_INFO_REQUEST_FAILED_LOADING) {
             MapActivity.this.runOnUiThread(new Runnable() {
@@ -471,8 +487,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             this.viewHolder.drawerBtn.setVisibility(View.VISIBLE);
         }
         //The views for starting a route and for changing the route mode are being displayed.
-        else if (viewHolder.editSearch.getVisibility() == View.GONE ||
-                viewHolder.routeBtn.getVisibility() == View.VISIBLE){
+        else if (isRouteModeViewDisplayed()){
             this.viewHolder.drawerBtn.setVisibility(View.VISIBLE);
             this.viewHolder.editDestination.setText("");
             this.viewHolder.editOrigin.setText("");
@@ -500,6 +515,11 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             });
 
         }
+    }
+
+    public boolean isRouteModeViewDisplayed(){
+        return viewHolder.editSearch.getVisibility() == View.GONE ||
+                viewHolder.routeBtn.getVisibility() == View.VISIBLE;
     }
 
     public LatLng getSelectedOrigin() {

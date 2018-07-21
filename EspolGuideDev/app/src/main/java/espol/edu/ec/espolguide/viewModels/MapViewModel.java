@@ -3,17 +3,19 @@ package espol.edu.ec.espolguide.viewModels;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.PointF;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.ImageViewCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.android.volley.AuthFailureError;
@@ -100,11 +102,6 @@ public class MapViewModel extends Observable{
     public static String MAP_CENTERING_REQUEST_STARTED = "map_centering_request_started";
     public static String MAP_CENTERING_REQUEST_SUCCEEDED = "map_centering_request_succeeded";
     public static String MAP_CENTERING_REQUEST_FAILED_LOADING = "map_centering_request_failed_loading";
-
-    final private String FAVORITES_WS = Constants.getFavoritesURL();
-
-    private ArrayList<String> favoriteBlocks;
-
 
     final private String POIS_NAMES_WS = Constants.getAlternativeNamesURL();
     final private ArrayList<String> namesItems = new ArrayList<>();
@@ -392,6 +389,22 @@ public class MapViewModel extends Observable{
         }
     }
 
+    public void lockMapOnClickListener(){
+        activity.getViewHolder().mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(final MapboxMap mapboxMap) {
+                activity.getViewHolder().setMapboxMap(mapboxMap);
+                mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(@NonNull LatLng point) {
+
+                    }
+
+                });
+            }
+        });
+    }
+
     public void setMapOnClickListener(){
         activity.getViewHolder().mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -418,6 +431,8 @@ public class MapViewModel extends Observable{
                                 String description = "";
                                 String codeInfrastructure = "";
                                 if (feature.properties() != null && hasEspolAttributes(feature)) {
+                                    lockMapOnClickListener();
+                                    activity.setSelectedPoi("");
                                     if(feature.properties().has(Constants.BLOCKNAME_FIELD)){
                                         blockName = feature.getStringProperty(Constants.BLOCKNAME_FIELD).toString();
                                     }
@@ -435,6 +450,7 @@ public class MapViewModel extends Observable{
                                         activity.setSelectedPoi(codeGtsi);
                                         //makeAddFavoriteRequest(codeGtsi);
                                     }
+                                    updateFavBtnColor(activity.getSelectedPoi());
                                     new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description,
                                             codeInfrastructure, activity, activity.getViewHolder().info)).show();
                                     setChanged();
@@ -451,6 +467,17 @@ public class MapViewModel extends Observable{
                 });
             }
         });
+    }
+
+    public void updateFavBtnColor(String codeGtsi){
+        Integer colorInt;
+        if(SessionHelper.isFavorite(activity, codeGtsi)){
+            colorInt = ContextCompat.getColor(activity, R.color.fifth);
+        }
+        else{
+            colorInt = ContextCompat.getColor(activity, R.color.first);
+        }
+        ImageViewCompat.setImageTintList(activity.getViewHolder().favBtn, ColorStateList.valueOf(colorInt));
     }
 
     public void setRouteZoom(){
@@ -473,6 +500,18 @@ public class MapViewModel extends Observable{
         }
     }
 
+    /**
+     * Method that checks if an Espol building has been selected on the map.
+     *
+     * This method checks if the feature of the region selected on the map, contains at least
+     * one Espol's buildings attribute.
+     *
+     * @author Galo Castillo
+     * @param feature The feature of the region selected on the map.
+     * @return The method returns true if the feature contains at least one
+     * Espol building attributes. Returns false if there are no Espol building attributes contained
+     * in the feature's attributes.
+     */
     public boolean hasEspolAttributes(Feature feature){
         return (feature.properties().has(Constants.CODE_GTSI_FIELD) ||
                 feature.properties().has(Constants.BLOCKNAME_FIELD) ||
@@ -483,7 +522,9 @@ public class MapViewModel extends Observable{
 
     @SuppressWarnings( {"MissingPermission"})
     public void enableLocationPlugin() {
-        // Check if permissions are enabled and if not request
+        /**
+         * Checks if permissions are enabled and if not, request         *
+         */
         if (PermissionsManager.areLocationPermissionsGranted(activity)) {
             // Create an instance of location engine
             initializeLocationEngine();
@@ -613,6 +654,7 @@ public class MapViewModel extends Observable{
      * This method retrieves the user's at the very beginning of the application's launching
      * in order to avoid location's issues later, when drawing a route.
      *
+     * @author Galo Castillo
      * @return The method returns nothing.
      */
     public void getInitialPosition(){
@@ -637,31 +679,54 @@ public class MapViewModel extends Observable{
     }
 
     /**
-     * Method that instances a FavoriteAdder class.
+     * Method that instances a FavoriteUpdater class.
      *
+     * This method instances a FavoriteUpdater class to add or remove as favorite
+     * the POI related to the code passed as argument.
+     *
+     * @author Galo Castillo
      * @param codeGtsi The MapCentering URL request parameter.
      * @return The method returns nothing.
      */
-    public void makeAddFavoriteRequest(String codeGtsi){
+    public void makeUpdateFavoriteRequest(String codeGtsi){
         setChanged();
         notifyObservers(ADD_FAVORITES_REQUEST_STARTED);
-        new FavoriteAdder().execute(codeGtsi);
+        new FavoriteUpdater().execute(codeGtsi);
     }
 
-    private class FavoriteAdder extends AsyncTask<String, Void, Void> {
+    /**
+     * Auxiliar class that handles the favorite POI addition or removal.
+     *
+     * This auxiliar class handles the favorites addition or removal of an specified POI
+     * when requested. This class calls a the favorites updating web service to add or remove
+     * the POI sent as parameter on the call. Moreover, this class updates the user's favorites
+     * stored on the shared preferences.
+     *
+     * @author Galo Castillo
+     */
+    private class FavoriteUpdater extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... strings) {
             String codeGtsi = activity.getSelectedPoi();
+            System.out.println("================= CODIGO ENVIADO =================: " + codeGtsi);
             if(!SessionHelper.hasAccessToken(activity)){
                 setChanged();
                 notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
             }
             else{
+                System.out.println("================= HAY ACCESS TOKEN =================");
                 if (!Constants.isNetworkAvailable(activity)) {
                     setChanged();
                     notifyObservers(REQUEST_FAILED_CONNECTION);
                 }
                 else {
+                    String url;
+                    if(SessionHelper.isFavorite(activity, codeGtsi)){
+                        url = Constants.getDeleteFavoriteURL();
+                    }
+                    else{
+                        url = Constants.getFavoritesURL();
+                    }
                     JSONObject jsonBody = new JSONObject();
                     try{
                         jsonBody.put(Constants.CODE_GTSI_KEY, codeGtsi);
@@ -670,33 +735,39 @@ public class MapViewModel extends Observable{
                     }
                     String accessToken = SessionHelper.getAccessToken(activity);
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                            FAVORITES_WS, jsonBody, new Response.Listener<JSONObject>() {
+                            url, jsonBody, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             try{
+                                System.out.println("================= HAY RESPUESTA =================");
                                 JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
-                                ArrayList<String> favoritesList = new ArrayList<String>();
+                                Set<String> favoritesSet = new HashSet<>();
                                 if (jsonArray != null) {
-                                    int len = jsonArray.length();
-                                    for (int i=0;i<len;i++){
-                                        favoritesList.add(jsonArray.get(i).toString());
+                                    int jsonArrayLen = jsonArray.length();
+                                    for (int i=0; i<jsonArrayLen; i++){
+                                        favoritesSet.add(jsonArray.get(i).toString());
+                                        System.out.println("================== SAVED POIS ===============");
+                                        System.out.println(jsonArray.get(i).toString());
                                     }
                                 }
-                                Set<String> favoritesSet = new HashSet<>();
-                                favoritesSet.addAll(favoritesList);
                                 SessionHelper.saveFavoritePois(activity, favoritesSet);
+                                updateFavBtnColor(codeGtsi);
                                 setChanged();
                                 notifyObservers(ADD_FAVORITES_REQUEST_SUCCEEDED);
+                                System.out.println("================= TODO BIEN =================");
                             }
                             catch (Exception e){
                                 setChanged();
                                 notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
+                                System.out.println("================= CATCH =================");
                             }
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             VolleyLog.d("tag", "Error: " + error.getMessage());
+                            System.out.println("================= ERROR ON RESPONSE =================");
+
                             setChanged();
                             notifyObservers(REQUEST_FAILED_HTTP);
                         }
@@ -707,7 +778,6 @@ public class MapViewModel extends Observable{
                         @Override
                         public Map<String, String> getHeaders() throws AuthFailureError {
                             HashMap<String, String> headers = new HashMap<String, String>();
-                            //headers.put("Content-Type", "application/json");
                             headers.put(Constants.ACCESS_TOKEN_HEADER_KEY, accessToken);
                             return headers;
                         }
@@ -723,6 +793,10 @@ public class MapViewModel extends Observable{
     /**
      * Method that instances a MapCentering class.
      *
+     * This method instances a MapCentering class to center and zoom the map over
+     * the POI related to the code passed as argument.
+     *
+     * @author GaloCastillo
      * @param codeGtsi The MapCentering URL request parameter.
      * @return The method returns nothing.
      */
@@ -731,11 +805,7 @@ public class MapViewModel extends Observable{
         notifyObservers(MAP_CENTERING_REQUEST_STARTED);
         new MapCentering().execute(codeGtsi);
     }
-
-    public void setCameraPosition(Location location) {
-        activity.getViewHolder().mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(location.getLatitude(), location.getLongitude()), Constants.FAR_AWAY_ZOOM));
-    }
+    
 
 
 }
