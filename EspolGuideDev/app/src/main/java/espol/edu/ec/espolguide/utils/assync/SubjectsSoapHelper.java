@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import espol.edu.ec.espolguide.controllers.listeners.ToPOIListener;
+import espol.edu.ec.espolguide.controllers.listeners.ToPoiListener;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SubjectRoom;
 import espol.edu.ec.espolguide.utils.User;
@@ -35,9 +35,11 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void, HashMap>{
     private void addSubject(LinearLayout container, HashMap subjectData, String name){
 
         LinearLayout subjectBox = new LinearLayout(ctx);
+
         subjectBox.setOrientation(LinearLayout.VERTICAL);
         TextView subjectName = new TextView(ctx);
         subjectName.setText(name);
+        subjectName.setTextColor(Color.parseColor(Constants.COLOR_FIRST));
         subjectBox.addView(subjectName);
         addRooms(subjectBox,subjectData);
 
@@ -52,8 +54,9 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void, HashMap>{
         while (it.hasNext()) {
             Map.Entry e = (Map.Entry) it.next();
             SubjectRoom subjectRoom = new SubjectRoom(ctx, (String) e.getKey(), (String) e.getValue());
-            subjectRoom.setOnClickListener(new ToPOIListener((String) e.getValue()));
-            subjectRoom.setTextColor(Color.parseColor("#ff0000"));
+            subjectRoom.setBackgroundColor(Color.parseColor(Constants.COLOR_FOURTH));
+            subjectRoom.setOnClickListener(new ToPoiListener((String) e.getValue(),ctx));
+            subjectRoom.setTextColor(Color.parseColor(Constants.COLOR_SECOND));
             subjectRoom.setText(subjectRoom.toString());
             subjectBox.addView(subjectRoom);
         }
@@ -139,7 +142,6 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void, HashMap>{
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     protected void onPostExecute(HashMap data) {
-        System.out.println(data);
         Iterator it = data.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry e = (Map.Entry)it.next();
