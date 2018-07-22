@@ -69,6 +69,9 @@ public class Constants {
     public final static String COLOR_FOURTH = "#DBE4EE";
     public final static String COLOR_FIFTH = "#F17300";
 
+    public final static int SUBJECTS_REQUEST_CODE = 2;
+
+
     public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
@@ -101,5 +104,4 @@ public class Constants {
     public static String getBuildingInfoURL(){
         return SERVER_URL + "/buildingInfo/";
     }
-
 }

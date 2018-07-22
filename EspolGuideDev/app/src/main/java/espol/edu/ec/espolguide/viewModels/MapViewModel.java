@@ -865,4 +865,6 @@ public class MapViewModel extends Observable{
         return null;
         }
     }
+
+
 }
