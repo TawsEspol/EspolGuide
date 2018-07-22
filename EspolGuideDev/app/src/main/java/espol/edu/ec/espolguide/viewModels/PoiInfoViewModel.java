@@ -4,9 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import espol.edu.ec.espolguide.PoiInfo;
 import espol.edu.ec.espolguide.utils.Constants;
@@ -81,7 +79,8 @@ public class PoiInfoViewModel extends Observable {
                 notifyObservers(POI_PHOTO_REQUEST_FAILED_CONNECTION);
             }
             else {
-                d = LoadImage(Constants.getBlockPhotoURL()+ identifier);
+                d = null;
+                //d = LoadImage(Constants.getBlockPhotoURL()+ identifier);
             }
             return d;
         }
@@ -89,7 +88,7 @@ public class PoiInfoViewModel extends Observable {
         @Override
         protected void onPostExecute(Drawable d) {
             super.onPostExecute(d);
-            iv.setImageDrawable(d);
+            //iv.setImageDrawable(d);
         }
     }
 

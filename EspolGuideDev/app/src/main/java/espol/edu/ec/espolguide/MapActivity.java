@@ -177,32 +177,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             this.backBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    editDestination.setText("");
-                    editOrigin.setText("");
-                    editSearch.setText("");
-                    routeBox.setVisibility(View.GONE);
-                    routeBtn.setVisibility(View.GONE);
-                    drawerBtn.setVisibility(View.VISIBLE);
-                    if (featureMarker != null){
-                        mapboxMap.removeMarker(featureMarker);
-                    }
-                    if (viewModel.getAdapter().getFeatureMarker() != null){
-                        mapboxMap.removeMarker(viewModel.getAdapter().getFeatureMarker());
-                    }
-                    if (viewModel.getNavigationMapRoute() != null) {
-                        viewModel.getNavigationMapRoute().removeRoute();
-                    }
-                    editSearch.setVisibility(View.VISIBLE);
-                    viewModel.setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
-                    mapView.getMapAsync(new OnMapReadyCallback() {
-                        @Override
-                        public void onMapReady(MapboxMap mapboxMap) {
-                            mapboxMap.setCameraPosition(new CameraPosition.Builder()
-                                    .target(new LatLng(Constants.ESPOL_CENTRAL_LAT, Constants.ESPOL_CENTRAL_LNG))
-                                    .zoom(Constants.FAR_AWAY_ZOOM)
-                                    .build());
-                        }
-                    });
+                    showMapView();
                 }
             });
         }
@@ -221,7 +196,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
             info.setVisibility(View.GONE);
             ImageView photo = (ImageView) findViewById(R.id.flag);
-            photo.setImageResource(android.R.color.transparent);
+            //photo.setImageResource(android.R.color.transparent);
             if(!isRouteModeViewDisplayed()){
                 getViewHolder().editSearch.setVisibility(View.VISIBLE);
             }
@@ -487,47 +462,72 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
     @Override
     public void onBackPressed() {
-        //The view for changing either the destination or origin is being displayed
-        if (viewHolder.mapLayout.getVisibility() == View.GONE){
-            this.viewHolder.routeSearchLayout.setVisibility(View.GONE);
-            this.viewHolder.mapLayout.setVisibility(View.VISIBLE);
-            this.viewHolder.editSearchRoutes.setText("");
-            this.viewHolder.drawerBtn.setVisibility(View.VISIBLE);
+        if (isUpdateRouteViewDisplayed()){
+            showRouteModeView();
         }
-        //The views for starting a route and for changing the route mode are being displayed.
         else if (isRouteModeViewDisplayed()){
-            this.viewHolder.drawerBtn.setVisibility(View.VISIBLE);
-            this.viewHolder.editDestination.setText("");
-            this.viewHolder.editOrigin.setText("");
-            this.viewHolder.routeBox.setVisibility(View.GONE);
-            this.viewHolder.routeBtn.setVisibility(View.GONE);
-            if (this.viewHolder.featureMarker != null){
-                this.viewHolder.mapboxMap.removeMarker(this.viewHolder.featureMarker);
-            }
-            if (this.viewModel.getAdapter().getFeatureMarker() != null){
-                this.viewHolder.mapboxMap.removeMarker(this.viewModel.getAdapter().getFeatureMarker());
-            }
-            if (viewModel.getNavigationMapRoute() != null) {
-                viewModel.getNavigationMapRoute().removeRoute();
-            }
-            this.viewHolder.editSearch.setVisibility(View.VISIBLE);
-            this.viewModel.setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
-            this.viewHolder.mapView.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(MapboxMap mapboxMap) {
-                    mapboxMap.setCameraPosition(new CameraPosition.Builder()
-                            .target(new LatLng(Constants.ESPOL_CENTRAL_LAT, Constants.ESPOL_CENTRAL_LNG))
-                            .zoom(Constants.FAR_AWAY_ZOOM)
-                            .build());
-                }
-            });
-
+            showMapView();
+        }
+        else if(isPoiInfoDisplayed()){
+            viewHolder.closePoiInfo();
+        }
+        else if(isRouteBtnDisplayed()){
+            viewHolder.routeBtn.setVisibility(View.INVISIBLE);
         }
     }
 
     public boolean isRouteModeViewDisplayed(){
-        return viewHolder.editSearch.getVisibility() == View.GONE ||
-                viewHolder.routeBtn.getVisibility() == View.VISIBLE;
+        return viewHolder.editSearch.getVisibility() == View.GONE &&
+                viewHolder.routeBox.getVisibility() == View.VISIBLE;
+    }
+
+    public boolean isPoiInfoDisplayed(){
+        return viewHolder.info.getVisibility() == View.VISIBLE;
+    }
+
+    public boolean isRouteBtnDisplayed(){
+        return viewHolder.routeBtn.getVisibility() == View.VISIBLE;
+    }
+
+    public void showMapView(){
+        this.viewHolder.drawerBtn.setVisibility(View.VISIBLE);
+        this.viewHolder.editSearch.setText("");
+        this.viewHolder.editDestination.setText("");
+        this.viewHolder.editOrigin.setText("");
+        this.viewHolder.routeBox.setVisibility(View.GONE);
+        this.viewHolder.routeBtn.setVisibility(View.GONE);
+        if (this.viewHolder.featureMarker != null){
+            this.viewHolder.mapboxMap.removeMarker(this.viewHolder.featureMarker);
+        }
+        if (this.viewModel.getAdapter().getFeatureMarker() != null){
+            this.viewHolder.mapboxMap.removeMarker(this.viewModel.getAdapter().getFeatureMarker());
+        }
+        if (viewModel.getNavigationMapRoute() != null) {
+            viewModel.getNavigationMapRoute().removeRoute();
+        }
+        this.viewHolder.editSearch.setVisibility(View.VISIBLE);
+        this.viewModel.setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
+        this.viewHolder.mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(MapboxMap mapboxMap) {
+                mapboxMap.setCameraPosition(new CameraPosition.Builder()
+                        .target(new LatLng(Constants.ESPOL_CENTRAL_LAT, Constants.ESPOL_CENTRAL_LNG))
+                        .zoom(Constants.FAR_AWAY_ZOOM)
+                        .build());
+            }
+        });
+    }
+
+    public boolean isUpdateRouteViewDisplayed(){
+        return viewHolder.mapLayout.getVisibility() == View.GONE &&
+                viewHolder.routeSearchLayout.getVisibility() == View.VISIBLE;
+    }
+
+    public void showRouteModeView(){
+        this.viewHolder.routeSearchLayout.setVisibility(View.GONE);
+        this.viewHolder.mapLayout.setVisibility(View.VISIBLE);
+        this.viewHolder.editSearchRoutes.setText("");
+        this.viewHolder.drawerBtn.setVisibility(View.VISIBLE);
     }
 
     public LatLng getSelectedOrigin() {

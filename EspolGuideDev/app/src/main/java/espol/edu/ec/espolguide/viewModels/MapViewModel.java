@@ -226,7 +226,6 @@ public class MapViewModel extends Observable{
                         Iterator<String> iter = response.keys();
                         while (iter.hasNext()) {
                             String identifier = iter.next();
-                            System.out.println("===============" + identifier + "===============");
                             if (identifier != null) {
                                 try {
                                     String blockString = "";
@@ -376,12 +375,6 @@ public class MapViewModel extends Observable{
                                 return;
                             }
                             setCurrentRoute(response.body().routes().get(0));
-                            if(activity.getViewHolder().featureMarker != null){
-                                activity.getViewHolder().mapboxMap.removeMarker(activity.getViewHolder().featureMarker);
-                            }
-                            if(MapViewModel.this.getAdapter().getFeatureMarker() != null){
-                                activity.getViewHolder().mapboxMap.removeMarker(MapViewModel.this.getAdapter().getFeatureMarker());
-                            }
                             activity.getViewHolder().featureMarker = activity.getViewHolder().mapboxMap.addMarker(new MarkerOptions()
                                     .position(activity.getSelectedDestination())
                             );
@@ -419,6 +412,15 @@ public class MapViewModel extends Observable{
                 });
             }
         });
+    }
+
+    public void removeMarkers(){
+        if(activity.getViewHolder().featureMarker != null){
+            activity.getViewHolder().mapboxMap.removeMarker(activity.getViewHolder().featureMarker);
+        }
+        if(MapViewModel.this.getAdapter().getFeatureMarker() != null){
+            activity.getViewHolder().mapboxMap.removeMarker(MapViewModel.this.getAdapter().getFeatureMarker());
+        }
     }
 
     public void setMapOnClickListener(){
@@ -465,11 +467,13 @@ public class MapViewModel extends Observable{
                                         String codeGtsi = feature.getStringProperty(Constants.CODE_GTSI_FIELD).toString();
                                         activity.setSelectedPoi(codeGtsi);
                                         setSelectedPoiCoords();
-                                        //makeAddFavoriteRequest(codeGtsi);
                                     }
                                     updateFavBtnColor(activity.getSelectedPoi());
                                     new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description,
                                             codeInfrastructure, activity, activity.getViewHolder().info)).show();
+                                    activity.getViewHolder().routeBtn.setVisibility(View.INVISIBLE);
+                                    activity.getViewHolder().editSearch.setText("");
+                                    removeMarkers();
                                     setChanged();
                                     notifyObservers(POI_INFO_REQUEST_SUCCEEDED);
                                 }
@@ -606,6 +610,17 @@ public class MapViewModel extends Observable{
         }
     }
 
+    /**
+     * Method that sets the click listeners of the car and walking route buttons.
+     *
+     * This method sets the click listeners of the buttons used for updating the mode of the route,
+     * which might be by car or walking. The buttons react if they have not been previously
+     * selected. When the buttons listeners react, they automatically call the 'getRoute' method,
+     * drawing the route on the map.
+     *
+     * @author Galo Castillo
+     * @return The method returns nothing.
+     */
     public void setRouteModeButtonsListeners(){
         activity.getViewHolder().walkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -695,7 +710,6 @@ public class MapViewModel extends Observable{
                 notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
             }
             else{
-                System.out.println("================= HAY ACCESS TOKEN =================");
                 if (!Constants.isNetworkAvailable(activity)) {
                     setChanged();
                     notifyObservers(REQUEST_FAILED_CONNECTION);
@@ -720,7 +734,6 @@ public class MapViewModel extends Observable{
                         @Override
                         public void onResponse(JSONObject response) {
                             try{
-                                System.out.println("================= HAY RESPUESTA =================");
                                 JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
                                 Set<String> favoritesSet = new HashSet<>();
                                 if (jsonArray != null) {
@@ -734,12 +747,10 @@ public class MapViewModel extends Observable{
                                 updateFavBtnColor(codeGtsi);
                                 setChanged();
                                 notifyObservers(ADD_FAVORITES_REQUEST_SUCCEEDED);
-                                System.out.println("================= TODO BIEN =================");
                             }
                             catch (Exception e){
                                 setChanged();
                                 notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
-                                System.out.println("================= CATCH =================");
                             }
                         }
                     }, new Response.ErrorListener() {
@@ -854,5 +865,4 @@ public class MapViewModel extends Observable{
         return null;
         }
     }
-
 }
