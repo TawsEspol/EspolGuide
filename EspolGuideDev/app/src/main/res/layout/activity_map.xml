@@ -85,7 +85,7 @@
                                 android:background="@drawable/shape_searchview_poi"
                                 android:textSize="14dp"
                                 android:hint="@string/search_origin"
-                                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789ÁÉÍÓÚáéíóú "
                                 android:paddingTop="5dp"
                                 android:paddingLeft="15dp"
                                 android:paddingBottom="5dp"
@@ -115,7 +115,7 @@
                                 android:background="@drawable/shape_searchview_poi"
                                 android:textSize="14dp"
                                 android:hint="@string/search_destination"
-                                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789ÁÉÍÓÚáéíóú "
                                 android:paddingTop="5dp"
                                 android:paddingLeft="15dp"
                                 android:paddingBottom="5dp"
@@ -187,7 +187,7 @@
             <EditText
                 android:id="@+id/search_destiny"
                 style="@style/input_barra_pois"
-                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789ÁÉÍÓÚáéíóú "
                 >
                 <requestFocus />
             </EditText>
@@ -343,7 +343,7 @@
             <EditText
                 android:id="@+id/search_routes"
                 style="@style/input_barra_pois"
-                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789ÁÉÍÓÚáéíóú "
                 >
                 <requestFocus />
             </EditText>
