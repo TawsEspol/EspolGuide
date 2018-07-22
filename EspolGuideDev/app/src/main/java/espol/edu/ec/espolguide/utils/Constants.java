@@ -48,6 +48,12 @@ public class Constants {
     public final static int ROUTE_ZOOM_PADDING_RIGHT = 80;
     public final static int ROUTE_ZOOM_PADDING_BOTTOM = 0;
 
+    public final static String COLOR_FIRST = "#054A91";
+    public final static String COLOR_SECOND = "#3E7CB1";
+    public final static String COLOR_THIRD = "#81A4CD";
+    public final static String COLOR_FOURTH = "#DBE4EE";
+    public final static String COLOR_FIFTH = "#F17300";
+
     public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
