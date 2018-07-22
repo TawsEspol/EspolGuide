@@ -1,10 +1,11 @@
 package espol.edu.ec.espolguide.utils.assync;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
-import android.widget.ArrayAdapter;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.ksoap2.SoapEnvelope;
@@ -12,13 +13,13 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
+import espol.edu.ec.espolguide.controllers.listeners.ToPOIListener;
 import espol.edu.ec.espolguide.utils.Constants;
+import espol.edu.ec.espolguide.utils.SubjectRoom;
 import espol.edu.ec.espolguide.utils.User;
 
 /**
@@ -29,22 +30,37 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void, HashMap>{
     Context ctx;
     LinearLayout layout;
 
+    //Creates a box for containing info about subject (room, place)
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private void addSubject(LinearLayout container, HashMap subjectData, String name){
 
-    public void addBox( LinearLayout d, String name){
-        Spinner spinner = new Spinner(ctx);
-        //Make sure you have valid layout parameters.
-        spinner.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT));
-        String[] months = new String[] {name};
+        LinearLayout subjectBox = new LinearLayout(ctx);
+        subjectBox.setOrientation(LinearLayout.VERTICAL);
+        TextView subjectName = new TextView(ctx);
+        subjectName.setText(name);
+        subjectBox.addView(subjectName);
+        addRooms(subjectBox,subjectData);
 
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter(ctx,
-                android.R.layout.simple_spinner_dropdown_item, months);
-        spinner.setAdapter(spinnerArrayAdapter);
-        d.addView(spinner);
+        container.addView(subjectBox);
+
     }
 
+    //Creates a box for containing info about subject (room, place)
+
+    private void addRooms(LinearLayout subjectBox, HashMap rooms) {
+        Iterator it = rooms.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry e = (Map.Entry) it.next();
+            SubjectRoom subjectRoom = new SubjectRoom(ctx, (String) e.getKey(), (String) e.getValue());
+            subjectRoom.setOnClickListener(new ToPOIListener((String) e.getValue()));
+            subjectRoom.setTextColor(Color.parseColor("#ff0000"));
+            subjectRoom.setText(subjectRoom.toString());
+            subjectBox.addView(subjectRoom);
+        }
+    }
     @Override
     protected HashMap doInBackground(User... data) {
-        HashMap<String,HashMap> subjects_map = new HashMap<>();
+        HashMap<String,HashMap> subjectsMap = new HashMap<>();
         ctx = data[0].getContext();
         layout = data[0].getLayout();
 
@@ -61,19 +77,44 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void, HashMap>{
                 SoapObject response = (SoapObject) envelope.getResponse();
                 for ( int subjects = 0; subjects < response.getPropertyCount();subjects ++ ){
                     SoapObject subject = (SoapObject) response.getProperty(subjects);
-                    String subject_name = subject.getPropertyAsString("Materia");
+                    String subjectName = subject.getPropertyAsString("Materia");
 
                     if (data[0].getType()){
-                        HashMap<String,String> lectures_map = new HashMap<>();
+                        HashMap<String,String> lecturesMap = new HashMap<>();
+                        //Key:place - block
+                        //Value: Day(s)
 
                         SoapObject lectures = (SoapObject) subject.getProperty("HorarioClase");
                         for ( int lecture = 0; lecture < lectures.getPropertyCount(); lecture ++ ){
                             SoapObject classroom = (SoapObject) lectures.getProperty(lecture);
-
-                            //Replace for GTSI service of date
-                            lectures_map.put("DAY"+String.valueOf(lecture+1),classroom.getPropertyAsString("Bloque"));
+                            String block = classroom.getPropertyAsString("Bloque");
+                            String place = classroom.getPropertyAsString("Lugar");
+                            String key = place + " | " + block;
+                            String day = "DAY" + " " +String.valueOf(lecture+1);
+                            if (lecturesMap.get(key) != null){
+                                lecturesMap.put(key,lecturesMap.get(key) + "," + day);
+                            }else{
+                                lecturesMap.put(key,day);
+                            }
                         }
-                        subjects_map.put(subject_name,lectures_map);
+                        if (subjectsMap.get(subjectName) != null){
+                            Iterator it = lecturesMap.entrySet().iterator();
+                            while (it.hasNext()) {
+                                Map.Entry e = (Map.Entry)it.next();
+                                if (subjectsMap.get(subjectName).get( e.getKey()) != null ){
+                                    //distribuidos,bloque16c,com3
+                                    subjectsMap.get(subjectName).put( e.getKey(),
+                                            subjectsMap.get(subjectName).get( e.getKey())
+                                                    +","+lecturesMap.get(e.getKey()));
+                                }else{
+                                    subjectsMap.get(subjectName).put( e.getKey(),
+                                            lecturesMap.get(e.getKey()));
+                                }
+                            }
+                        }else{
+                            subjectsMap.put(subjectName,lecturesMap);
+                        }
+
                     }else{
                         HashMap<String,String> exams_map = new HashMap<>();
 
@@ -82,7 +123,9 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void, HashMap>{
                             SoapObject classroom = (SoapObject) exams.getProperty(lecture);
                             exams_map.put(classroom.getPropertyAsString("Examen"),classroom.getPropertyAsString("Bloque"));
                         }
-                        subjects_map.put(subject_name,exams_map);
+                        if (!exams_map.isEmpty()) {
+                            subjectsMap.put(subjectName, exams_map);
+                        }
                     }
                 }
 
@@ -90,16 +133,19 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void, HashMap>{
                 System.out.println(e);
             }
         }
-        return subjects_map;
+        return subjectsMap;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     protected void onPostExecute(HashMap data) {
+        System.out.println(data);
         Iterator it = data.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry e = (Map.Entry)it.next();
-            addBox(layout,(String)e.getKey());
+            addSubject(layout,(HashMap) data.get(e.getKey()),(String)e.getKey());
         }
+
 
     }
 }
