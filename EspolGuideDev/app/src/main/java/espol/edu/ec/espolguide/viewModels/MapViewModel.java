@@ -29,6 +29,7 @@ import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
@@ -74,6 +75,15 @@ public class MapViewModel extends Observable{
     public static String ROUTE_REQUEST_STARTED = "route_request_started";
     public static String ROUTE_REQUEST_SUCCEEDED = "route_request_succeeded";
     public static String ROUTE_REQUEST_FAILED = "route_request_failed";
+
+    public static String REQUEST_FAILED_HTTP = "request_failed_http";
+    public static String REQUEST_FAILED_CONNECTION = "request_failed_connection";
+    public static String MAP_CENTERING_REQUEST_STARTED = "map_centering_request_started";
+    public static String MAP_CENTERING_REQUEST_SUCCEEDED = "map_centering_request_succeeded";
+    public static String MAP_CENTERING_REQUEST_FAILED_LOADING = "map_centering_request_failed_loading";
+
+    final String COORDINATES_WS = Constants.getCoordinatesURL();
+
 
     final private String POIS_NAMES_WS = Constants.getAlternativeNamesURL();
     final private ArrayList<String> namesItems = new ArrayList<>();
@@ -481,5 +491,80 @@ public class MapViewModel extends Observable{
     public void setCameraPosition(Location location) {
         activity.getViewHolder().mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(location.getLatitude(), location.getLongitude()), Constants.FAR_AWAY_ZOOM));
+    }
+
+    public void centerMapOnResult(String codeGtsi){
+        setChanged();
+        notifyObservers(MAP_CENTERING_REQUEST_STARTED);
+        new MapCentering().execute(codeGtsi);
+    }
+
+    /**
+     * Auxiliar class that handles the map zoom and centering.
+     *
+     * This auxiliar class handles the map zoom and centering of an specified POI when requested.
+     * This class calls a the coordinates web service to obtain a POI's central coordinate.
+     *
+     * @author Galo Castillo
+     */
+    private class MapCentering extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... strings) {
+            String codeGtsi = strings[0];
+            if (!Constants.isNetworkAvailable(activity)) {
+                setChanged();
+                notifyObservers(REQUEST_FAILED_CONNECTION);
+            }
+            else {
+                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                        COORDINATES_WS + codeGtsi, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            double lat = response.getDouble(Constants.LATITUDE_KEY);
+                            double lon = response.getDouble(Constants.LONGITUDE_KEY);
+                            LatLng point = new LatLng(lat, lon);
+                            activity.setSelectedDestination(point);
+                            activity.getViewHolder().editDestination.setText(codeGtsi);
+                            activity.getViewHolder().editSearch.setText(codeGtsi);
+                            activity.getViewHolder().editSearch.clearFocus();
+                            activity.getViewHolder().mapView.getMapAsync(new OnMapReadyCallback() {
+                                @Override
+                                public void onMapReady(MapboxMap mapboxMap) {
+                                    if (activity.getViewHolder().featureMarker != null) {
+                                        mapboxMap.removeMarker(activity.getViewHolder().featureMarker);
+                                    }
+                                    activity.getViewHolder().featureMarker = mapboxMap.addMarker(new MarkerOptions()
+                                            .position(point)
+                                    );
+                                    mapboxMap.setCameraPosition(new CameraPosition.Builder()
+                                            .target(point)
+                                            .zoom(Constants.CLOSE_ZOOM)
+                                            .build());
+                                }
+                            });
+                            adapter.getPois().clear();
+                            activity.getViewHolder().routeBtn.setVisibility(View.VISIBLE);
+                            setChanged();
+                            notifyObservers(MAP_CENTERING_REQUEST_SUCCEEDED);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            setChanged();
+                            notifyObservers(MAP_CENTERING_REQUEST_FAILED_LOADING);
+                        } finally {
+                            System.gc();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        setChanged();
+                        notifyObservers(REQUEST_FAILED_HTTP);
+                    }
+                });
+                AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
+            }
+            return null;
+        }
     }
 }

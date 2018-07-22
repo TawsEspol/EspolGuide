@@ -98,6 +98,10 @@ public class SearchViewAdapter extends BaseAdapter {
         this.featureMarker = featureMarker;
     }
 
+    public List<String> getPois() {
+        return this.pois;
+    }
+
     public Marker getFeatureMarker(){
         return this.featureMarker;
     }

@@ -1,7 +1,15 @@
 package espol.edu.ec.espolguide.controllers.listeners;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
+
+import espol.edu.ec.espolguide.MapActivity;
+import espol.edu.ec.espolguide.R;
+import espol.edu.ec.espolguide.utils.Constants;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by fabricio on 21/07/18.
@@ -9,20 +17,31 @@ import android.view.View;
 
 public class ToPoiListener implements View.OnClickListener {
 
-    private String name;
+    private String codeGtsi;
     private Context context;
 
-    public ToPoiListener(String name, Context ctx) {
-        this.name = name;
+    public ToPoiListener(String codeGtsi, Context ctx) {
+        this.codeGtsi = codeGtsi;
         this.context = ctx;
+    }
+
+    public Activity getActivity(){
+        Activity activity = (Activity) this.context;
+        return activity;
     }
 
     @Override
     public void onClick(View arg0) {
-
-        System.out.println("GO TO " + this.name);
+        goToBuilding(this.codeGtsi.trim());
     }
 
+    public void goToBuilding(String codeGtsi){
+        Intent mapIntent = new Intent(this.context, MapActivity.class);
+        mapIntent.putExtra(Constants.SELECTED_OPTION, R.id.map_op);
+        mapIntent.putExtra(Constants.SELECTED_GTSI_CODE, codeGtsi);
+        getActivity().setResult(RESULT_OK, mapIntent);
+        getActivity().finish();
+    }
 }
 
 

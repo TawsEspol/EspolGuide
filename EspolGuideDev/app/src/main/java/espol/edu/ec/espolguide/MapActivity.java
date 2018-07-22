@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -426,6 +427,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
     protected void onResume() {
         super.onResume();
         viewHolder.mapView.onResume();
+        Util.closeDrawer(this);
     }
 
     @Override
@@ -545,6 +547,21 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             navigationView.getMenu().findItem(R.id.map_op).setChecked(true);
         }catch (Exception e){
             e.getStackTrace();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.SUBJECTS_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                if(data.getExtras().containsKey(Constants.SELECTED_GTSI_CODE)){
+                    String codeGtsi = data.getExtras().getString(Constants.SELECTED_GTSI_CODE);
+                    viewModel.centerMapOnResult(codeGtsi);
+                }
+            }
+            else if (resultCode == RESULT_CANCELED) {
+                // Write the code if there's no result
+            }
         }
     }
 }
