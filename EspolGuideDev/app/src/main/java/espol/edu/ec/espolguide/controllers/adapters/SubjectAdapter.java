@@ -3,12 +3,16 @@ package espol.edu.ec.espolguide.controllers.adapters;
 import java.util.List;
 
 import android.content.Context;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.jetbrains.annotations.Nullable;
 
 import espol.edu.ec.espolguide.R;
 
@@ -17,61 +21,49 @@ import espol.edu.ec.espolguide.R;
  * Created by fabricio on 07/07/18.
  */
 
-public class SubjectAdapter {
-/*
-    private Context context;
+public class SubjectAdapter extends ArrayAdapter<String>{
 
-    List<Subject> datos = null;
+        private final LayoutInflater mInflater;
+        private final Context mContext;
+        private final List<Subject> items;
+        private final int mResource;
 
-    public SubjectAdapter(Context context, List<Subject> datos)
-    {
-        //se debe indicar el layout para el item que seleccionado (el que se muestra sobre el botón del botón)
-        super(context, R.layout.subject_info_layout, datos);
-        this.context = context;
-        this.datos = datos;
-    }
+        public SubjectAdapter(@NonNull Context context, @LayoutRes int resource,
+                              @NonNull List objects) {
+            super(context, resource, 0, objects);
 
-    //este método establece el elemento seleccionado sobre el botón del spinner
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent)
-    {
-        if (convertView == null)
-        {
-            convertView = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.spinner_selected_item,null);
+            mContext = context;
+            mInflater = LayoutInflater.from(context);
+            mResource = resource;
+            items = objects;
         }
-        ((TextView) convertView.findViewById(R.id.texto)).setText(datos.get(position).getNombre());
-        ((ImageView) convertView.findViewById(R.id.icono)).setBackgroundResource(datos.get(position).getIcono());
-
-        return convertView;
-    }
-
-    //gestiona la lista usando el View Holder Pattern. Equivale a la típica implementación del getView
-    //de un Adapter de un ListView ordinario
-    @Override
-    public View getDropDownView(int position, View convertView, ViewGroup parent)
-    {
-        View row = convertView;
-        if (row == null)
-        {
-            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = layoutInflater.inflate(R.layout.spinner_list_item, parent, false);
+        @Override
+        public View getDropDownView(int position, @Nullable View convertView,
+                                    @NonNull ViewGroup parent) {
+            return createItemView(position, convertView, parent);
         }
 
-        if (row.getTag() == null)
-        {
-            SocialNetworkHolder redSocialHolder = new SocialNetworkHolder();
-            redSocialHolder.setIcono((ImageView) row.findViewById(R.id.icono));
-            redSocialHolder.setTextView((TextView) row.findViewById(R.id.texto));
-            row.setTag(redSocialHolder);
+        @Override
+        public @NonNull View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            return createItemView(position, convertView, parent);
         }
 
-        //rellenamos el layout con los datos de la fila que se está procesando
-        SocialNetwork redSocial = datos.get(position);
-        ((SocialNetworkHolder) row.getTag()).getIcono().setImageResource(redSocial.getIcono());
-        ((SocialNetworkHolder) row.getTag()).getTextView().setText(redSocial.getNombre());
+        private View createItemView(int position, View convertView, ViewGroup parent){
+            final View view = mInflater.inflate(mResource, parent, false);
 
-        return row;
-    }*/
+            TextView offTypeTv = (TextView) view.findViewById(R.id.offer_type_txt);
+            TextView numOffersTv = (TextView) view.findViewById(R.id.num_offers_txt);
+            TextView maxDiscTV = (TextView) view.findViewById(R.id.max_discount_txt);
+
+            Subject offerData = items.get(position);
+
+            offTypeTv.setText(offerData.getDay());
+            numOffersTv.setText(offerData.getRoom());
+            maxDiscTV.setText("Ver ruta");
+
+            return view;
+        }
+
 
     /**
      * Holder para el Adapter del Spinner
