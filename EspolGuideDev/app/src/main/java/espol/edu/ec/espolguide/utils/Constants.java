@@ -85,18 +85,12 @@ public class Constants {
         return SERVER_URL + "/photoBlock/";
     }
 
-
     public static String getAddFavoriteURL(){
         return SERVER_URL + "/addFavorite/";
     }
 
-    public static String getGetFavoritesURL() {
-        return SERVER_URL + "/getFavorites/";
-    }
-
     public static String getFavoritesURL(){
         return SERVER_URL + "/favorites/";
-    }
 
     public static String getDeleteFavoriteURL(){
         return SERVER_URL + "/deleteFavorite/";
@@ -106,12 +100,11 @@ public class Constants {
         return SERVER_URL + "/login/";
     }
 
-
     public static String getCoordinatesURL(){
         return SERVER_URL + "/coordinates/";
     }
 
-    public static String getBuildingInfoURL() {
+    public static String getBuildingInfoURL(){
         return SERVER_URL + "/buildingInfo/";
-    }
+
 }

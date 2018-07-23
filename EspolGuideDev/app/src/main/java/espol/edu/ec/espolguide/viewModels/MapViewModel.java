@@ -86,6 +86,15 @@ public class MapViewModel extends Observable{
     public static String ROUTE_REQUEST_STARTED = "route_request_started";
     public static String ROUTE_REQUEST_SUCCEEDED = "route_request_succeeded";
     public static String ROUTE_REQUEST_FAILED = "route_request_failed";
+    public static String ADD_FAVORITES_REQUEST_STARTED = "add_favorites_request_started";
+    public static String ADD_FAVORITES_REQUEST_SUCCEEDED = "add_favorites_request_succeeded";
+    public static String ADD_FAVORITES_REQUEST_FAILED_LOADING = "add_favorites_request_failed_loading";
+    public static String REQUEST_FAILED_HTTP = "request_failed_http";
+    public static String REQUEST_FAILED_CONNECTION = "request_failed_connection";
+
+    public static String MAP_CENTERING_REQUEST_STARTED = "map_centering_request_started";
+    public static String MAP_CENTERING_REQUEST_SUCCEEDED = "map_centering_request_succeeded";
+    public static String MAP_CENTERING_REQUEST_FAILED_LOADING = "map_centering_request_failed_loading";
 
     public static String GET_FAVORITES_REQUEST_STARTED = "get_favorites_request_started";
     public static String GET_FAVORITES_REQUEST_SUCCEEDED = "get_favorites_request_succeeded";
@@ -652,7 +661,6 @@ public class MapViewModel extends Observable{
         });
     }
 
-
     /**
      * Method that retrieves user's location at the onCreate Activity's state.
      *
@@ -805,7 +813,6 @@ public class MapViewModel extends Observable{
         notifyObservers(MAP_CENTERING_REQUEST_STARTED);
         new MapCentering().execute(codeGtsi);
     }
-    
 
     /**
      * Auxiliar class that handles the map zoom and centering.

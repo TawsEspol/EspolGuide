@@ -22,11 +22,13 @@
                 <action android:name="android.intent.action.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity android:name=".SubjectsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity android:name=".FavoritesActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.DEFAULT" />
