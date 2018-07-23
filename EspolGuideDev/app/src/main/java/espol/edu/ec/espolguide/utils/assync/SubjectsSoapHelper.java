@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.listeners.ToPoiListener;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SubjectRoom;
@@ -27,14 +29,15 @@ import espol.edu.ec.espolguide.utils.User;
  */
 public class SubjectsSoapHelper extends AsyncTask<User, Void,HashMap>{
 
-    Context ctx;
-    LinearLayout layout;
+    private Context ctx;
+    private LinearLayout layout;
 
     //Creates a box for containing info about subject (room, place)
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void addSubject(LinearLayout container, HashMap subjectData, String name){
+        LayoutInflater inflater = LayoutInflater.from(ctx);
 
-        LinearLayout subjectBox = new LinearLayout(ctx);
+        LinearLayout subjectBox = (LinearLayout) inflater.inflate(R.layout.subject_box, null, false);
 
         subjectBox.setOrientation(LinearLayout.VERTICAL);
         TextView subjectName = new TextView(ctx);
@@ -158,8 +161,6 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void,HashMap>{
             Map.Entry e = (Map.Entry)it.next();
             addSubject(layout,(HashMap) data.get(e.getKey()),(String)e.getKey());
         }
-
-
     }
 }
 
