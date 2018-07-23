@@ -26,16 +26,16 @@ public class ToPoiListener implements View.OnClickListener {
         this.context = ctx;
     }
 
-    public Activity getActivity(){
-        Activity activity = (Activity) this.context;
-        return activity;
-    }
-
     @Override
     public void onClick(View arg0) {
         goToBuilding(this.codeGtsi);
     }
 
+    public Activity getActivity(){
+        Activity activity = (Activity) this.context;
+        return activity;
+    }
+    
     public void goToBuilding(String codeGtsi){
         Intent mapIntent = new Intent(this.context, MapActivity.class);
         mapIntent.putExtra(Constants.SELECTED_OPTION, R.id.map_op);
