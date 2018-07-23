@@ -470,6 +470,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         }
         else if(isPoiInfoDisplayed()){
             viewHolder.closePoiInfo();
+            viewModel.removeMarkers();
         }
         else if(isRouteBtnDisplayed()){
             viewHolder.routeBtn.setVisibility(View.INVISIBLE);
@@ -488,10 +489,12 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
     }
 
     public boolean isRouteBtnDisplayed(){
+        viewModel.removeMarkers();
         return viewHolder.routeBtn.getVisibility() == View.VISIBLE;
     }
 
     public void showMapView(){
+        viewModel.removeMarkers();
         this.viewHolder.drawerBtn.setVisibility(View.VISIBLE);
         this.viewHolder.editSearch.setText("");
         this.viewHolder.editDestination.setText("");
@@ -530,6 +533,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         this.viewHolder.mapLayout.setVisibility(View.VISIBLE);
         this.viewHolder.editSearchRoutes.setText("");
         this.viewHolder.drawerBtn.setVisibility(View.VISIBLE);
+        viewModel.removeMarkers();
     }
 
     public LatLng getSelectedOrigin() {
