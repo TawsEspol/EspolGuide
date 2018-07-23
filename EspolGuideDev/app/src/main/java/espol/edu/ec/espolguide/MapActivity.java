@@ -473,6 +473,8 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         }
         else if(isRouteBtnDisplayed()){
             viewHolder.routeBtn.setVisibility(View.INVISIBLE);
+            viewModel.removeMarkers();
+            showMapView();
         }
     }
 

@@ -706,11 +706,14 @@ public class MapViewModel extends Observable{
             String codeGtsi = activity.getSelectedPoi();
             System.out.println("================= CODIGO ENVIADO =================: " + codeGtsi);
             if(!SessionHelper.hasAccessToken(activity)){
+                System.out.println("=============== NOT HAS TOKEN ================");
                 setChanged();
                 notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
             }
             else{
                 if (!Constants.isNetworkAvailable(activity)) {
+                    System.out.println("=============== NO INTERNET ================");
+
                     setChanged();
                     notifyObservers(REQUEST_FAILED_CONNECTION);
                 }
@@ -745,10 +748,14 @@ public class MapViewModel extends Observable{
                                 }
                                 SessionHelper.saveFavoritePois(activity, favoritesSet);
                                 updateFavBtnColor(codeGtsi);
+                                System.out.println("=============== HE AÑADIDO ================");
+
                                 setChanged();
                                 notifyObservers(ADD_FAVORITES_REQUEST_SUCCEEDED);
                             }
                             catch (Exception e){
+                                System.out.println("=============== EN CATCH ================");
+
                                 setChanged();
                                 notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
                             }
