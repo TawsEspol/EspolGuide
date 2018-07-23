@@ -25,7 +25,7 @@ import espol.edu.ec.espolguide.utils.User;
 /**
  * Created by fabricio on 14/07/18.
  */
-public class SubjectsSoapHelper extends AsyncTask<User, Void, HashMap>{
+public class SubjectsSoapHelper extends AsyncTask<User, Void,HashMap>{
 
     Context ctx;
     LinearLayout layout;
@@ -55,7 +55,10 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void, HashMap>{
             Map.Entry e = (Map.Entry) it.next();
             SubjectRoom subjectRoom = new SubjectRoom(ctx, (String) e.getKey(), (String) e.getValue());
             subjectRoom.setBackgroundColor(Color.parseColor(Constants.COLOR_FOURTH));
-            subjectRoom.setOnClickListener(new ToPoiListener((String) e.getValue(),ctx));
+
+            String[] placeInfo = ((String) e.getKey()).split("\\|");
+
+            subjectRoom.setOnClickListener(new ToPoiListener(placeInfo[1].trim(),ctx));
             subjectRoom.setTextColor(Color.parseColor(Constants.COLOR_SECOND));
             subjectRoom.setText(subjectRoom.toString());
             subjectBox.addView(subjectRoom);
@@ -120,11 +123,19 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void, HashMap>{
 
                     }else{
                         HashMap<String,String> exams_map = new HashMap<>();
-
                         SoapObject exams = (SoapObject) subject.getProperty("HorarioExamen");
                         for ( int lecture = 0; lecture < exams.getPropertyCount(); lecture ++ ){
                             SoapObject classroom = (SoapObject) exams.getProperty(lecture);
-                            exams_map.put(classroom.getPropertyAsString("Examen"),classroom.getPropertyAsString("Bloque"));
+                            String block = classroom.getPropertyAsString("Bloque");
+                            String place = classroom.getPropertyAsString("Lugar");
+                            String examType = classroom.getPropertyAsString("Examen");
+                            String key = place +" | "+block;
+                            if (exams_map.keySet().contains(key)){
+                                exams_map.put(key,exams_map.get(key)+  "," + examType);
+                            }else{
+                                exams_map.put(key, examType);
+                            }
+
                         }
                         if (!exams_map.isEmpty()) {
                             subjectsMap.put(subjectName, exams_map);

@@ -22,6 +22,7 @@ public class ToPoiListener implements View.OnClickListener {
 
     public ToPoiListener(String codeGtsi, Context ctx) {
         this.codeGtsi = codeGtsi;
+        System.out.println(codeGtsi);
         this.context = ctx;
     }
 
@@ -32,7 +33,7 @@ public class ToPoiListener implements View.OnClickListener {
 
     @Override
     public void onClick(View arg0) {
-        goToBuilding(this.codeGtsi.trim());
+        goToBuilding(this.codeGtsi);
     }
 
     public void goToBuilding(String codeGtsi){
