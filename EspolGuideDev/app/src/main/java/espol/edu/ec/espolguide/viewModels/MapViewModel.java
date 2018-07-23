@@ -158,6 +158,18 @@ public class MapViewModel extends Observable{
         this.selectedRouteMode = selectedRouteMode;
     }
 
+    /**
+     * Auxiliar class that helps to fill with items the search bars.
+     *
+     * This auxiliar class helps to fill with POI names the search bars used to locate a POI
+     * and changing origin and destination places on route settings
+     * The 'doInBackground' method calls the POI  names web service. Then, after parsing the
+     * request response, it adds the received items to the 'nameItems' list.
+     * Finally it instances a SearchViewApdater and a RouteAdapter in order to set them
+     * on the listviews.
+     *
+     * @author Galo Castillo
+     */
     private class Nombres extends AsyncTask<Context, Void, ArrayList> {
         Context context;
         @Override
@@ -165,7 +177,7 @@ public class MapViewModel extends Observable{
             context = contexts[0];
             if (!Constants.isNetworkAvailable(context)) {
                 setChanged();
-                notifyObservers(NAMES_REQUEST_FAILED_CONNECTION);
+                notifyObservers(REQUEST_FAILED_CONNECTION);
             }
             else {
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
@@ -175,21 +187,24 @@ public class MapViewModel extends Observable{
                         Iterator<String> iter = response.keys();
                         while (iter.hasNext()) {
                             String identifier = iter.next();
-                            Integer numIdentifier = Integer.getInteger(identifier.substring(6));
-                            if (numIdentifier == null || numIdentifier <= 69) {
+                            if (identifier != null) {
                                 try {
                                     String blockString = "";
                                     JSONObject blockInfo = (JSONObject) response.get(identifier);
-                                    String officialName = (String) blockInfo.getString("NombreOficial");
-                                    JSONArray alternativeNames = blockInfo.getJSONArray("NombresAlternativos");
+                                    String blockName = (String) blockInfo.getString(Constants.BLOCKNAME_FIELD);
+                                    String codeGtsi = (String) blockInfo.getString(Constants.CODE_GTSI_FIELD);
+                                    JSONArray alternativeNames = blockInfo.getJSONArray(Constants.ALTERNATIVE_NAMES_FIELD);
                                     int totalAlternatives = alternativeNames.length();
                                     String alternativeString = "";
                                     for (int i = 0; i < totalAlternatives; i++) {
                                         String alternative = (String) alternativeNames.get(i);
-                                        alternativeString = alternativeString + "|" + alternative;
+                                        alternativeString = alternativeString + " | " + alternative;
+                                    }
+                                    if(codeGtsi.length() < 1){
+                                        codeGtsi = " ";
                                     }
                                     blockString = identifier +
-                                            ";" + officialName + ";" + alternativeString;
+                                            ";" + blockName + ";" + alternativeString + ";" + codeGtsi;
                                     namesItems.add(blockString);
                                 } catch (JSONException e) {
                                     setChanged();
@@ -242,14 +257,15 @@ public class MapViewModel extends Observable{
                                 // TODO Auto-generated method stub
                             }
                         });
-
+                        setChanged();
+                        notifyObservers(NAMES_REQUEST_SUCCEEDED);
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("tag", "Error: " + error.getMessage());
                         setChanged();
-                        notifyObservers(NAMES_REQUEST_FAILED_HTTP);
+                        notifyObservers(REQUEST_FAILED_HTTP);
                     }
                 });
                 AppController.getInstance(context).addToRequestQueue(jsonObjReq);

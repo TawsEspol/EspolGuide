@@ -59,13 +59,15 @@ public class Constants {
     public final static String LATITUDE_KEY = "lat";
     public final static String LONGITUDE_KEY = "long";
 
+    public final static String ALTERNATIVE_NAMES_FIELD = "alternative_names";
+
     public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 
     public static String getAlternativeNamesURL(){
-        return SERVER_URL + "/nombresAlternativo/";
+        return SERVER_URL + "/alternativeNames/";
     }
 
     public static String getBlockInfoURL(){
