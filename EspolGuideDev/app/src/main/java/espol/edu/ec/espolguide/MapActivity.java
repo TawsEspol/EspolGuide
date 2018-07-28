@@ -177,7 +177,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             this.backBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showMapView();
+                    showMapLayoutView();
                 }
             });
         }
@@ -463,44 +463,65 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
     @Override
     public void onBackPressed() {
         if (isUpdateRouteViewDisplayed()){
+            hideUpdateRouteView();
             showRouteModeView();
         }
         else if (isRouteModeViewDisplayed()){
-            showMapView();
+            hideRouteModeView();
+            showMapLayoutView();
         }
         else if(isPoiInfoDisplayed()){
             viewHolder.closePoiInfo();
             viewModel.removeMarkers();
         }
         else if(isRouteBtnDisplayed()){
-            viewHolder.routeBtn.setVisibility(View.INVISIBLE);
+            viewHolder.routeBtn.setVisibility(View.GONE);
             viewModel.removeMarkers();
-            showMapView();
+            showMapLayoutView();
         }
-    }
-
-    public boolean isRouteModeViewDisplayed(){
-        return viewHolder.editSearch.getVisibility() == View.GONE &&
-                viewHolder.routeBox.getVisibility() == View.VISIBLE;
     }
 
     public boolean isPoiInfoDisplayed(){
         return viewHolder.info.getVisibility() == View.VISIBLE;
     }
 
+    public void hidePoiInfo(){
+        getViewHolder().info.setVisibility(View.GONE);
+    }
+
+    public void showPoiInfo(){
+        getViewHolder().info.setVisibility(View.VISIBLE);
+    }
+
     public boolean isRouteBtnDisplayed(){
-        viewModel.removeMarkers();
         return viewHolder.routeBtn.getVisibility() == View.VISIBLE;
     }
 
-    public void showMapView(){
+    public void hideRouteBtn(){
+        getViewHolder().routeBtn.setVisibility(View.GONE);
+    }
+
+    public void showRouteBtn(){
+        getViewHolder().routeBtn.setVisibility(View.VISIBLE);
+    }
+
+    public boolean isMapLayoutViewDisplayed(){
+        return this.viewHolder.mapLayout.getVisibility() == View.VISIBLE;
+    }
+
+    public void hideMapLayoutView(){
+        getViewHolder().mapLayout.setVisibility(View.GONE);
+    }
+
+    public void showMapLayoutView(){
         viewModel.removeMarkers();
         this.viewHolder.drawerBtn.setVisibility(View.VISIBLE);
         this.viewHolder.editSearch.setText("");
         this.viewHolder.editDestination.setText("");
         this.viewHolder.editOrigin.setText("");
-        this.viewHolder.routeBox.setVisibility(View.GONE);
-        this.viewHolder.routeBtn.setVisibility(View.GONE);
+        hideRouteModeView();
+        hideRouteBtn();
+        hidePoiInfo();
         if (this.viewHolder.featureMarker != null){
             this.viewHolder.mapboxMap.removeMarker(this.viewHolder.featureMarker);
         }
@@ -528,13 +549,24 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
                 viewHolder.routeSearchLayout.getVisibility() == View.VISIBLE;
     }
 
-    public void showRouteModeView(){
-        this.viewHolder.routeSearchLayout.setVisibility(View.GONE);
-        this.viewHolder.mapLayout.setVisibility(View.VISIBLE);
+    public void hideUpdateRouteView(){
         this.viewHolder.editSearchRoutes.setText("");
-        this.viewHolder.drawerBtn.setVisibility(View.VISIBLE);
+        this.viewHolder.routeSearchLayout.setVisibility(View.GONE);
+    }
+
+    public void showRouteModeView(){
+        this.viewHolder.mapLayout.setVisibility(View.VISIBLE);
         viewModel.removeMarkers();
     }
+
+    public boolean isRouteModeViewDisplayed(){
+        return viewHolder.routeBox.getVisibility() == View.VISIBLE;
+    }
+
+    public void hideRouteModeView(){
+        viewHolder.routeBox.setVisibility(View.GONE);
+    }
+
 
     public LatLng getSelectedOrigin() {
         return selectedOrigin;
