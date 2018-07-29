@@ -365,35 +365,43 @@ public class MapViewModel extends Observable{
                     .getRoute(new Callback<DirectionsResponse>() {
                         @Override
                         public void onResponse(Call<DirectionsResponse> call, retrofit2.Response<DirectionsResponse> response) {
-                            // You can get the generic HTTP info about the response
-                            Log.d(getTAG(), "Response code: " + response.code());
-                            if (response.body() == null) {
-                                Log.e(getTAG(), "No routes found, make sure you set the right user and access token.");
-                                return;
-                            } else if (response.body().routes().size() < 1) {
-                                Log.e(getTAG(), "No routes found");
-                                return;
+                            try{
+                                // You can get the generic HTTP info about the response
+                                Log.d(getTAG(), "Response code: " + response.code());
+                                if (response.body() == null) {
+                                    Log.e(getTAG(), "No routes found, make sure you set the right user and access token.");
+                                    return;
+                                } else if (response.body().routes().size() < 1) {
+                                    Log.e(getTAG(), "No routes found");
+                                    return;
+                                }
+                                setCurrentRoute(response.body().routes().get(0));
+                                removeMarkers();
+                                activity.getViewHolder().featureMarker = activity.getViewHolder().mapboxMap.addMarker(new MarkerOptions()
+                                        .position(activity.getSelectedDestination())
+                                );
+                                if (getNavigationMapRoute() != null) {
+                                    getNavigationMapRoute().removeRoute();
+                                } else {
+                                    setNavigationMapRoute(new NavigationMapRoute(null, activity.getViewHolder().mapView,
+                                            activity.getViewHolder().mapboxMap, R.style.CustomNavigationMapRoute));
+                                }
+                                getNavigationMapRoute().addRoute(getCurrentRoute());
+                                setRouteZoom();
+                                setChanged();
+                                notifyObservers(ROUTE_REQUEST_SUCCEEDED);
                             }
-                            setCurrentRoute(response.body().routes().get(0));
-                            activity.getViewHolder().featureMarker = activity.getViewHolder().mapboxMap.addMarker(new MarkerOptions()
-                                    .position(activity.getSelectedDestination())
-                            );
-                            if (getNavigationMapRoute() != null) {
-                                getNavigationMapRoute().removeRoute();
-                            } else {
-                                setNavigationMapRoute(new NavigationMapRoute(null, activity.getViewHolder().mapView,
-                                        activity.getViewHolder().mapboxMap, R.style.CustomNavigationMapRoute));
+                            catch (Exception e){
+                                setChanged();
+                                notifyObservers(ROUTE_REQUEST_FAILED);
                             }
-                            getNavigationMapRoute().addRoute(getCurrentRoute());
-                            setRouteZoom();
-                            setChanged();
-                            notifyObservers(ROUTE_REQUEST_SUCCEEDED);
                         }
 
                         @Override
                         public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
                             setChanged();
-                            notifyObservers(ROUTE_REQUEST_FAILED);                        }
+                            notifyObservers(ROUTE_REQUEST_FAILED);
+                        }
                     });
         }
     }
@@ -428,18 +436,12 @@ public class MapViewModel extends Observable{
             @Override
             public void onMapReady(final MapboxMap mapboxMap) {
                 activity.getViewHolder().setMapboxMap(mapboxMap);
-                mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
+                activity.getViewHolder().getMapboxMap().addOnMapClickListener(new MapboxMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(@NonNull LatLng point) {
                         setChanged();
                         notifyObservers(POI_INFO_REQUEST_STARTED);
                         try{
-                            if (activity.getViewHolder().featureMarker != null) {
-                                activity.getViewHolder().mapboxMap.removeMarker(activity.getViewHolder().featureMarker);
-                            }
-                            if (activity.getViewHolder().featureMarker != null) {
-                                activity.getViewHolder().mapboxMap.removeMarker(activity.getViewHolder().featureMarker);
-                            }
                             final PointF pixel = activity.getViewHolder().mapboxMap.getProjection().toScreenLocation(point);
                             List<Feature> features = activity.getViewHolder().mapboxMap.queryRenderedFeatures(pixel);
                             if (features.size() > 0) {
@@ -449,7 +451,10 @@ public class MapViewModel extends Observable{
                                 String description = "";
                                 String codeInfrastructure = "";
                                 if (feature.properties() != null && hasEspolAttributes(feature)) {
-                                    lockMapOnClickListener();
+                                    removeMarkers();
+                                    //lockMapOnClickListener();
+                                    activity.getViewHolder().poiRoute.setEnabled(true);
+                                    activity.getViewHolder().poiRoute.setClickable(true);
                                     activity.setSelectedPoi("");
                                     if(feature.properties().has(Constants.BLOCKNAME_FIELD)){
                                         blockName = feature.getStringProperty(Constants.BLOCKNAME_FIELD).toString();
@@ -465,14 +470,26 @@ public class MapViewModel extends Observable{
                                     }
                                     if(feature.properties().has(Constants.CODE_GTSI_FIELD)){
                                         String codeGtsi = feature.getStringProperty(Constants.CODE_GTSI_FIELD).toString();
-                                        activity.setSelectedPoi(codeGtsi);
-                                        setSelectedPoiCoords();
+                                        System.out.println("--->" + codeGtsi + "<---");
+                                        if(codeGtsi.trim().length() > 0){
+                                            activity.setSelectedPoi(codeGtsi);
+                                            setSelectedPoiCoords();
+                                            updateFavBtnColor(activity.getSelectedPoi());
+                                        }
+                                        else{
+                                            activity.getViewHolder().poiRoute.setEnabled(false);
+                                            activity.getViewHolder().poiRoute.setClickable(false);
+                                        }
                                     }
-                                    updateFavBtnColor(activity.getSelectedPoi());
+                                    else{
+                                        activity.getViewHolder().poiRoute.setEnabled(false);
+                                        activity.getViewHolder().poiRoute.setClickable(false);
+                                    }
                                     new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description,
                                             codeInfrastructure, activity, activity.getViewHolder().info)).show();
                                     activity.getViewHolder().routeBtn.setVisibility(View.INVISIBLE);
                                     activity.getViewHolder().editSearch.setText("");
+                                    activity.getViewHolder().getMapboxMap().getUiSettings().setAllGesturesEnabled(false);
                                     removeMarkers();
                                     setChanged();
                                     notifyObservers(POI_INFO_REQUEST_SUCCEEDED);
@@ -500,11 +517,17 @@ public class MapViewModel extends Observable{
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
-                        double lat = response.getDouble(Constants.LATITUDE_KEY);
-                        double lon = response.getDouble(Constants.LONGITUDE_KEY);
-                        LatLng point = new LatLng(lat, lon);
-                        activity.setSelectedDestination(point);
-                        activity.getViewHolder().editDestination.setText(activity.getSelectedPoi());
+                        if(response.length() > 0){
+                            double lat = response.getDouble(Constants.LATITUDE_KEY);
+                            double lon = response.getDouble(Constants.LONGITUDE_KEY);
+                            LatLng point = new LatLng(lat, lon);
+                            activity.setSelectedDestination(point);
+                            activity.getViewHolder().editDestination.setText(activity.getSelectedPoi());
+                        }
+                        else{
+                            activity.setSelectedDestination(null);
+                        }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(activity, activity.getResources().getString(R.string.loading_poi_info_error_msg),
@@ -685,9 +708,15 @@ public class MapViewModel extends Observable{
      * @return The method returns nothing.
      */
     public void makeUpdateFavoriteRequest(String codeGtsi){
-        setChanged();
-        notifyObservers(ADD_FAVORITES_REQUEST_STARTED);
-        new FavoriteUpdater().execute(codeGtsi);
+        if(codeGtsi.trim().length() > 0){
+            setChanged();
+            notifyObservers(ADD_FAVORITES_REQUEST_STARTED);
+            new FavoriteUpdater().execute(codeGtsi);
+        }
+        else{
+            setChanged();
+            notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
+        }
     }
 
     /**
@@ -704,16 +733,12 @@ public class MapViewModel extends Observable{
         @Override
         protected Void doInBackground(String... strings) {
             String codeGtsi = activity.getSelectedPoi();
-            System.out.println("================= CODIGO ENVIADO =================: " + codeGtsi);
             if(!SessionHelper.hasAccessToken(activity)){
-                System.out.println("=============== NOT HAS TOKEN ================");
                 setChanged();
                 notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
             }
             else{
                 if (!Constants.isNetworkAvailable(activity)) {
-                    System.out.println("=============== NO INTERNET ================");
-
                     setChanged();
                     notifyObservers(REQUEST_FAILED_CONNECTION);
                 }
@@ -748,14 +773,10 @@ public class MapViewModel extends Observable{
                                 }
                                 SessionHelper.saveFavoritePois(activity, favoritesSet);
                                 updateFavBtnColor(codeGtsi);
-                                System.out.println("=============== HE AÑADIDO ================");
-
                                 setChanged();
                                 notifyObservers(ADD_FAVORITES_REQUEST_SUCCEEDED);
                             }
                             catch (Exception e){
-                                System.out.println("=============== EN CATCH ================");
-
                                 setChanged();
                                 notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
                             }
@@ -764,8 +785,6 @@ public class MapViewModel extends Observable{
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             VolleyLog.d("tag", "Error: " + error.getMessage());
-                            System.out.println("================= ERROR ON RESPONSE =================");
-
                             setChanged();
                             notifyObservers(REQUEST_FAILED_HTTP);
                         }

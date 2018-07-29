@@ -126,7 +126,7 @@ public class RouteAdapter extends BaseAdapter {
                 if (!Constants.isNetworkAvailable(getmContext())) {
                     Toast.makeText(getmContext(), mContext.getResources().getString(R.string.failed_connection_msg),
                             Toast.LENGTH_LONG).show();
-                } else {
+                } else if (holder.getCodeGtsi().trim().length() > 0) {
 
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                             COORDINATES_WS + holder.getCodeGtsi(), null, new Response.Listener<JSONObject>() {
@@ -153,8 +153,8 @@ public class RouteAdapter extends BaseAdapter {
                                 }
                                 activity.getViewHolder().routeSearchLayout.setVisibility(View.GONE);
                                 activity.getViewHolder().mapLayout.setVisibility(View.VISIBLE);
+                                activity.getViewModel().removeMarkers();
                                 activity.getViewModel().getRoute(activity.getOriginPosition(), activity.getDestinationPosition());
-
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Toast.makeText(getmContext(), mContext.getResources().getString(R.string.loading_poi_info_error_msg),
@@ -172,6 +172,10 @@ public class RouteAdapter extends BaseAdapter {
                         }
                     });
                     AppController.getInstance(getmContext()).addToRequestQueue(jsonObjReq);
+                }
+                else{
+                    Toast.makeText(getmContext(), mContext.getResources().getString(R.string.loading_poi_info_error_msg),
+                            Toast.LENGTH_LONG).show();
                 }
             }
         });

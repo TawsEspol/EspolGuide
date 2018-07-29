@@ -112,8 +112,10 @@ public class PoiInfo extends AppCompatActivity implements Observer {
                 @Override
                 public void onClick(View v) {
                     MapActivity parentActivity = (MapActivity) ctx;
-                    parentActivity.getViewHolder().closePoiInfo();
-                    parentActivity.getViewHolder().drawRoute();
+                    if(parentActivity.getSelectedPoi().trim().length()>0){
+                        parentActivity.getViewHolder().closePoiInfo();
+                        parentActivity.getViewHolder().drawRoute();
+                    }
                 }
             });
         }

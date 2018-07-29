@@ -116,6 +116,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         public ImageButton carBtn;
 
         public ImageView drawerBtn;
+        public Button poiRoute;
 
         public ViewHolder(){
             findViews();
@@ -149,6 +150,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
             drawerBtn = (ImageView) findViewById(R.id.drawerBtn);
             favBtn = (ImageButton) findViewById(R.id.favoriteBtn);
+            poiRoute = (Button) findViewById(R.id.poi_route_btn);
         }
 
         private void setDrawerBtnListener(){
@@ -167,6 +169,10 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
                     viewModel.makeUpdateFavoriteRequest(selectedPoi);
                 }
             });
+        }
+
+        public MapboxMap getMapboxMap(){
+            return this.mapboxMap;
         }
 
         public void setMapboxMap(MapboxMap mapboxMap){
@@ -192,7 +198,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         }
 
         public void closePoiInfo(){
-            viewModel.setMapOnClickListener();
+            mapboxMap.getUiSettings().setAllGesturesEnabled(true);
             final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
             info.setVisibility(View.GONE);
             ImageView photo = (ImageView) findViewById(R.id.flag);
@@ -212,19 +218,19 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         }
 
         public void drawRoute(){
-            editSearch.setVisibility(View.GONE);
-            routeBox.setVisibility(View.VISIBLE);
-            drawerBtn.setVisibility(View.GONE);
-            routeBtn.setVisibility(View.GONE);
-            editDestination.clearFocus();
-            editOrigin.clearFocus();
-            editOrigin.setText(getResources().getString(R.string.your_location));
-            viewModel.enableLocationPlugin();
             try{
+                editOrigin.setText(getResources().getString(R.string.your_location));
+                viewModel.enableLocationPlugin();
                 setSelectedOrigin(new LatLng(getOriginLocation().getLatitude(), getOriginLocation().getLongitude()));
                 setOriginPosition(Point.fromLngLat(getSelectedOrigin().getLongitude(), getSelectedOrigin().getLatitude()));
                 setDestinationPosition(Point.fromLngLat(getSelectedDestination().getLongitude(), getSelectedDestination().getLatitude()));
                 viewModel.getRoute(getOriginPosition(), getDestinationPosition());
+                editSearch.setVisibility(View.GONE);
+                routeBox.setVisibility(View.VISIBLE);
+                drawerBtn.setVisibility(View.GONE);
+                routeBtn.setVisibility(View.GONE);
+                editDestination.clearFocus();
+                editOrigin.clearFocus();
             }
             catch(Exception e){
                 if (!Constants.isNetworkAvailable(MapActivity.this)) {
@@ -233,6 +239,15 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
                             Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
                                     Toast.LENGTH_LONG).show();
 
+                        }
+                    });
+                }
+
+                else if(getSelectedDestination() == null){
+                    MapActivity.this.runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(MapActivity.this, getResources().getString(R.string.error_on_calculating_route),
+                                    Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -355,6 +370,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
                             Toast.LENGTH_LONG).show();
                 }
             });
+            showMapLayoutView();
         }
         if (message == viewModel.ADD_FAVORITES_REQUEST_STARTED) {
 
@@ -462,17 +478,17 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
     @Override
     public void onBackPressed() {
-        if (isUpdateRouteViewDisplayed()){
+        if(isPoiInfoDisplayed()){
+            viewHolder.closePoiInfo();
+            viewModel.removeMarkers();
+        }
+        else if (isUpdateRouteViewDisplayed()){
             hideUpdateRouteView();
             showRouteModeView();
         }
         else if (isRouteModeViewDisplayed()){
             hideRouteModeView();
             showMapLayoutView();
-        }
-        else if(isPoiInfoDisplayed()){
-            viewHolder.closePoiInfo();
-            viewModel.removeMarkers();
         }
         else if(isRouteBtnDisplayed()){
             viewHolder.routeBtn.setVisibility(View.GONE);
@@ -519,9 +535,10 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         this.viewHolder.editSearch.setText("");
         this.viewHolder.editDestination.setText("");
         this.viewHolder.editOrigin.setText("");
-        hideRouteModeView();
-        hideRouteBtn();
         hidePoiInfo();
+        hideRouteBtn();
+        hideRouteModeView();
+        hideUpdateRouteView();
         if (this.viewHolder.featureMarker != null){
             this.viewHolder.mapboxMap.removeMarker(this.viewHolder.featureMarker);
         }
@@ -652,6 +669,9 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
                 if(data.getExtras().containsKey(Constants.SELECTED_GTSI_CODE)){
                     codeGtsi = data.getExtras().getString(Constants.SELECTED_GTSI_CODE);
                     viewModel.centerMapOnResult(codeGtsi);
+                    if (viewModel.getNavigationMapRoute() != null) {
+                        viewModel.getNavigationMapRoute().removeRoute();
+                    }
                 }
             }
             else if (resultCode == RESULT_CANCELED) {
@@ -664,6 +684,9 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
                 if(data.getExtras().containsKey(Constants.SELECTED_GTSI_CODE)){
                     codeGtsi = data.getExtras().getString(Constants.SELECTED_GTSI_CODE);
                     viewModel.centerMapOnResult(codeGtsi);
+                    if (viewModel.getNavigationMapRoute() != null) {
+                        viewModel.getNavigationMapRoute().removeRoute();
+                    }
                 }
             }
             else if (resultCode == RESULT_CANCELED) {
