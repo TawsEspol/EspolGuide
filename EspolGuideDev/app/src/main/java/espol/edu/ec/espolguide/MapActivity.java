@@ -498,11 +498,20 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             viewModel.removeMarkers();
             showMapLayoutView();
         }
+        else if(isSearchResultsDisplayed()){
+            getViewHolder().searchPoiLv.setVisibility(View.GONE);
+            getViewHolder().routesLv.setVisibility(View.GONE);
+        }
         else if(isMapLayoutViewDisplayed() && !isPoiInfoDisplayed() && !isRouteBtnDisplayed() &&
                 !isRouteModeViewDisplayed() && !isUpdateRouteViewDisplayed() &&
                 !Util.isDrawerOpen(this)){
             finish();
         }
+    }
+
+    public boolean isSearchResultsDisplayed(){
+        return getViewHolder().searchPoiLv.getVisibility() == View.VISIBLE ||
+                getViewHolder().routesLv.getVisibility() == View.VISIBLE;
     }
 
     public boolean isPoiInfoDisplayed(){
