@@ -52,7 +52,7 @@ import com.mapbox.android.core.permissions.PermissionsListener;
  * This activity is used to display the Map layout resources. It uses the Observator
  * software design pattern.
  *
- * @autho Galo Castillo
+ * @author Galo Castillo
  * @since apolo 0.1
  */
 public class MapActivity extends BaseActivity implements Observer, LocationEngineListener, PermissionsListener {
@@ -361,7 +361,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         }
 
         if (message == viewModel.ROUTE_REQUEST_STARTED) {
-
+            getViewHolder().timeTv.setText(getApplicationContext().getString(R.string.empty_time));
         }
         if (message == viewModel.ROUTE_REQUEST_SUCCEEDED) {
 

@@ -43,4 +43,8 @@
 
     <string name="lectures">Clases</string>
     <string name="exams">Exámenes</string>
+
+    <string name="hour_unit">h</string>
+    <string name="minute_unit">min</string>
+    <string name="empty_time">   -   </string>
 </resources>

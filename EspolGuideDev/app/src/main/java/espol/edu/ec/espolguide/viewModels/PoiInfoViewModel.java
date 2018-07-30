@@ -13,6 +13,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Observable;
 
+/**
+ * Created by galo on 14/04/18.
+ */
+
 public class PoiInfoViewModel extends Observable {
     public static String POI_INFO_REQUEST_STARTED = "poi_info_request_started";
     public static String POI_INFO_REQUEST_SUCCEED = "poi_info_request_succeed";

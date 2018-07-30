@@ -136,7 +136,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="10dp">
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center_vertical">
                     <LinearLayout
                         android:id="@+id/walk_button_box"
                         android:layout_width="wrap_content"
@@ -177,15 +178,14 @@
                     </LinearLayout>
                     <LinearLayout
                         android:id="@+id/time_box"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:paddingLeft="15dp"
                         android:paddingRight="15dp"
-                        android:paddingTop="5dp"
-                        android:layout_marginRight="5dp"
-                        android:background="@drawable/login_button"
-                        android:layout_gravity="right"
+                        android:layout_marginRight="10dp"
+                        android:background="@android:color/transparent"
+                        android:gravity="right"
                         >
                         <ImageView
                             android:layout_width="20dp"
@@ -201,7 +201,7 @@
                             android:layout_marginLeft="10dp"
                             android:textColor="@color/white"
                             android:textStyle="bold"
-                            android:text="min"/>
+                            android:text="@string/empty_time"/>
                     </LinearLayout>
 
                 </LinearLayout>

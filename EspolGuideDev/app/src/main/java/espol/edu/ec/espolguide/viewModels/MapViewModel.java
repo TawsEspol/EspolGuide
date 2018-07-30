@@ -77,6 +77,10 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
 
+/**
+ * Created by galo on 14/04/18.
+ */
+
 public class MapViewModel extends Observable{
     public static String NAMES_REQUEST_STARTED = "names_request_started";
     public static String NAMES_REQUEST_SUCCEEDED = "names_request_succeeded";
@@ -388,7 +392,7 @@ public class MapViewModel extends Observable{
                                             activity.getViewHolder().mapboxMap, R.style.CustomNavigationMapRoute));
                                 }
                                 getNavigationMapRoute().addRoute(getCurrentRoute());
-                                String timeStr = Util.getTimeString(getCurrentRoute().duration());
+                                String timeStr = Util.getTimeString(getCurrentRoute().duration(), activity);
                                 activity.getViewHolder().timeTv.setText(timeStr);
                                 setRouteZoom();
                                 setChanged();
