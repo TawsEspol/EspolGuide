@@ -54,4 +54,22 @@ public class Util {
         DrawerLayout drawerLayout = (DrawerLayout) viewGroup;
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
+
+    public static String getTimeString(double time){
+        String timeString = "";
+        int minutes = (int) Math.round(time/60);
+        if(minutes > 59){
+            int hours;
+            double fractionHour;
+            int remainderMin;
+            hours = (int) minutes/60;
+            fractionHour = minutes/60.0 - minutes/60;
+            remainderMin = (int) Math.round(fractionHour*60);
+            timeString = Integer.toString(hours) + Constants.HOUR_UNIT + Integer.toString(remainderMin);
+        }
+        else{
+            timeString = Integer.toString(minutes) + Constants.MINUTE_UNIT;
+        }
+        return timeString;
+    }
 }

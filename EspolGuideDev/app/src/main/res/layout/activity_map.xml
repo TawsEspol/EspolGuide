@@ -150,8 +150,8 @@
                         >
                         <ImageButton
                             android:id="@+id/walk_button"
-                            android:layout_width="40dp"
-                            android:layout_height="45dp"
+                            android:layout_width="30dp"
+                            android:layout_height="35dp"
                             android:src="@drawable/ic_walk_icon"
                             android:tint="@color/white"
                             android:background="@android:color/transparent"/>
@@ -164,16 +164,44 @@
                         android:orientation="horizontal"
                         android:paddingLeft="15dp"
                         android:paddingRight="15dp"
-                        android:layout_marginRight="5dp"
+                        android:layout_marginLeft="10dp"
                         android:background="@drawable/login_button"
                         >
                         <ImageButton
                             android:id="@+id/car_button"
-                            android:layout_width="40dp"
-                            android:layout_height="45dp"
+                            android:layout_width="30dp"
+                            android:layout_height="35dp"
                             android:src="@drawable/ic_car_icon"
                             android:tint="@color/white"
                             android:background="@android:color/transparent"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/time_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:paddingTop="5dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/login_button"
+                        android:layout_gravity="right"
+                        >
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_time"
+                            android:tint="@color/white"
+                            android:background="@android:color/transparent"
+                            />
+                        <TextView
+                            android:id="@+id/time_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            android:text="min"/>
                     </LinearLayout>
 
                 </LinearLayout>

@@ -58,6 +58,7 @@ import espol.edu.ec.espolguide.controllers.adapters.RouteAdapter;
 import espol.edu.ec.espolguide.controllers.adapters.SearchViewAdapter;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SessionHelper;
+import espol.edu.ec.espolguide.utils.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -387,6 +388,8 @@ public class MapViewModel extends Observable{
                                             activity.getViewHolder().mapboxMap, R.style.CustomNavigationMapRoute));
                                 }
                                 getNavigationMapRoute().addRoute(getCurrentRoute());
+                                String timeStr = Util.getTimeString(getCurrentRoute().duration());
+                                activity.getViewHolder().timeTv.setText(timeStr);
                                 setRouteZoom();
                                 setChanged();
                                 notifyObservers(ROUTE_REQUEST_SUCCEEDED);

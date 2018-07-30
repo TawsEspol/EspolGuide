@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mapbox.geojson.Point;
@@ -117,6 +118,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
         public ImageView drawerBtn;
         public Button poiRoute;
+        public TextView timeTv;
 
         public ViewHolder(){
             findViews();
@@ -151,6 +153,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             drawerBtn = (ImageView) findViewById(R.id.drawerBtn);
             favBtn = (ImageButton) findViewById(R.id.favoriteBtn);
             poiRoute = (Button) findViewById(R.id.poi_route_btn);
+            timeTv = (TextView) findViewById(R.id.time_tv);
         }
 
         private void setDrawerBtnListener(){
