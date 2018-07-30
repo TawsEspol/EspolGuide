@@ -478,7 +478,10 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
     @Override
     public void onBackPressed() {
-        if(isPoiInfoDisplayed()){
+        if(Util.isDrawerOpen(this)){
+            Util.closeDrawer(this);
+        }
+        else if(isPoiInfoDisplayed()){
             viewHolder.closePoiInfo();
             viewModel.removeMarkers();
         }
@@ -494,6 +497,11 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             viewHolder.routeBtn.setVisibility(View.GONE);
             viewModel.removeMarkers();
             showMapLayoutView();
+        }
+        else if(isMapLayoutViewDisplayed() && !isPoiInfoDisplayed() && !isRouteBtnDisplayed() &&
+                !isRouteModeViewDisplayed() && !isUpdateRouteViewDisplayed() &&
+                !Util.isDrawerOpen(this)){
+            finish();
         }
     }
 

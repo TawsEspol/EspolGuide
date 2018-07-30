@@ -25,6 +25,12 @@ public class Util {
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
+    public static boolean isDrawerOpen(Activity activity){
+        ViewGroup viewGroup = (ViewGroup) ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
+        DrawerLayout drawerLayout = (DrawerLayout) viewGroup;
+        return drawerLayout.isDrawerOpen(Gravity.LEFT);
+    }
+
     public static void openDrawer(Activity activity){
         ViewGroup viewGroup = (ViewGroup) ((ViewGroup) activity.findViewById(android.R.id.content)).getChildAt(0);
         DrawerLayout drawerLayout = (DrawerLayout) viewGroup;
