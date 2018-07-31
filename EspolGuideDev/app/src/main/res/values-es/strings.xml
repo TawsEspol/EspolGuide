@@ -47,4 +47,6 @@
     <string name="hour_unit">h</string>
     <string name="minute_unit">min</string>
     <string name="empty_time">   -   </string>
+
+    <string name="getting_your_location">Obteniendo su ubicación</string>
 </resources>

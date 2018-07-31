@@ -26,6 +26,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEnginePriority;
@@ -100,6 +101,10 @@ public class MapViewModel extends Observable{
     public static String MAP_CENTERING_REQUEST_STARTED = "map_centering_request_started";
     public static String MAP_CENTERING_REQUEST_SUCCEEDED = "map_centering_request_succeeded";
     public static String MAP_CENTERING_REQUEST_FAILED_LOADING = "map_centering_request_failed_loading";
+
+    public static String LOCATION_REQUEST_STARTED = "location_request_started";
+    public static String LOCATION_REQUEST_FAILED = "location_request_failed";
+    public static String LOCATION_REQUEST_SUCCEEDED = "location_request_succeeded";
 
     final private String POIS_NAMES_WS = Constants.getAlternativeNamesURL();
     final private ArrayList<String> namesItems = new ArrayList<>();
@@ -684,6 +689,8 @@ public class MapViewModel extends Observable{
      * @return The method returns nothing.
      */
     public void getInitialPosition(){
+        setChanged();
+        notifyObservers(LOCATION_REQUEST_STARTED);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED ||
@@ -695,9 +702,22 @@ public class MapViewModel extends Observable{
                         public void onSuccess(Location location) {
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
-                                // Logic to handle location object
                                 activity.setOriginLocation(location);
+                                setChanged();
+                                notifyObservers(LOCATION_REQUEST_SUCCEEDED);
                             }
+                            else{
+                                setChanged();
+                                notifyObservers(LOCATION_REQUEST_FAILED);
+                            }
+                        }
+                    });
+            mFusedLocationClient.getLastLocation()
+                    .addOnFailureListener(activity, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            setChanged();
+                            notifyObservers(LOCATION_REQUEST_FAILED);
                         }
                     });
             return;
@@ -899,5 +919,11 @@ public class MapViewModel extends Observable{
         }
     }
 
-
+    public void updateOriginLocation(){
+        initializeLocationEngine();
+        activity.setSelectedOrigin(new LatLng(activity.getOriginLocation().getLatitude(),
+                activity.getOriginLocation().getLongitude()));
+        activity.setOriginPosition(Point.fromLngLat(activity.getSelectedOrigin().getLongitude(),
+                activity.getSelectedOrigin().getLatitude()));
+    }
 }

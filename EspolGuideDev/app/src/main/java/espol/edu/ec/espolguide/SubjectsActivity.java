@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import espol.edu.ec.espolguide.controllers.adapters.PageAdapter;
 import espol.edu.ec.espolguide.utils.SessionHelper;
+import espol.edu.ec.espolguide.utils.Util;
 import espol.edu.ec.espolguide.viewModels.SubjectsViewModel;
 
 
@@ -40,6 +41,7 @@ public class SubjectsActivity extends BaseActivity implements Observer {
         this.viewHolder = new SubjectsViewHolder();
         this.viewHolder.setTabs();
         this.viewHolder.setSubjectsAdapter();
+        Util.lockSwipeGesture(this);
     }
 
     public SubjectsViewHolder getViewHolder() {

@@ -386,6 +386,25 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         if (message == viewModel.ADD_FAVORITES_REQUEST_FAILED_LOADING) {
 
         }
+        if (message == viewModel.LOCATION_REQUEST_STARTED) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.getting_your_location),
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        if (message == viewModel.LOCATION_REQUEST_SUCCEEDED) {
+
+        }
+        if (message == viewModel.LOCATION_REQUEST_FAILED) {
+            MapActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(MapActivity.this, getResources().getString(R.string.error_on_getting_location),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     @Override

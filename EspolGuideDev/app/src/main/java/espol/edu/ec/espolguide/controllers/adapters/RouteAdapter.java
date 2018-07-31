@@ -1,6 +1,7 @@
 package espol.edu.ec.espolguide.controllers.adapters;
 
 import android.content.Context;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,8 +134,8 @@ public class RouteAdapter extends BaseAdapter {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                double selectedLat = response.getDouble("lat");
-                                double selectedLng = response.getDouble("long");
+                                double selectedLat = response.getDouble(Constants.LATITUDE_KEY);
+                                double selectedLng = response.getDouble(Constants.LONGITUDE_KEY);
                                 pois.clear();
                                 MapActivity activity = (MapActivity) mContext;
                                 if(activity.getSelectedEditText() == Constants.FROM_ORIGIN){
@@ -150,6 +151,10 @@ public class RouteAdapter extends BaseAdapter {
                                     activity.getViewHolder().editDestination.setText(name1);
                                     activity.setDestinationPosition(Point.fromLngLat(activity.getSelectedDestination().getLongitude(),
                                             activity.getSelectedDestination().getLatitude()));
+                                    if(activity.getViewHolder().editOrigin.getText().toString().trim()
+                                            .equals(activity.getApplicationContext().getString(R.string.your_location).trim())){
+                                        activity.getViewModel().updateOriginLocation();
+                                    }
                                 }
                                 activity.getViewHolder().routeSearchLayout.setVisibility(View.GONE);
                                 activity.getViewHolder().mapLayout.setVisibility(View.VISIBLE);
