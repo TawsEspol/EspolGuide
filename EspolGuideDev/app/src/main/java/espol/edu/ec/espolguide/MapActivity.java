@@ -203,8 +203,9 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         public void closePoiInfo(){
             mapboxMap.getUiSettings().setAllGesturesEnabled(true);
             final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
+            ImageView photo = findViewById(R.id.flag);
             info.setVisibility(View.GONE);
-            ImageView photo = (ImageView) findViewById(R.id.flag);
+            //ImageView photo = (ImageView) findViewById(R.id.flag);
             //photo.setImageResource(android.R.color.transparent);
             if(!isRouteModeViewDisplayed()){
                 getViewHolder().editSearch.setVisibility(View.VISIBLE);
