@@ -14,7 +14,7 @@
 
     <string name="failed_connection_msg">Conexión a Internet no disponible</string>
     <string name="http_error_msg">Error al conectarse con el servidor</string>
-    <string name="loading_pois_names_error_msg">Error cargando nombres de sitios...</string>
+    <string name="loading_pois_names_error_msg">Error cargando nombres de sitios</string>
     <string name="loading_poi_info_error_msg">Información del sitio no disponible</string>
     <string name="wrong_credentials_msg">Credenciales incorrectas</string>
     <string name="error_on_getting_location">Error obteniendo su ubicación</string>

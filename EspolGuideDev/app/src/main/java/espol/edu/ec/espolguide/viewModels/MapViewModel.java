@@ -208,9 +208,9 @@ public class MapViewModel extends Observable{
     }
 
     /**
-     * Auxiliar class that helps to fill with items the search bars.
+     * Auxiliary class that helps to fill with items the search bars.
      *
-     * This auxiliar class helps to fill with POI names the search bars used to locate a POI
+     * This auxiliary class helps to fill with POI names the search bars used to locate a POI
      * and changing origin and destination places on route settings
      * The 'doInBackground' method calls the POI  names web service. Then, after parsing the
      * request response, it adds the received items to the 'nameItems' list.
@@ -418,22 +418,6 @@ public class MapViewModel extends Observable{
         }
     }
 
-    public void lockMapOnClickListener(){
-        activity.getViewHolder().mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(final MapboxMap mapboxMap) {
-                activity.getViewHolder().setMapboxMap(mapboxMap);
-                mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
-                    @Override
-                    public void onMapClick(@NonNull LatLng point) {
-
-                    }
-
-                });
-            }
-        });
-    }
-
     public void removeMarkers(){
         if(activity.getViewHolder().featureMarker != null){
             activity.getViewHolder().mapboxMap.removeMarker(activity.getViewHolder().featureMarker);
@@ -464,7 +448,6 @@ public class MapViewModel extends Observable{
                                 String codeInfrastructure = "";
                                 if (feature.properties() != null && hasEspolAttributes(feature)) {
                                     removeMarkers();
-                                    //lockMapOnClickListener();
                                     activity.getViewHolder().poiRoute.setEnabled(true);
                                     activity.getViewHolder().poiRoute.setClickable(true);
                                     activity.setSelectedPoi("");
@@ -499,10 +482,6 @@ public class MapViewModel extends Observable{
                                     }
                                     new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description,
                                             codeInfrastructure, activity, activity.getViewHolder().info)).show();
-                                    activity.getViewHolder().routeBtn.setVisibility(View.INVISIBLE);
-                                    activity.getViewHolder().editSearch.setText("");
-                                    activity.getViewHolder().getMapboxMap().getUiSettings().setAllGesturesEnabled(false);
-                                    removeMarkers();
                                     setChanged();
                                     notifyObservers(POI_INFO_REQUEST_SUCCEEDED);
                                 }
@@ -534,7 +513,6 @@ public class MapViewModel extends Observable{
                             double lon = response.getDouble(Constants.LONGITUDE_KEY);
                             LatLng point = new LatLng(lat, lon);
                             activity.setSelectedDestination(point);
-                            activity.getViewHolder().editDestination.setText(activity.getSelectedPoi());
                         }
                         else{
                             activity.setSelectedDestination(null);
@@ -571,6 +549,16 @@ public class MapViewModel extends Observable{
         ImageViewCompat.setImageTintList(activity.getViewHolder().favBtn, ColorStateList.valueOf(colorInt));
     }
 
+    /**
+     * Method that sets the map view to fit the current route polyline on it.
+     *
+     * This method obtains all the current route coordinates. Then, these coordinates are
+     * used to create bounds to display the map, in order to keep all the coordinates in the
+     * screen. Finally, the map is centered on the center of mass of the route.
+     *
+     * @author Galo Castillo
+     * @return The method returns nothing.
+     */
     public void setRouteZoom(){
         LineString lineString = LineString.fromPolyline(getCurrentRoute().geometry(), 6);
         List<Point> coordinates = lineString.coordinates();
@@ -661,6 +649,9 @@ public class MapViewModel extends Observable{
             @Override
             public void onClick(View v) {
                 if(getSelectedRouteMode() != Constants.WALKING_ROUTE_MODE){
+                    if(activity.getViewHolder().editOrigin.getText().toString().trim()
+                            .equals(activity.getApplicationContext().getString(R.string.your_location)))
+                    updateOriginLocation();
                     setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
                     getRoute(activity.getOriginPosition(), activity.getDestinationPosition());
                 }
@@ -671,6 +662,8 @@ public class MapViewModel extends Observable{
             @Override
             public void onClick(View v) {
                 if(getSelectedRouteMode() != Constants.CAR_ROUTE_MODE){
+                    if(activity.getViewHolder().editOrigin.getText().toString().trim()
+                            .equals(activity.getApplicationContext().getString(R.string.your_location)))
                     setSelectedRouteMode(Constants.CAR_ROUTE_MODE);
                     getRoute(activity.getOriginPosition(), activity.getDestinationPosition());
                 }
@@ -747,9 +740,9 @@ public class MapViewModel extends Observable{
     }
 
     /**
-     * Auxiliar class that handles the favorite POI addition or removal.
+     * Auxiliary class that handles the favorite POI addition or removal.
      *
-     * This auxiliar class handles the favorites addition or removal of an specified POI
+     * This auxiliary class handles the favorites addition or removal of an specified POI
      * when requested. This class calls a the favorites updating web service to add or remove
      * the POI sent as parameter on the call. Moreover, this class updates the user's favorites
      * stored on the shared preferences.
@@ -851,9 +844,9 @@ public class MapViewModel extends Observable{
     }
 
     /**
-     * Auxiliar class that handles the map zoom and centering.
+     * Auxiliary class that handles the map zoom and centering.
      *
-     * This auxiliar class handles the map zoom and centering of an specified POI when requested.
+     * This auxiliary class handles the map zoom and centering of an specified POI when requested.
      * This class calls a the coordinates web service to obtain a POI's central coordinate.
      *
      * @author Galo Castillo
@@ -919,6 +912,14 @@ public class MapViewModel extends Observable{
         }
     }
 
+    /**
+     * Method that updates the user's origin location.
+     *
+     * This method obtains user's location to update a route origin position.
+     *
+     * @author GaloCastillo
+     * @return The method returns nothing.
+     */
     public void updateOriginLocation(){
         initializeLocationEngine();
         activity.setSelectedOrigin(new LatLng(activity.getOriginLocation().getLatitude(),

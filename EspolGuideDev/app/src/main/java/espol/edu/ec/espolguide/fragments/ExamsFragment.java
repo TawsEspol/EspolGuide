@@ -1,4 +1,4 @@
-package espol.edu.ec.espolguide;
+package espol.edu.ec.espolguide.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.utils.SessionHelper;
 import espol.edu.ec.espolguide.utils.User;
 import espol.edu.ec.espolguide.utils.assync.SubjectsSoapHelper;

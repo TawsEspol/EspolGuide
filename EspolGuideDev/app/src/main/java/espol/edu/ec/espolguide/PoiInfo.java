@@ -18,7 +18,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 /**
- * Auxiliar class that helps to model and visualize the information of each POI.
+ * Auxiliary class that helps to model and visualize the information of each POI.
  * Created by fabricio on 07/01/18.
  */
 
@@ -113,6 +113,7 @@ public class PoiInfo extends AppCompatActivity implements Observer {
                 public void onClick(View v) {
                     MapActivity parentActivity = (MapActivity) ctx;
                     if(parentActivity.getSelectedPoi().trim().length()>0){
+                        parentActivity.getViewHolder().editDestination.setText(parentActivity.getSelectedPoi());
                         parentActivity.getViewHolder().closePoiInfo();
                         parentActivity.getViewHolder().drawRoute();
                     }

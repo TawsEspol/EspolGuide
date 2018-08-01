@@ -5,12 +5,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import espol.edu.ec.espolguide.ExamsFragment;
-import espol.edu.ec.espolguide.LecturesFragment;
-import espol.edu.ec.espolguide.R;
-import espol.edu.ec.espolguide.utils.SessionHelper;
-import espol.edu.ec.espolguide.utils.User;
-import espol.edu.ec.espolguide.utils.assync.SubjectsSoapHelper;
+import espol.edu.ec.espolguide.fragments.ExamsFragment;
+import espol.edu.ec.espolguide.fragments.LecturesFragment;
 
 /**
  * Created by fabricio on 07/07/18.

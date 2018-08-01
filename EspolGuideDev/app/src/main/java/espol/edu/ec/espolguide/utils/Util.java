@@ -7,7 +7,9 @@ import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
-import espol.edu.ec.espolguide.R;
+/**
+ * Created by galo on 14/04/18.
+ */
 
 /**
  * Created by galo on 14/04/18.
