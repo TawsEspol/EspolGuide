@@ -44,34 +44,18 @@ public class PoiInfoViewModel extends Observable {
         this.activity = activity;
     }
 
-    private Drawable LoadImage(String url)  {
-        try {
-            InputStream is = (InputStream) new URL(url).getContent();
-            Drawable d = Drawable.createFromStream(is, "photoBlock");
-            return d;
-        } catch (Exception e) {
-            setChanged();
-            notifyObservers(POI_PHOTO_REQUEST_FAILED_HTTP);
-            return null;
-        }
-    }
-
     public void show() {
         activity.getViewHolder().nameTv.setText(activity.getName());
         activity.getViewHolder().unityTv.setText(activity.getacAdemicUnit());
-        //activity.getViewHolder().descriptionTv.setText(activity.getDescription());
-        //new Counter().execute(new PhotoData(activity.getCtx(), activity.getViewHolder().photo, activity.getCodeInfrastructure()));
-        System.out.println(Constants.getBlockPhotoURL()+activity.getCodeInfrastructure());
         String url = Constants.getBlockPhotoURL() + activity.getCodeInfrastructure();
         ImageView img = activity.getViewHolder().photo;
-        //Picasso.with(activity.getCtx()).load(url).into(img);
+        activity.getView().setVisibility(View.VISIBLE);
 
 
         Picasso.with(activity.getCtx()).load(url).into(new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 img.setImageDrawable(new BitmapDrawable(bitmap));
-                activity.getView().setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -102,37 +86,7 @@ public class PoiInfoViewModel extends Observable {
         }
     }
 
-    private class Counter extends AsyncTask<PhotoData, Void, Void> {
-        Context context;
-        ImageView iv;
-        String url = Constants.getBlockPhotoURL() + activity.getCodeInfrastructure();
 
-        @Override
-        protected Void doInBackground(PhotoData... datas) {
-            Picasso.with(activity.getCtx()).load(url).into(new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    activity.getView().setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-                    setChanged();
-                    notifyObservers(POI_PHOTO_REQUEST_FAILED_HTTP);
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    //Log.(TAG, "Getting ready to get the image");
-                    //Here you should place a loading gif in the ImageView to
-                    //while image is being obtained.
-                }
-            });
-            return null;
-        }
-
-
-    }
 
 }
 
