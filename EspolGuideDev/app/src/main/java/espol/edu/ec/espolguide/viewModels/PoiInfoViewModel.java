@@ -16,6 +16,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import espol.edu.ec.espolguide.PoiInfo;
+import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.utils.Constants;
 
 import java.io.InputStream;
@@ -49,6 +50,7 @@ public class PoiInfoViewModel extends Observable {
         activity.getViewHolder().unityTv.setText(activity.getacAdemicUnit());
         String url = Constants.getBlockPhotoURL() + activity.getCodeInfrastructure();
         ImageView img = activity.getViewHolder().photo;
+        img.setImageResource(R.drawable.nophoto);
         activity.getView().setVisibility(View.VISIBLE);
 
 
