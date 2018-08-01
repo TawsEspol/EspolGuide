@@ -86,7 +86,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         this.viewModel.setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
         this.viewModel.setRouteModeButtonsListeners();
         this.disableMenuOption();
-        this.viewModel.getInitialPosition();
+        this.viewModel.getInitialPosition(Constants.ON_CREATE);
         this.viewHolder.setFavBtnListener();
     }
 
@@ -397,6 +397,9 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
         }
         if (message == viewModel.LOCATION_REQUEST_SUCCEEDED) {
+
+        }
+        if (message == viewModel.LOCATION_REQUEST_SUCCEEDED_ON_CREATE) {
             Toast.makeText(this, getResources().getString(R.string.getting_your_location),
                     Toast.LENGTH_LONG).show();
         }
@@ -417,7 +420,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
     @Override
     public void onPermissionResult(boolean granted) {
         if (granted) {
-            viewModel.getInitialPosition();
+            viewModel.getInitialPosition(Constants.ON_PERMISSION_RESULT);
         } else {
             finish();
         }
@@ -481,6 +484,10 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
     protected void onResume() {
         super.onResume();
         viewHolder.mapView.onResume();
+        if(isMapLayoutViewDisplayed() && !isPoiInfoDisplayed() && !isRouteBtnDisplayed() &&
+                !isRouteModeViewDisplayed() && !isUpdateRouteViewDisplayed()){
+            viewModel.getInitialPosition(Constants.ON_RESUME);
+        }
         Util.closeDrawer(this);
     }
 

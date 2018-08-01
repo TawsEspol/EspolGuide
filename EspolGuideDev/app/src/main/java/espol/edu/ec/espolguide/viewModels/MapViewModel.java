@@ -104,6 +104,7 @@ public class MapViewModel extends Observable{
 
     public static String LOCATION_REQUEST_STARTED = "location_request_started";
     public static String LOCATION_REQUEST_FAILED = "location_request_failed";
+    public static String LOCATION_REQUEST_SUCCEEDED_ON_CREATE = "location_request_succeeded_on_create";
     public static String LOCATION_REQUEST_SUCCEEDED = "location_request_succeeded";
 
     final private String POIS_NAMES_WS = Constants.getAlternativeNamesURL();
@@ -650,8 +651,9 @@ public class MapViewModel extends Observable{
             public void onClick(View v) {
                 if(getSelectedRouteMode() != Constants.WALKING_ROUTE_MODE){
                     if(activity.getViewHolder().editOrigin.getText().toString().trim()
-                            .equals(activity.getApplicationContext().getString(R.string.your_location)))
-                    updateOriginLocation();
+                            .equals(activity.getApplicationContext().getString(R.string.your_location))){
+                        updateOriginLocation();
+                    }
                     setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
                     getRoute(activity.getOriginPosition(), activity.getDestinationPosition());
                 }
@@ -663,7 +665,9 @@ public class MapViewModel extends Observable{
             public void onClick(View v) {
                 if(getSelectedRouteMode() != Constants.CAR_ROUTE_MODE){
                     if(activity.getViewHolder().editOrigin.getText().toString().trim()
-                            .equals(activity.getApplicationContext().getString(R.string.your_location)))
+                            .equals(activity.getApplicationContext().getString(R.string.your_location))){
+                        updateOriginLocation();
+                    }
                     setSelectedRouteMode(Constants.CAR_ROUTE_MODE);
                     getRoute(activity.getOriginPosition(), activity.getDestinationPosition());
                 }
@@ -679,9 +683,10 @@ public class MapViewModel extends Observable{
      * in order to avoid location's issues later, when drawing a route.
      *
      * @author Galo Castillo
+     * @param onState is used to announce when the method is being called.
      * @return The method returns nothing.
      */
-    public void getInitialPosition(){
+    public void getInitialPosition(String onState){
         setChanged();
         notifyObservers(LOCATION_REQUEST_STARTED);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
@@ -696,8 +701,14 @@ public class MapViewModel extends Observable{
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
                                 activity.setOriginLocation(location);
-                                setChanged();
-                                notifyObservers(LOCATION_REQUEST_SUCCEEDED);
+                                if(onState == Constants.ON_CREATE){
+                                    setChanged();
+                                    notifyObservers(LOCATION_REQUEST_SUCCEEDED_ON_CREATE);
+                                }
+                                else{
+                                    setChanged();
+                                    notifyObservers(LOCATION_REQUEST_SUCCEEDED);
+                                }
                             }
                             else{
                                 setChanged();
@@ -846,7 +857,7 @@ public class MapViewModel extends Observable{
     /**
      * Auxiliary class that handles the map zoom and centering.
      *
-     * This auxiliary class handles the map zoom and centering of an specified POI when requested.
+     * This uxiliary class handles the map zoom and centering of an specified POI when requested.
      * This class calls a the coordinates web service to obtain a POI's central coordinate.
      *
      * @author Galo Castillo
