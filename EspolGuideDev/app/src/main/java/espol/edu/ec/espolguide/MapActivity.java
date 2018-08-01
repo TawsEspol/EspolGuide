@@ -576,6 +576,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         this.viewHolder.editSearch.setText("");
         this.viewHolder.editDestination.setText("");
         this.viewHolder.editOrigin.setText("");
+        this.viewHolder.getMapboxMap().getUiSettings().setAllGesturesEnabled(true);
         hidePoiInfo();
         hideRouteBtn();
         hideRouteModeView();
