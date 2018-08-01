@@ -1,12 +1,22 @@
 package espol.edu.ec.espolguide.viewModels;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
 import espol.edu.ec.espolguide.PoiInfo;
+import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.utils.Constants;
 
 import java.io.InputStream;
@@ -35,24 +45,35 @@ public class PoiInfoViewModel extends Observable {
         this.activity = activity;
     }
 
-    private Drawable LoadImage(String url)  {
-        try {
-            InputStream is = (InputStream) new URL(url).getContent();
-            Drawable d = Drawable.createFromStream(is, "photoBlock");
-            return d;
-        } catch (Exception e) {
-            setChanged();
-            notifyObservers(POI_PHOTO_REQUEST_FAILED_HTTP);
-            return null;
-        }
-    }
-
     public void show() {
         activity.getViewHolder().nameTv.setText(activity.getName());
         activity.getViewHolder().unityTv.setText(activity.getacAdemicUnit());
-        //activity.getViewHolder().descriptionTv.setText(activity.getDescription());
-        new Counter().execute(new PhotoData(activity.getCtx(), activity.getViewHolder().photo, activity.getCodeInfrastructure()));
+        String url = Constants.getBlockPhotoURL() + activity.getCodeInfrastructure();
+        ImageView img = activity.getViewHolder().photo;
+        img.setImageResource(R.drawable.nophoto);
         activity.getView().setVisibility(View.VISIBLE);
+
+
+        Picasso.with(activity.getCtx()).load(url).into(new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                img.setImageDrawable(new BitmapDrawable(bitmap));
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+                setChanged();
+                notifyObservers(POI_PHOTO_REQUEST_FAILED_HTTP);
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                //Log.(TAG, "Getting ready to get the image");
+                //Here you should place a loading gif in the ImageView to
+                //while image is being obtained.
+            }
+        });
+
     }
 
     private class PhotoData{
@@ -67,34 +88,7 @@ public class PoiInfoViewModel extends Observable {
         }
     }
 
-    private class Counter extends AsyncTask<PhotoData, Void, Drawable> {
-        Context context;
-        ImageView iv;
-        String identifier;
-        @Override
-        protected Drawable doInBackground(PhotoData... datas) {
-            context = datas[0].context;
-            identifier = datas[0].id;
-            iv = datas[0].imgvw;
-            Drawable d;
-            if (!Constants.isNetworkAvailable(context)) {
-                d = null;
-                setChanged();
-                notifyObservers(POI_PHOTO_REQUEST_FAILED_CONNECTION);
-            }
-            else {
-                d = null;
-                //d = LoadImage(Constants.getBlockPhotoURL()+ identifier);
-            }
-            return d;
-        }
 
-        @Override
-        protected void onPostExecute(Drawable d) {
-            super.onPostExecute(d);
-            //iv.setImageDrawable(d);
-        }
-    }
 
 }
 
