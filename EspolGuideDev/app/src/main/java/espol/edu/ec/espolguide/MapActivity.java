@@ -354,9 +354,6 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             getViewModel().removeMarkers();
             getViewHolder().routeBtn.setVisibility(View.GONE);
             getViewHolder().editSearch.setText("");
-            if(isRouteModeViewDisplayed()){
-                //Util.closeKeyboard(this);
-            }
         }
         if (message == viewModel.POI_INFO_REQUEST_FAILED_LOADING) {
             MapActivity.this.runOnUiThread(new Runnable() {
