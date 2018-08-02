@@ -1,12 +1,20 @@
 package espol.edu.ec.espolguide;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -14,6 +22,7 @@ import android.widget.TextView;
 import java.util.Observable;
 import java.util.Observer;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SessionHelper;
 import espol.edu.ec.espolguide.utils.Util;
@@ -30,33 +39,41 @@ public class BaseActivity extends AppCompatActivity implements Observer {
     public class ViewHolder {
         public NavigationView navigationView;
         public TextView greetingTxt;
+        public CircleImageView imgView;
 
         public ViewHolder(){
             findViews();
-            setGreeting();
+            setUserInfo();
         }
 
         private void findViews(){
             navigationView = (NavigationView) findViewById(R.id.navigation_view);
             greetingTxt =(TextView) navigationView.getHeaderView(0).findViewById(R.id.greeting_tv);
+            imgView = navigationView.getHeaderView(0).findViewById(R.id.profile_image);
         }
 
-        private void setGreeting(){
+        private void setUserInfo(){
             if(SessionHelper.isEspolLoggedIn(BaseActivity.this.getApplicationContext())){
-                String espolUsername = SessionHelper.getEspolUsername(BaseActivity.this).trim();
+                String espolName = SessionHelper.getEspolName(BaseActivity.this).trim();
+                String espolPhoto = SessionHelper.getEspolPhoto(BaseActivity.this);
                 String startGreeting = getResources().getString(R.string.greeting) + ", ";
                 String endGreeting = "!";
-                String greeting = startGreeting + espolUsername + endGreeting;
+                String greeting = startGreeting + espolName + endGreeting;
                 Spannable sb = new SpannableString(greeting);
 
                 final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD); // Span to make text bold
-                sb.setSpan(bss, startGreeting.length(), startGreeting.length() + espolUsername.length(),
+                sb.setSpan(bss, startGreeting.length(), startGreeting.length() + espolName.length(),
                         Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                 greetingTxt.setText(sb);
+
+                byte[] imageAsBytes = Base64.decode(espolPhoto.getBytes(), Base64.DEFAULT);
+                Bitmap imgBitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+                imgView.setImageBitmap(imgBitmap);
             }
             else{
                 String greeting = getResources().getString(R.string.greeting) + "!";
                 greetingTxt.setText(greeting);
+                imgView.setImageResource(R.drawable.nophoto);
             }
         }
     }

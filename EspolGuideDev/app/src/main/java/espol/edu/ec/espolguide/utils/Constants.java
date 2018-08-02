@@ -75,6 +75,14 @@ public class Constants {
     public final static String ON_CREATE = "on_create";
     public final static String ON_RESUME = "on_resume";
 
+    public final static String USR_INFO_METHOD_NAME = "wsInfoUsuario";
+    public final static String USR_INFO_SOAP_ACTION = "http://tempuri.org/wsInfoUsuario";
+
+    public final static String MEDIA_NAMESPACE = "http://academico.espol.edu.ec/webservices/";
+    public final static String MEDIA_URL="https://ws.espol.edu.ec/saac/wsMedia.asmx";
+    public final static String USR_PHOTO_METHOD_NAME = "downloadFoto";
+    public final static String USR_PHOTO_SOAP_ACTION = "http://academico.espol.edu.ec/webservices/downloadFoto";
+
     public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
