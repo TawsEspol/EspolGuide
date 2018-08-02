@@ -9,9 +9,12 @@ import android.support.v4.view.ViewPager;
 import java.util.HashMap;
 import java.util.Observer;
 
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -28,6 +31,7 @@ public class SubjectsActivity extends BaseActivity implements Observer {
     private SubjectsViewHolder viewHolder;
     private SubjectsViewModel viewModel;
 
+    private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private PageAdapter adapter;
@@ -61,6 +65,16 @@ public class SubjectsActivity extends BaseActivity implements Observer {
         private void findViews() {
             tabLayout = (TabLayout) findViewById(R.id.tab_layout);
             viewPager = (ViewPager) findViewById(R.id.pager);
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setActivityTitle();
+            toolbar.setNavigationIcon(R.drawable.ic_left_arrow);
+            setSupportActionBar(toolbar);
+
+        }
+
+        private void setActivityTitle() {
+            String activityName = (String) getApplicationContext().getString(R.string.courses_menu_op);
+            toolbar.setTitle(activityName);
         }
 
         public void setTabs() {
@@ -91,6 +105,15 @@ public class SubjectsActivity extends BaseActivity implements Observer {
             });
         }
 
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }
