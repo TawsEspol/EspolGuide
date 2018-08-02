@@ -14,7 +14,9 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import java.sql.SQLOutput;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -22,6 +24,7 @@ import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.listeners.ToPoiListener;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SubjectRoom;
+import espol.edu.ec.espolguide.utils.SubjectsSet;
 import espol.edu.ec.espolguide.utils.User;
 
 /**
@@ -56,7 +59,12 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void,HashMap>{
         Iterator it = rooms.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry e = (Map.Entry) it.next();
-            SubjectRoom subjectRoom = new SubjectRoom(ctx, (String) e.getKey(), (String) e.getValue());
+            SubjectRoom subjectRoom;
+            try {
+                subjectRoom = new SubjectRoom(ctx, (e.getValue()).toString(), (String) e.getKey());
+            }catch (Exception a){
+                subjectRoom = new SubjectRoom(ctx, (String) e.getValue(), (String) e.getKey());
+            }
             subjectRoom.setBackgroundColor(Color.parseColor(Constants.COLOR_FOURTH));
 
             String[] placeInfo = ((String) e.getKey()).split("\\|");
@@ -89,7 +97,7 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void,HashMap>{
                     String subjectName = subject.getPropertyAsString("Materia");
 
                     if (data[0].getType()){
-                        HashMap<String,String> lecturesMap = new HashMap<>();
+                        HashMap<String,HashSet<String>> lecturesMap = new HashMap<>();
                         //Key:place - block
                         //Value: Day(s)
 
@@ -99,11 +107,16 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void,HashMap>{
                             String block = classroom.getPropertyAsString("Bloque");
                             String place = classroom.getPropertyAsString("Lugar");
                             String key = place + " | " + block;
-                            String day = "DAY" + " " +String.valueOf(lecture+1);
+                            String day = classroom.getPropertyAsString("Dia");
+                            HashSet<String> days;
                             if (lecturesMap.get(key) != null){
-                                lecturesMap.put(key,lecturesMap.get(key) + "," + day);
+                                days = lecturesMap.get(key);
+                                days.add(day);
+                                lecturesMap.put(key, days);
                             }else{
-                                lecturesMap.put(key,day);
+                                days = new SubjectsSet();
+                                days.add(day);
+                                lecturesMap.put(key,days);
                             }
                         }
                         if (subjectsMap.get(subjectName) != null){
@@ -112,9 +125,9 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void,HashMap>{
                                 Map.Entry e = (Map.Entry)it.next();
                                 if (subjectsMap.get(subjectName).get( e.getKey()) != null ){
                                     //distribuidos,bloque16c,com3
-                                    subjectsMap.get(subjectName).put( e.getKey(),
-                                            subjectsMap.get(subjectName).get( e.getKey())
-                                                    +","+lecturesMap.get(e.getKey()));
+                                    HashSet sM = (HashSet) subjectsMap.get(subjectName).get( e.getKey());
+                                    sM.addAll(lecturesMap.get(e.getKey()));
+                                    subjectsMap.get(subjectName).put( e.getKey(),sM );
                                 }else{
                                     subjectsMap.get(subjectName).put( e.getKey(),
                                             lecturesMap.get(e.getKey()));

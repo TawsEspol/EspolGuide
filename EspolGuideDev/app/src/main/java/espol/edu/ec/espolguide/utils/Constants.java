@@ -3,6 +3,8 @@ package espol.edu.ec.espolguide.utils;
 import android.content.Context;
 import android.net.ConnectivityManager;
 
+import java.util.HashMap;
+
 /**
  * Created by galo on 14/04/18.
  */
@@ -83,6 +85,29 @@ public class Constants {
     public final static String USR_PHOTO_METHOD_NAME = "downloadFoto";
     public final static String USR_PHOTO_SOAP_ACTION = "http://academico.espol.edu.ec/webservices/downloadFoto";
 
+    public static HashMap<String,HashMap<String,String>> getDaysTraductor(){
+        HashMap<String,HashMap<String,String>> result = new HashMap<>();
+        HashMap<String,String> english = new HashMap<>();
+        english.put("LUNES","MONDAY");
+        english.put("MARTES","TUESDAY");
+        english.put("MIERCOLES","WEDNESDAY");
+        english.put("JUEVES","THURSDAY");
+        english.put("VIERNES","FRIDAY");
+        english.put("SABADO","SATURDAY");
+        english.put("DOMINGO","SUNDAY");
+        HashMap<String,String> portuguese = new HashMap<>();
+        portuguese.put("LUNES","SEGUNDA-FEIRA");
+        portuguese.put("MARTES","TERÇA-FEIRA");
+        portuguese.put("MIERCOLES","QUARTA-FEIRA");
+        portuguese.put("JUEVES","QUINTA-FEIRA");
+        portuguese.put("VIERNES","SEXTA-FEIRA");
+        portuguese.put("SABADO","SABADO");
+        portuguese.put("DOMINGO","DOMINGO");
+        result.put("en",english);
+        result.put("pt",portuguese);
+        return result;
+    }
+
     public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
@@ -115,4 +140,6 @@ public class Constants {
     public static String getBuildingInfoURL(){
         return SERVER_URL + "/buildingInfo/";
     }
+
+
 }
