@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.EditText;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,6 +18,7 @@ import org.ksoap2.transport.HttpTransportSE;
 import org.kxml2.kdom.Element;
 import org.kxml2.kdom.Node;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,12 +26,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
+import java.util.Vector;
 
 import espol.edu.ec.espolguide.LoginActivity;
 import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SessionHelper;
+import espol.edu.ec.espolguide.utils.User;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -67,6 +71,10 @@ public class LoginViewModel extends Observable {
     public static String GET_FAVORITES_REQUEST_STARTED = "get_favorites_request_started";
     public static String GET_FAVORITES_REQUEST_SUCCEEDED = "get_favorites_request_succeeded";
     public static String GET_FAVORITES_REQUEST_FAILED_LOADING = "get_favorites_request_failed_loading";
+    public static String NAME_REQUEST_STARTED = "name_request_started";
+    public static String NAME_REQUEST_SUCCEED = "name_request_succeed";
+    public static String PHOTO_REQUEST_STARTED = "photo_request_started";
+    public static String PHOTO_REQUEST_SUCCEED = "photo_request_succeed";
 
     private String EG_LOGIN_WS = Constants.getLoginURL();
     private String FAVORITES_WS = Constants.getFavoritesURL();
@@ -172,7 +180,7 @@ public class LoginViewModel extends Observable {
     private class Auth extends AsyncTask<AuthScreen, Void, Boolean> {
         Context ctx;
         Boolean result;
-
+        String username;
         @Override
         protected Boolean doInBackground(AuthScreen... auths) {
             ctx = auths[0].context;
@@ -182,7 +190,8 @@ public class LoginViewModel extends Observable {
             } else {
                 try {
                 SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.AUTH_METHOD_NAME);
-                request.addProperty("authUser", auths[0].usr.getText().toString());
+                username = auths[0].usr.getText().toString();
+                request.addProperty("authUser", username );
                 request.addProperty("authContrasenia", auths[0].pass.getText().toString());
                 SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
                 envelope.dotNet = true;
@@ -206,8 +215,7 @@ public class LoginViewModel extends Observable {
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             if (result) {
-                setChanged();
-                notifyObservers(AUTH_REQUEST_SUCCEED);
+                new UserInfoSoapHelper().execute(username);
             } else {
                 setChanged();
                 notifyObservers(AUTH_WRONG_CREDENTIALS);
@@ -359,6 +367,91 @@ public class LoginViewModel extends Observable {
                 }
             }
             return null;
+        }
+    }
+
+    private class UserInfoSoapHelper extends AsyncTask<String, Void, Void> {
+        Context ctx;
+        String studentNumber;
+        @Override
+        protected Void doInBackground(String... users) {
+            ctx = activity.getApplicationContext();
+            if (!Constants.isNetworkAvailable(ctx)) {
+                setChanged();
+                notifyObservers(REQUEST_FAILED_CONNECTION);
+            } else {
+                setChanged();
+                notifyObservers(NAME_REQUEST_STARTED);
+                try {
+                    SoapObject request = new SoapObject(Constants.NAMESPACE, Constants.USR_INFO_METHOD_NAME);
+                    request.addProperty("user", users[0]);
+                    SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                    envelope.dotNet = true;
+                    envelope.setOutputSoapObject(request);
+                    HttpTransportSE transport = new HttpTransportSE(Constants.URL);
+                    transport.call(Constants.USR_INFO_SOAP_ACTION, envelope);
+                    SoapObject response = (SoapObject) envelope.getResponse();
+                    SoapObject userInfo = (SoapObject) ((SoapObject) ((SoapObject) response.getProperty("diffgram")).getProperty("NewDataSet")).getProperty("ESTUDIANTE");
+                    String name = userInfo.getPropertyAsString("NOMBRES").split(" ")[0].toLowerCase();
+                    studentNumber = userInfo.getPropertyAsString("MATRICULA");
+                    name = WordUtils.capitalize(name);
+                    SessionHelper.saveEspolName(ctx, name);
+                    SessionHelper.saveEspolUserIdNumber(ctx, studentNumber);
+                } catch (Exception e) {
+                    setChanged();
+                    notifyObservers(REQUEST_FAILED_HTTP);
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            setChanged();
+            notifyObservers(NAME_REQUEST_SUCCEED);
+            new PhotoSoapHelper().execute(studentNumber);
+        }
+    }
+
+    public class PhotoSoapHelper extends AsyncTask<String, Void,String>{
+
+        private Context ctx;
+
+        @Override
+        protected String doInBackground(String... data){
+            ctx = activity.getApplicationContext();
+            if (!Constants.isNetworkAvailable(ctx)) {
+                setChanged();
+                notifyObservers(REQUEST_FAILED_CONNECTION);
+            } else {
+                setChanged();
+                notifyObservers(PHOTO_REQUEST_STARTED);
+
+                try {
+                    SoapObject request = new SoapObject(Constants.MEDIA_NAMESPACE, Constants.USR_PHOTO_METHOD_NAME);
+                    request.addProperty("name", data[0]);
+                    SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                    envelope.dotNet = true;
+                    envelope.setOutputSoapObject(request);
+                    HttpTransportSE transport = new HttpTransportSE(Constants.MEDIA_URL);
+                    transport.call(Constants.USR_PHOTO_SOAP_ACTION, envelope);
+                    SoapPrimitive result = (SoapPrimitive) (((Vector) envelope.getResponse()).get(0));
+                    return result.toString();
+                } catch (Exception e) {
+                    setChanged();
+                    notifyObservers(PHOTO_REQUEST_SUCCEED);
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            SessionHelper.saveEspolUserPhoto(ctx,s);
+            setChanged();
+            notifyObservers(AUTH_REQUEST_SUCCEED);
         }
     }
 }

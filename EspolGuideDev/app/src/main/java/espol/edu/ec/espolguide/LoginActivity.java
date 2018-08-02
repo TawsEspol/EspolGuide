@@ -174,6 +174,7 @@ public class LoginActivity extends BaseActivity implements Observer {
     public void update(Observable observable, Object arg) {
         String message = (String)arg;
         if (message == viewModel.AUTH_REQUEST_STARTED) {
+            System.out.println("STARTED");
 
         }
         else if (message == viewModel.AUTH_REQUEST_SUCCEED) {
@@ -275,6 +276,17 @@ public class LoginActivity extends BaseActivity implements Observer {
                             Toast.LENGTH_SHORT).show();
                 }
             });
+        }
+        else if (message == viewModel.NAME_REQUEST_STARTED) {
+
+        }
+        else if (message == viewModel.NAME_REQUEST_SUCCEED) {
+
+        }else if (message == viewModel.PHOTO_REQUEST_STARTED) {
+
+        }
+        else if (message == viewModel.PHOTO_REQUEST_SUCCEED) {
+
         }
     }
 }

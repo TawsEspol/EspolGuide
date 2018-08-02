@@ -17,6 +17,9 @@ public class SessionHelper {
     private static final String ESPOL_USERNAME = "espol_username";
     private static final String FAVORITES = "favorites";
     private static final String ACCESS_TOKEN = "access_token";
+    private static final String ESPOL_NAME = "espol_name";
+    private static final String ESPOL_ID = "espol_id";
+    private static final String ESPOL_PHOTO = "espol_photo";
 
     public static boolean isEspolLoggedIn(Context context){
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -105,5 +108,36 @@ public class SessionHelper {
 
     public static boolean isGoogleLoggedIn(Activity activity){
         return true;
+    }
+
+    public static void saveEspolName(Context ctx, String name) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(ESPOL_NAME, name);
+        editor.commit();
+    }
+
+    public static void saveEspolUserIdNumber(Context ctx, String studentNumber) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(ESPOL_ID, studentNumber);
+        editor.commit();
+    }
+
+    public static void saveEspolUserPhoto(Context ctx, String photoString) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(ESPOL_PHOTO, photoString);
+        editor.commit();
+    }
+
+    public static String getEspolName(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPref.getString(ESPOL_NAME, "");
+    }
+
+    public static String getEspolPhoto(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPref.getString(ESPOL_PHOTO, "");
     }
 }
