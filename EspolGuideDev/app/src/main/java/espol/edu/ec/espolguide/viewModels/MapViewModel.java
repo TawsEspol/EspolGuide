@@ -241,9 +241,9 @@ public class MapViewModel extends Observable{
                                 try {
                                     String blockString = "";
                                     JSONObject blockInfo = (JSONObject) response.get(identifier);
-                                    String blockName = (String) blockInfo.getString(Constants.BLOCKNAME_FIELD);
-                                    String type = (String) blockInfo.getString(Constants.TYPE_FIELD);
-                                    String codeGtsi = (String) blockInfo.getString(Constants.CODE_GTSI_FIELD);
+                                    String blockName = blockInfo.getString(Constants.BLOCKNAME_FIELD);
+                                    String type = blockInfo.getString(Constants.TYPE_FIELD);
+                                    String codeGtsi = blockInfo.getString(Constants.CODE_GTSI_FIELD);
                                     JSONArray alternativeNames = blockInfo.getJSONArray(Constants.ALTERNATIVE_NAMES_FIELD);
                                     int totalAlternatives = alternativeNames.length();
                                     String alternativeString = "";

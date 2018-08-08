@@ -77,7 +77,7 @@ public class FavoriteAdapter extends BaseAdapter {
         if(view == null){
             holder = new ViewHolder();
             view = inflater.inflate(R.layout.favorites_item, null);
-            holder.codeGtsi_tv = (TextView) view.findViewById(R.id.favorite_gtsi_tv);
+            holder.codeGtsi_tv = view.findViewById(R.id.favorite_gtsi_tv);
             view.setTag(holder);
         } else{
             holder = (ViewHolder) view.getTag();

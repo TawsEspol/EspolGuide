@@ -47,8 +47,8 @@ public class BaseActivity extends AppCompatActivity implements Observer {
         }
 
         private void findViews(){
-            navigationView = (NavigationView) findViewById(R.id.navigation_view);
-            greetingTxt =(TextView) navigationView.getHeaderView(0).findViewById(R.id.greeting_tv);
+            navigationView = findViewById(R.id.navigation_view);
+            greetingTxt = navigationView.getHeaderView(0).findViewById(R.id.greeting_tv);
             imgView = navigationView.getHeaderView(0).findViewById(R.id.profile_image);
         }
 

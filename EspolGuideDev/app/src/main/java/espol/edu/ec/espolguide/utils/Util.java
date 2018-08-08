@@ -151,7 +151,7 @@ public class Util {
             int hours;
             double fractionHour;
             int remainderMin;
-            hours = (int) minutes/60;
+            hours = minutes /60;
             fractionHour = minutes/60.0 - minutes/60;
             remainderMin = (int) Math.round(fractionHour*60);
             String hourUnit = activity.getApplicationContext().getString(R.string.hour_unit);

@@ -100,11 +100,11 @@ public class PoiInfo extends AppCompatActivity implements Observer {
 
         public void findViews(){
             Activity parentActivity = (Activity) ctx;
-            nameTv = (TextView) parentActivity.findViewById(R.id.name_tv);
-            unityTv = (TextView) parentActivity.findViewById(R.id.unity_tv);
+            nameTv = parentActivity.findViewById(R.id.name_tv);
+            unityTv = parentActivity.findViewById(R.id.unity_tv);
             //descriptionTv = (TextView) parentActivity.findViewById(R.id.description_tv);
-            photo = (ImageView) parentActivity.findViewById(R.id.flag);
-            poiRoute = (Button) parentActivity.findViewById(R.id.poi_route_btn);
+            photo = parentActivity.findViewById(R.id.flag);
+            poiRoute = parentActivity.findViewById(R.id.poi_route_btn);
         }
 
         public void setPoiRouteListener(){

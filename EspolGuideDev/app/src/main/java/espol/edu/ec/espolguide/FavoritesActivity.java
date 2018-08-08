@@ -24,7 +24,7 @@ public class FavoritesActivity extends BaseActivity implements Observer {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
+        FrameLayout contentFrameLayout = findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
         getLayoutInflater().inflate(R.layout.activity_favorites, contentFrameLayout);
         this.viewHolder = new ViewHolder();
         this.viewModel = new FavoritesViewModel(this);
@@ -45,12 +45,12 @@ public class FavoritesActivity extends BaseActivity implements Observer {
         }
 
         public void findViews(){
-            favoritesLv = (ListView) findViewById(R.id.favorites_lv);
-            favToolbar = (Toolbar) findViewById(R.id.fav_toolbar);
+            favoritesLv = findViewById(R.id.favorites_lv);
+            favToolbar = findViewById(R.id.fav_toolbar);
         }
 
         public void setActivityTitle(){
-            String activityName = (String) getApplicationContext().getString(R.string.favorites_menu_op);
+            String activityName = getApplicationContext().getString(R.string.favorites_menu_op);
             favToolbar.setTitle(activityName);
         }
     }

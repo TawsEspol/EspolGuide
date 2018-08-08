@@ -39,7 +39,7 @@ public class SubjectsActivity extends BaseActivity implements Observer {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
+        FrameLayout contentFrameLayout = findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
         getLayoutInflater().inflate(R.layout.activity_subjects, contentFrameLayout);
         this.viewModel = new SubjectsViewModel(this);
         this.viewHolder = new SubjectsViewHolder();
@@ -63,9 +63,9 @@ public class SubjectsActivity extends BaseActivity implements Observer {
         }
 
         private void findViews() {
-            tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-            viewPager = (ViewPager) findViewById(R.id.pager);
-            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            tabLayout = findViewById(R.id.tab_layout);
+            viewPager = findViewById(R.id.pager);
+            toolbar = findViewById(R.id.toolbar);
             setActivityTitle();
             toolbar.setNavigationIcon(R.drawable.ic_left_arrow);
             setSupportActionBar(toolbar);
@@ -73,7 +73,7 @@ public class SubjectsActivity extends BaseActivity implements Observer {
         }
 
         private void setActivityTitle() {
-            String activityName = (String) getApplicationContext().getString(R.string.courses_menu_op);
+            String activityName = getApplicationContext().getString(R.string.courses_menu_op);
             toolbar.setTitle(activityName);
         }
 

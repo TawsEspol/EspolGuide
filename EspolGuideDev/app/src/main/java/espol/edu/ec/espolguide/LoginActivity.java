@@ -58,7 +58,7 @@ public class LoginActivity extends BaseActivity implements Observer {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
+        FrameLayout contentFrameLayout = findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
         getLayoutInflater().inflate(R.layout.start, contentFrameLayout);
 
         this.viewHolder = new ViewHolder(this);
@@ -122,12 +122,12 @@ public class LoginActivity extends BaseActivity implements Observer {
         }
 
         private void findViews() {
-            username = (EditText) findViewById(R.id.username);
-            password = (EditText) findViewById(R.id.password);
-            authBtn = (Button) findViewById(R.id.buttonAuth);
-            fbAuthBtn = (LoginButton) findViewById(R.id.fbAuthBtn);
-            googlAuthBtn = (SignInButton) findViewById(R.id.googlAuthbutton);
-            navigationView = (NavigationView) findViewById(R.id.navigation_view);
+            username = findViewById(R.id.username);
+            password = findViewById(R.id.password);
+            authBtn = findViewById(R.id.buttonAuth);
+            fbAuthBtn = findViewById(R.id.fbAuthBtn);
+            googlAuthBtn = findViewById(R.id.googlAuthbutton);
+            navigationView = findViewById(R.id.navigation_view);
         }
 
         private void setAuthButtonListener() {

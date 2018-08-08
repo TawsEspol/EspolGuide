@@ -134,8 +134,8 @@ public class SearchViewAdapter extends BaseAdapter {
         if (view == null) {
             holder = new ViewHolder();
             view = inflater.inflate(R.layout.searchview_item, null);
-            holder.name = (TextView) view.findViewById(R.id.name);
-            holder.alternativeName = (TextView) view.findViewById(R.id.alter_name);
+            holder.name = view.findViewById(R.id.name);
+            holder.alternativeName = view.findViewById(R.id.alter_name);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();

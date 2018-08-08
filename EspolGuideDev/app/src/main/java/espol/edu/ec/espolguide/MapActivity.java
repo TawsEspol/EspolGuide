@@ -76,7 +76,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, getString(R.string.access_token));
 
-        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
+        FrameLayout contentFrameLayout = findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
         getLayoutInflater().inflate(R.layout.activity_map, contentFrameLayout);
 
         this.viewHolder = new ViewHolder();
@@ -133,29 +133,29 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         }
 
         private void findViews(){
-            mapView = (MapView) findViewById(R.id.mapView);
-            info = (LinearLayout) findViewById(R.id.overlay);
-            closePoiInfoBtn = (Button) findViewById(R.id.close_poi_info_button);
-            editSearch = (EditText) findViewById(R.id.search_destiny);
-            searchPoiLv = (ListView) findViewById(R.id.listview);
-            editOrigin = (EditText) findViewById(R.id.search_origin);
-            editDestination = (EditText) findViewById(R.id.search_destination);
-            originLv = (ListView) findViewById(R.id.origin_results);
-            destinationLv = (ListView) findViewById(R.id.destination_results);
-            routeBox = (LinearLayout) findViewById(R.id.route_box);
-            routeBtn = (Button) findViewById(R.id.route_btn);
-            mapLayout = (FrameLayout) findViewById(R.id.map_layout);
-            routeSearchLayout = (FrameLayout) findViewById(R.id.routes_search_layout);
-            routesLv = (ListView) findViewById(R.id.listroutes);
-            editSearchRoutes = (EditText) findViewById(R.id.search_routes);
-            backBtn = (ImageButton) findViewById(R.id.back_button);
-            walkBtn = (ImageButton) findViewById(R.id.walk_button);
-            carBtn = (ImageButton) findViewById(R.id.car_button);
+            mapView = findViewById(R.id.mapView);
+            info = findViewById(R.id.overlay);
+            closePoiInfoBtn = findViewById(R.id.close_poi_info_button);
+            editSearch = findViewById(R.id.search_destiny);
+            searchPoiLv = findViewById(R.id.listview);
+            editOrigin = findViewById(R.id.search_origin);
+            editDestination = findViewById(R.id.search_destination);
+            originLv = findViewById(R.id.origin_results);
+            destinationLv = findViewById(R.id.destination_results);
+            routeBox = findViewById(R.id.route_box);
+            routeBtn = findViewById(R.id.route_btn);
+            mapLayout = findViewById(R.id.map_layout);
+            routeSearchLayout = findViewById(R.id.routes_search_layout);
+            routesLv = findViewById(R.id.listroutes);
+            editSearchRoutes = findViewById(R.id.search_routes);
+            backBtn = findViewById(R.id.back_button);
+            walkBtn = findViewById(R.id.walk_button);
+            carBtn = findViewById(R.id.car_button);
 
-            drawerBtn = (ImageView) findViewById(R.id.drawerBtn);
-            favBtn = (ImageButton) findViewById(R.id.favoriteBtn);
-            poiRoute = (Button) findViewById(R.id.poi_route_btn);
-            timeTv = (TextView) findViewById(R.id.time_tv);
+            drawerBtn = findViewById(R.id.drawerBtn);
+            favBtn = findViewById(R.id.favoriteBtn);
+            poiRoute = findViewById(R.id.poi_route_btn);
+            timeTv = findViewById(R.id.time_tv);
         }
 
         private void checkEspolViews(){
@@ -210,7 +210,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
         public void closePoiInfo(){
             mapboxMap.getUiSettings().setAllGesturesEnabled(true);
-            final LinearLayout info = (LinearLayout) findViewById(R.id.overlay);
+            final LinearLayout info = findViewById(R.id.overlay);
             info.setVisibility(View.GONE);
             if(!isRouteModeViewDisplayed()){
                 getViewHolder().editSearch.setVisibility(View.VISIBLE);
@@ -704,7 +704,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
     }
 
     public void disableMenuOption(){
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        NavigationView navigationView = findViewById(R.id.navigation_view);
         try{
             navigationView.getMenu().findItem(R.id.map_op).setChecked(true);
         }catch (Exception e){
