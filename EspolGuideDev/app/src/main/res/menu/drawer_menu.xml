@@ -8,10 +8,6 @@
             android:title="@string/map_menu_op" />
 
         <item
-            android:id="@+id/events_op"
-            android:title="@string/events_menu_op" />
-
-        <item
             android:id="@+id/courses_op"
             android:title="@string/courses_menu_op" />
 

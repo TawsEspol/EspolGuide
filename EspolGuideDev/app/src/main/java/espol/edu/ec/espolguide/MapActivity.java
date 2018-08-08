@@ -33,6 +33,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 
 import espol.edu.ec.espolguide.utils.Constants;
+import espol.edu.ec.espolguide.utils.SessionHelper;
 import espol.edu.ec.espolguide.utils.Util;
 import espol.edu.ec.espolguide.viewModels.MapViewModel;
 
@@ -85,7 +86,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         this.viewModel.makeNamesRequest();
         this.viewModel.setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
         this.viewModel.setRouteModeButtonsListeners();
-        this.disableMenuOption();
+        //this.disableMenuOption();
         this.viewModel.getInitialPosition(Constants.ON_CREATE);
         this.viewHolder.setFavBtnListener();
     }
@@ -128,6 +129,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             setEditTextListeners();
             setDrawerBtnListener();
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            checkEspolViews();
         }
 
         private void findViews(){
@@ -154,6 +156,12 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             favBtn = (ImageButton) findViewById(R.id.favoriteBtn);
             poiRoute = (Button) findViewById(R.id.poi_route_btn);
             timeTv = (TextView) findViewById(R.id.time_tv);
+        }
+
+        private void checkEspolViews(){
+            if(!SessionHelper.isEspolLoggedIn(getApplicationContext())){
+               favBtn.setVisibility(View.GONE);
+            }
         }
 
         private void setDrawerBtnListener(){
@@ -594,6 +602,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
     }
 
+    @Override
     public void showMapLayoutView(){
         this.cleanMapLayoutView();
         this.viewHolder.drawerBtn.setVisibility(View.VISIBLE);
@@ -607,6 +616,9 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
                         .build());
             }
         });
+        if(Util.isDrawerOpen(this)){
+            Util.closeDrawer(this);
+        }
     }
 
     public boolean isUpdateRouteViewDisplayed(){
