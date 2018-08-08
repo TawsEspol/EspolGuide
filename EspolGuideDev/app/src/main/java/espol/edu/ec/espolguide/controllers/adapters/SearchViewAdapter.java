@@ -96,7 +96,7 @@ public class SearchViewAdapter extends BaseAdapter {
         this.pois = pois;
         inflater = LayoutInflater.from(mContext);
         this.mapboxMap = mapboxMap;
-        this.arraylist = new ArrayList<String>();
+        this.arraylist = new ArrayList<>();
         this.arraylist.addAll(pois);
         this.featureMarker = featureMarker;
     }

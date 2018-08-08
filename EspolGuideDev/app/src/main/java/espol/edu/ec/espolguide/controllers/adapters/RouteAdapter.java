@@ -75,7 +75,7 @@ public class RouteAdapter extends BaseAdapter {
     public RouteAdapter(List<String> pois, MapActivity activity) {
         this.mContext = activity;
         this.pois = pois;
-        this.arraylist = new ArrayList<String>();
+        this.arraylist = new ArrayList<>();
         this.arraylist.addAll(pois);
         inflater = LayoutInflater.from(mContext);
     }

@@ -340,7 +340,7 @@ public class LoginViewModel extends Observable {
                          */
                         @Override
                         public Map<String, String> getHeaders() throws AuthFailureError {
-                            HashMap<String, String> headers = new HashMap<String, String>();
+                            HashMap<String, String> headers = new HashMap<>();
                             headers.put(Constants.ACCESS_TOKEN_HEADER_KEY, accessToken);
                             return headers;
                         }

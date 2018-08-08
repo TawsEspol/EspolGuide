@@ -31,7 +31,7 @@ public class PoiInfo extends AppCompatActivity implements Observer {
     private int favoritesCount;
     private String description;
     private String codeInfrastructure;
-    private ArrayList<String> alternativeNames = new ArrayList<String>();
+    private ArrayList<String> alternativeNames = new ArrayList<>();
     private ViewHolder viewHolder;
     private PoiInfoViewModel viewModel;
 
