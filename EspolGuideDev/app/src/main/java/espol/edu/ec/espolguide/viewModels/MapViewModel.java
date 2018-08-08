@@ -907,7 +907,6 @@ public class MapViewModel extends Observable{
                             notifyObservers(MAP_CENTERING_REQUEST_FAILED_LOADING);
                         } finally {
                             System.gc();
-                            activity.getViewHolder().routeBtn.setVisibility(View.VISIBLE);
                         }
                     }
                 }, new Response.ErrorListener() {

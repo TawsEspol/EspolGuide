@@ -401,6 +401,9 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         if (message == viewModel.LOCATION_REQUEST_FAILED) {
 
         }
+        if (message == viewModel.MAP_CENTERING_REQUEST_SUCCEEDED) {
+            getViewHolder().routeBtn.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
