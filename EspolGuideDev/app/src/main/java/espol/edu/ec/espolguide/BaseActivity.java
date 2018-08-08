@@ -86,7 +86,7 @@ public class BaseActivity extends AppCompatActivity implements Observer {
         this.viewModel = new BaseViewModel(this);
         this.viewModel.addObserver(this);
         this.viewModel.verifyMenuItems();
-        this.handleSelectedOptionUI();
+        //this.handleSelectedOptionUI();
 
         viewHolder.navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -97,13 +97,7 @@ public class BaseActivity extends AppCompatActivity implements Observer {
                 }
                 switch (item.getItemId()) {
                     case R.id.map_op:
-                        Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
-                        mapIntent.putExtra(Constants.SELECTED_OPTION, R.id.map_op);
-                        startActivity(mapIntent);
-                        finish();
-                        break;
-
-                    case R.id.events_op:
+                        showMapLayoutView();
                         break;
 
                     case R.id.courses_op:
@@ -201,5 +195,9 @@ public class BaseActivity extends AppCompatActivity implements Observer {
         for(int i = 0; i<navMenu.size(); i++){
             navMenu.getItem(i).setChecked(false);
         }
+    }
+
+    public void showMapLayoutView(){
+
     }
 }

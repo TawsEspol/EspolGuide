@@ -735,7 +735,7 @@ public class MapViewModel extends Observable{
      * the POI related to the code passed as argument.
      *
      * @author Galo Castillo
-     * @param codeGtsi The MapCentering URL request parameter.
+     * @param codeGtsi The FavoriteUpdater URL request parameter.
      * @return The method returns nothing.
      */
     public void makeUpdateFavoriteRequest(String codeGtsi){
@@ -898,7 +898,6 @@ public class MapViewModel extends Observable{
                                             .build());
                                 }
                             });
-                            adapter.getPois().clear();
                             setChanged();
                             notifyObservers(MAP_CENTERING_REQUEST_SUCCEEDED);
                         } catch (Exception e) {
@@ -907,7 +906,7 @@ public class MapViewModel extends Observable{
                             notifyObservers(MAP_CENTERING_REQUEST_FAILED_LOADING);
                         } finally {
                             System.gc();
-                            activity.getViewHolder().routeBtn.setVisibility(View.VISIBLE);
+                            adapter.getPois().clear();
                         }
                     }
                 }, new Response.ErrorListener() {
