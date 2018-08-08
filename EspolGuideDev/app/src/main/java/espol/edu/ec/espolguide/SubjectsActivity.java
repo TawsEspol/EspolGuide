@@ -1,27 +1,18 @@
 package espol.edu.ec.espolguide;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 
-import java.util.HashMap;
 import java.util.Observer;
 
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 
 import espol.edu.ec.espolguide.controllers.adapters.PageAdapter;
-import espol.edu.ec.espolguide.utils.SessionHelper;
 import espol.edu.ec.espolguide.utils.Util;
 import espol.edu.ec.espolguide.viewModels.SubjectsViewModel;
 
@@ -34,7 +25,6 @@ public class SubjectsActivity extends BaseActivity implements Observer {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private PageAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +74,7 @@ public class SubjectsActivity extends BaseActivity implements Observer {
         }
 
         public void setSubjectsAdapter(){
-            adapter = new PageAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+            PageAdapter adapter = new PageAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
             viewPager.setAdapter(adapter);
             viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
             tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

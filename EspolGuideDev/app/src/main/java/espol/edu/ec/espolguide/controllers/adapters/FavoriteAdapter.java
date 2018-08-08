@@ -23,10 +23,10 @@ import static android.app.Activity.RESULT_OK;
  */
 
 public class FavoriteAdapter extends BaseAdapter {
-    private List<String> favoritePlaces;
+    private final List<String> favoritePlaces;
     private ViewHolder viewHolder;
-    private Context mContext;
-    private LayoutInflater inflater;
+    private final Context mContext;
+    private final LayoutInflater inflater;
 
     private class ViewHolder{
         private String codeGtsi;

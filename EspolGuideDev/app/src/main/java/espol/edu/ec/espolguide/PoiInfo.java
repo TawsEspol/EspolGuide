@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +12,7 @@ import android.widget.Toast;
 import espol.edu.ec.espolguide.viewModels.PoiInfoViewModel;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -32,8 +31,8 @@ public class PoiInfo extends AppCompatActivity implements Observer {
     private String description;
     private String codeInfrastructure;
     private ArrayList<String> alternativeNames = new ArrayList<>();
-    private ViewHolder viewHolder;
-    private PoiInfoViewModel viewModel;
+    private final ViewHolder viewHolder;
+    private final PoiInfoViewModel viewModel;
 
     public PoiInfo(String blockName, String academicUnit, String description, String codeInfrastructure,
                    Context ctx, View view){
@@ -51,23 +50,17 @@ public class PoiInfo extends AppCompatActivity implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         String message = (String)arg;
-        if (message == viewModel.POI_INFO_REQUEST_STARTED) {
-
-        }
-        if (message == viewModel.POI_INFO_REQUEST_SUCCEED) {
-
-        }
-        if (message == viewModel.POI_INFO_REQUEST_FAILED_CONNECTION) {
+        if (Objects.equals(message, PoiInfoViewModel.POI_INFO_REQUEST_FAILED_CONNECTION)) {
             Activity activityTemp = (Activity) getCtx();
             activityTemp.runOnUiThread(() -> Toast.makeText(getCtx(), getResources().getString(R.string.failed_connection_msg),
                     Toast.LENGTH_LONG).show());
         }
-        if (message == viewModel.POI_INFO_REQUEST_FAILED_LOADING) {
+        if (Objects.equals(message, PoiInfoViewModel.POI_INFO_REQUEST_FAILED_LOADING)) {
             Activity activityTemp = (Activity) getCtx();
             activityTemp.runOnUiThread(() -> Toast.makeText(getCtx(), getResources().getString(R.string.loading_poi_info_error_msg),
                     Toast.LENGTH_LONG).show());
         }
-        if (message == viewModel.POI_INFO_REQUEST_FAILED_HTTP) {
+        if (Objects.equals(message, PoiInfoViewModel.POI_INFO_REQUEST_FAILED_HTTP)) {
             Activity activityTemp = (Activity) getCtx();
             activityTemp.runOnUiThread(() -> Toast.makeText(getCtx(), getResources().getString(R.string.http_error_msg),
                     Toast.LENGTH_SHORT).show());

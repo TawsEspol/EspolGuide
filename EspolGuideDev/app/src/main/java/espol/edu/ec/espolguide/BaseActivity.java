@@ -3,12 +3,7 @@ package espol.edu.ec.espolguide;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
@@ -16,9 +11,9 @@ import android.text.SpannableString;
 import android.text.style.StyleSpan;
 import android.util.Base64;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -129,19 +124,8 @@ public class BaseActivity extends AppCompatActivity implements Observer {
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-    }
-
-    @Override
     public void update(Observable o, Object arg) {
         String message = (String)arg;
-        if (message == viewModel.EXTERNAL_USER_AUTHENTICATED) {
-
-        }
-        if (message == viewModel.ESPOL_USER_AUTHENTICATED) {
-
-        }
     }
 
     public ViewHolder getBaseViewHolder() {
@@ -173,7 +157,7 @@ public class BaseActivity extends AppCompatActivity implements Observer {
 
     public void handleSelectedOptionUI(){
         Bundle bundle = getIntent().getExtras();
-        if(bundle.containsKey(Constants.SELECTED_OPTION)){
+        if(Objects.requireNonNull(bundle).containsKey(Constants.SELECTED_OPTION)){
             unCheckAllItems(viewHolder.navigationView.getMenu());
             int id = -1;
             try{

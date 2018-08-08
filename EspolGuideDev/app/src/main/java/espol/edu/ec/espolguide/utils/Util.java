@@ -7,11 +7,9 @@ import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
-import espol.edu.ec.espolguide.R;
+import java.util.Objects;
 
-/**
- * Created by galo on 14/04/18.
- */
+import espol.edu.ec.espolguide.R;
 
 /**
  * Class used to execute utilities tasks.
@@ -35,7 +33,7 @@ public class Util {
      */
     public static void closeKeyboard(Context ctx) {
         InputMethodManager imm = (InputMethodManager) ctx.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        Objects.requireNonNull(imm).toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
     /**
@@ -49,7 +47,7 @@ public class Util {
      */
     public static void openKeyboard(Context ctx) {
         InputMethodManager imm = (InputMethodManager) ctx.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        Objects.requireNonNull(imm).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     /**
@@ -144,9 +142,6 @@ public class Util {
         String timeString = "";
         int minutes = (int) Math.round(time/60);
         String minuteUnit = activity.getApplicationContext().getString(R.string.minute_unit);
-        /**
-         * Checks if the route takes more than 59 minutes.
-         */
         if(minutes > 59){
             int hours;
             double fractionHour;

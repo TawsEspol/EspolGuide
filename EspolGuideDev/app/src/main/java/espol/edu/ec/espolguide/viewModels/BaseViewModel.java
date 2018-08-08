@@ -10,10 +10,10 @@ import espol.edu.ec.espolguide.utils.SessionHelper;
  */
 
 public class BaseViewModel extends Observable{
-    public static String EXTERNAL_USER_AUTHENTICATED = "external_user_authenticated";
-    public static String ESPOL_USER_AUTHENTICATED = "espol_user_authenticated";
+    public static final String EXTERNAL_USER_AUTHENTICATED = "external_user_authenticated";
+    public static final String ESPOL_USER_AUTHENTICATED = "espol_user_authenticated";
 
-    BaseActivity activity;
+    final BaseActivity activity;
 
     public BaseViewModel(BaseActivity activity){
         this.activity = activity;

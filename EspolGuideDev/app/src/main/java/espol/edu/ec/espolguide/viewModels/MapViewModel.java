@@ -20,14 +20,10 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEnginePriority;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -44,8 +40,6 @@ import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
 import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
@@ -75,6 +69,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Set;
 
@@ -83,29 +78,29 @@ import java.util.Set;
  */
 
 public class MapViewModel extends Observable{
-    public static String NAMES_REQUEST_STARTED = "names_request_started";
-    public static String NAMES_REQUEST_SUCCEEDED = "names_request_succeeded";
-    public static String NAMES_REQUEST_FAILED_LOADING = "names_request_failed_loading";
-    public static String POI_INFO_REQUEST_STARTED = "poi_info_request_started";
-    public static String POI_INFO_REQUEST_SUCCEEDED = "poi_info_request_succeeded";
-    public static String POI_INFO_REQUEST_FAILED_LOADING = "poi_info_request_failed_loading";
-    public static String ROUTE_REQUEST_STARTED = "route_request_started";
-    public static String ROUTE_REQUEST_SUCCEEDED = "route_request_succeeded";
-    public static String ROUTE_REQUEST_FAILED = "route_request_failed";
-    public static String ADD_FAVORITES_REQUEST_STARTED = "add_favorites_request_started";
-    public static String ADD_FAVORITES_REQUEST_SUCCEEDED = "add_favorites_request_succeeded";
-    public static String ADD_FAVORITES_REQUEST_FAILED_LOADING = "add_favorites_request_failed_loading";
-    public static String REQUEST_FAILED_HTTP = "request_failed_http";
-    public static String REQUEST_FAILED_CONNECTION = "request_failed_connection";
+    public static final String NAMES_REQUEST_STARTED = "names_request_started";
+    public static final String NAMES_REQUEST_SUCCEEDED = "names_request_succeeded";
+    public static final String NAMES_REQUEST_FAILED_LOADING = "names_request_failed_loading";
+    public static final String POI_INFO_REQUEST_STARTED = "poi_info_request_started";
+    public static final String POI_INFO_REQUEST_SUCCEEDED = "poi_info_request_succeeded";
+    public static final String POI_INFO_REQUEST_FAILED_LOADING = "poi_info_request_failed_loading";
+    public static final String ROUTE_REQUEST_STARTED = "route_request_started";
+    public static final String ROUTE_REQUEST_SUCCEEDED = "route_request_succeeded";
+    public static final String ROUTE_REQUEST_FAILED = "route_request_failed";
+    public static final String ADD_FAVORITES_REQUEST_STARTED = "add_favorites_request_started";
+    public static final String ADD_FAVORITES_REQUEST_SUCCEEDED = "add_favorites_request_succeeded";
+    public static final String ADD_FAVORITES_REQUEST_FAILED_LOADING = "add_favorites_request_failed_loading";
+    public static final String REQUEST_FAILED_HTTP = "request_failed_http";
+    public static final String REQUEST_FAILED_CONNECTION = "request_failed_connection";
 
-    public static String MAP_CENTERING_REQUEST_STARTED = "map_centering_request_started";
-    public static String MAP_CENTERING_REQUEST_SUCCEEDED = "map_centering_request_succeeded";
-    public static String MAP_CENTERING_REQUEST_FAILED_LOADING = "map_centering_request_failed_loading";
+    public static final String MAP_CENTERING_REQUEST_STARTED = "map_centering_request_started";
+    public static final String MAP_CENTERING_REQUEST_SUCCEEDED = "map_centering_request_succeeded";
+    public static final String MAP_CENTERING_REQUEST_FAILED_LOADING = "map_centering_request_failed_loading";
 
-    public static String LOCATION_REQUEST_STARTED = "location_request_started";
-    public static String LOCATION_REQUEST_FAILED = "location_request_failed";
-    public static String LOCATION_REQUEST_SUCCEEDED_ON_CREATE = "location_request_succeeded_on_create";
-    public static String LOCATION_REQUEST_SUCCEEDED = "location_request_succeeded";
+    public static final String LOCATION_REQUEST_STARTED = "location_request_started";
+    public static final String LOCATION_REQUEST_FAILED = "location_request_failed";
+    public static final String LOCATION_REQUEST_SUCCEEDED_ON_CREATE = "location_request_succeeded_on_create";
+    public static final String LOCATION_REQUEST_SUCCEEDED = "location_request_succeeded";
 
     final private String POIS_NAMES_WS = Constants.getAlternativeNamesURL();
     final private ArrayList<String> namesItems = new ArrayList<>();
@@ -117,10 +112,9 @@ public class MapViewModel extends Observable{
     private DirectionsRoute currentRoute;
     private static final String TAG = "DirectionsActivity";
     private NavigationMapRoute navigationMapRoute;
-    private MapActivity activity;
+    private final MapActivity activity;
     private String selectedRouteMode;
 
-    private FusedLocationProviderClient mFusedLocationClient;
     final String COORDINATES_WS = Constants.getCoordinatesURL();
 
 
@@ -324,7 +318,7 @@ public class MapViewModel extends Observable{
     }
 
     public void changeRouteModeView(){
-        if(this.selectedRouteMode == Constants.CAR_ROUTE_MODE){
+        if(Objects.equals(this.selectedRouteMode, Constants.CAR_ROUTE_MODE)){
             LinearLayout carButtonBackground = (LinearLayout) activity.getViewHolder().carBtn.getParent();
             carButtonBackground.setBackgroundResource(R.drawable.selected_mode_button);
             activity.getViewHolder().carBtn.setColorFilter(
@@ -350,7 +344,7 @@ public class MapViewModel extends Observable{
 
     public String getDirectionCriteria(){
         String directionsCriteria = DirectionsCriteria.PROFILE_WALKING;
-        if(this.selectedRouteMode == Constants.CAR_ROUTE_MODE){
+        if(Objects.equals(this.selectedRouteMode, Constants.CAR_ROUTE_MODE)){
             directionsCriteria = DirectionsCriteria.PROFILE_DRIVING;
         }
         return directionsCriteria;
@@ -369,18 +363,18 @@ public class MapViewModel extends Observable{
                     .build()
                     .getRoute(new Callback<DirectionsResponse>() {
                         @Override
-                        public void onResponse(Call<DirectionsResponse> call, retrofit2.Response<DirectionsResponse> response) {
+                        public void onResponse(@NonNull Call<DirectionsResponse> call, @NonNull retrofit2.Response<DirectionsResponse> response) {
                             try{
                                 // You can get the generic HTTP info about the response
                                 Log.d(getTAG(), "Response code: " + response.code());
                                 if (response.body() == null) {
                                     Log.e(getTAG(), "No routes found, make sure you set the right user and access token.");
                                     return;
-                                } else if (response.body().routes().size() < 1) {
+                                } else if (Objects.requireNonNull(response.body()).routes().size() < 1) {
                                     Log.e(getTAG(), "No routes found");
                                     return;
                                 }
-                                setCurrentRoute(response.body().routes().get(0));
+                                setCurrentRoute(Objects.requireNonNull(response.body()).routes().get(0));
                                 removeMarkers();
                                 activity.getViewHolder().featureMarker = activity.getViewHolder().mapboxMap.addMarker(new MarkerOptions()
                                         .position(activity.getSelectedDestination())
@@ -405,7 +399,7 @@ public class MapViewModel extends Observable{
                         }
 
                         @Override
-                        public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+                        public void onFailure(@NonNull Call<DirectionsResponse> call, @NonNull Throwable throwable) {
                             setChanged();
                             notifyObservers(ROUTE_REQUEST_FAILED);
                         }
@@ -442,19 +436,19 @@ public class MapViewModel extends Observable{
                             activity.getViewHolder().poiRoute.setEnabled(true);
                             activity.getViewHolder().poiRoute.setClickable(true);
                             activity.setSelectedPoi("");
-                            if (feature.properties().has(Constants.BLOCKNAME_FIELD)) {
+                            if (Objects.requireNonNull(feature.properties()).has(Constants.BLOCKNAME_FIELD)) {
                                 blockName = feature.getStringProperty(Constants.BLOCKNAME_FIELD).toString();
                             }
-                            if (feature.properties().has(Constants.ACADEMIC_UNIT_FIELD)) {
+                            if (Objects.requireNonNull(feature.properties()).has(Constants.ACADEMIC_UNIT_FIELD)) {
                                 academicUnit = feature.getStringProperty(Constants.ACADEMIC_UNIT_FIELD).toString();
                             }
-                            if (feature.properties().has(Constants.CODE_INFRASTRUCTURE)) {
+                            if (Objects.requireNonNull(feature.properties()).has(Constants.CODE_INFRASTRUCTURE)) {
                                 codeInfrastructure = feature.getStringProperty(Constants.CODE_INFRASTRUCTURE).toString();
                             }
-                            if (feature.properties().has(Constants.DESCRIPTION_FIELD)) {
+                            if (Objects.requireNonNull(feature.properties()).has(Constants.DESCRIPTION_FIELD)) {
                                 description = feature.getStringProperty(Constants.DESCRIPTION_FIELD).toString();
                             }
-                            if (feature.properties().has(Constants.CODE_GTSI_FIELD)) {
+                            if (Objects.requireNonNull(feature.properties()).has(Constants.CODE_GTSI_FIELD)) {
                                 String codeGtsi = feature.getStringProperty(Constants.CODE_GTSI_FIELD).toString();
                                 System.out.println("--->" + codeGtsi + "<---");
                                 if (codeGtsi.trim().length() > 0) {
@@ -540,7 +534,7 @@ public class MapViewModel extends Observable{
      * @return The method returns nothing.
      */
     public void setRouteZoom(){
-        LineString lineString = LineString.fromPolyline(getCurrentRoute().geometry(), 6);
+        LineString lineString = LineString.fromPolyline(Objects.requireNonNull(getCurrentRoute().geometry()), 6);
         List<Point> coordinates = lineString.coordinates();
         if(coordinates.size() > 1 &&
                 !coordinates.get(0).equals(coordinates.get(coordinates.size()-1))){
@@ -572,18 +566,15 @@ public class MapViewModel extends Observable{
      * in the feature's attributes.
      */
     public boolean hasEspolAttributes(Feature feature){
-        return (feature.properties().has(Constants.CODE_GTSI_FIELD) ||
-                feature.properties().has(Constants.BLOCKNAME_FIELD) ||
-                feature.properties().has(Constants.ACADEMIC_UNIT_FIELD) ||
-                feature.properties().has(Constants.CODE_INFRASTRUCTURE) ||
-                feature.properties().has(Constants.DESCRIPTION_FIELD));
+        return (Objects.requireNonNull(feature.properties()).has(Constants.CODE_GTSI_FIELD) ||
+                Objects.requireNonNull(feature.properties()).has(Constants.BLOCKNAME_FIELD) ||
+                Objects.requireNonNull(feature.properties()).has(Constants.ACADEMIC_UNIT_FIELD) ||
+                Objects.requireNonNull(feature.properties()).has(Constants.CODE_INFRASTRUCTURE) ||
+                Objects.requireNonNull(feature.properties()).has(Constants.DESCRIPTION_FIELD));
     }
 
     @SuppressWarnings( {"MissingPermission"})
     public void enableLocationPlugin() {
-        /**
-         * Checks if permissions are enabled and if not, request         *
-         */
         if (PermissionsManager.areLocationPermissionsGranted(activity)) {
             // Create an instance of location engine
             initializeLocationEngine();
@@ -626,7 +617,7 @@ public class MapViewModel extends Observable{
      */
     public void setRouteModeButtonsListeners(){
         activity.getViewHolder().walkBtn.setOnClickListener(v -> {
-            if(getSelectedRouteMode() != Constants.WALKING_ROUTE_MODE){
+            if(!Objects.equals(getSelectedRouteMode(), Constants.WALKING_ROUTE_MODE)){
                 if(activity.getViewHolder().editOrigin.getText().toString().trim()
                         .equals(activity.getApplicationContext().getString(R.string.your_location))){
                     updateOriginLocation();
@@ -637,7 +628,7 @@ public class MapViewModel extends Observable{
         });
 
         activity.getViewHolder().carBtn.setOnClickListener(v -> {
-            if(getSelectedRouteMode() != Constants.CAR_ROUTE_MODE){
+            if(!Objects.equals(getSelectedRouteMode(), Constants.CAR_ROUTE_MODE)){
                 if(activity.getViewHolder().editOrigin.getText().toString().trim()
                         .equals(activity.getApplicationContext().getString(R.string.your_location))){
                     updateOriginLocation();
@@ -662,7 +653,7 @@ public class MapViewModel extends Observable{
     public void getInitialPosition(String onState){
         setChanged();
         notifyObservers(LOCATION_REQUEST_STARTED);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
+        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED ||
                 ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) ==
@@ -672,7 +663,7 @@ public class MapViewModel extends Observable{
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             activity.setOriginLocation(location);
-                            if(onState == Constants.ON_CREATE){
+                            if(Objects.equals(onState, Constants.ON_CREATE)){
                                 setChanged();
                                 notifyObservers(LOCATION_REQUEST_SUCCEEDED_ON_CREATE);
                             }
@@ -752,7 +743,7 @@ public class MapViewModel extends Observable{
                     try{
                         jsonBody.put(Constants.CODE_GTSI_KEY, codeGtsi);
                     }
-                    catch (Exception e){ ;
+                    catch (Exception ignored){ ;
                     }
                     String accessToken = SessionHelper.getAccessToken(activity);
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,

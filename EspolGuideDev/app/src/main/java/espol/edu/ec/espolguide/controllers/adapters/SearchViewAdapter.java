@@ -5,13 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -20,11 +17,6 @@ import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 
 import java.util.ArrayList;
@@ -36,7 +28,6 @@ import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.Util;
-import java.io.Serializable;
 
 /**
  * Created by fabricio on 14/01/18.
@@ -44,14 +35,14 @@ import java.io.Serializable;
 
 public class SearchViewAdapter extends BaseAdapter {
     final String COORDINATES_WS = Constants.getCoordinatesURL();
-    Context mContext;
-    LayoutInflater inflater;
+    final Context mContext;
+    final LayoutInflater inflater;
     private List<String> pois = null;
-    private ArrayList<String> arraylist;
+    private final ArrayList<String> arraylist;
     private MapView mapView;
     private ViewHolder viewHolder;
-    private View bar;
-    private MapboxMap mapboxMap;
+    private final View bar;
+    private final MapboxMap mapboxMap;
     Marker featureMarker;
 
     public class ViewHolder {

@@ -1,6 +1,7 @@
 package espol.edu.ec.espolguide;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -26,7 +27,6 @@ import android.widget.Toast;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -41,10 +41,6 @@ import android.location.Location;
 
 import com.mapbox.android.core.location.LocationEngineListener;
 import com.mapbox.android.core.permissions.PermissionsListener;
-
-/**
- * Created by galo on 29/12/17.
- */
 
 
 /**
@@ -277,72 +273,43 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
     @Override
     public void update(Observable o, Object arg) {
         String message = (String)arg;
-        if (message == viewModel.NAMES_REQUEST_STARTED) {
-
-        }
-        if (message == viewModel.REQUEST_FAILED_CONNECTION) {
+        if (Objects.equals(message, MapViewModel.REQUEST_FAILED_CONNECTION)) {
             MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
                     Toast.LENGTH_LONG).show());
         }
-        if (message == viewModel.NAMES_REQUEST_FAILED_LOADING) {
+        if (Objects.equals(message, MapViewModel.NAMES_REQUEST_FAILED_LOADING)) {
             MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_pois_names_error_msg),
                     Toast.LENGTH_LONG).show());
         }
-        if (message == viewModel.REQUEST_FAILED_HTTP) {
+        if (Objects.equals(message, MapViewModel.REQUEST_FAILED_HTTP)) {
             MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.http_error_msg),
                     Toast.LENGTH_LONG).show());
         }
-        if (message == viewModel.POI_INFO_REQUEST_STARTED) {
-
-        }
-        if (message == viewModel.POI_INFO_REQUEST_SUCCEEDED) {
+        if (Objects.equals(message, MapViewModel.POI_INFO_REQUEST_SUCCEEDED)) {
             getViewHolder().editSearch.setVisibility(View.GONE);
             getViewHolder().getMapboxMap().getUiSettings().setAllGesturesEnabled(false);
             getViewModel().removeMarkers();
             getViewHolder().routeBtn.setVisibility(View.GONE);
             getViewHolder().editSearch.setText("");
         }
-        if (message == viewModel.POI_INFO_REQUEST_FAILED_LOADING) {
+        if (Objects.equals(message, MapViewModel.POI_INFO_REQUEST_FAILED_LOADING)) {
             MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_poi_info_error_msg),
                     Toast.LENGTH_LONG).show());
         }
 
-        if (message == viewModel.ROUTE_REQUEST_STARTED) {
+        if (Objects.equals(message, MapViewModel.ROUTE_REQUEST_STARTED)) {
             getViewHolder().timeTv.setText(getApplicationContext().getString(R.string.empty_time));
         }
-        if (message == viewModel.ROUTE_REQUEST_SUCCEEDED) {
-
-        }
-        if (message == viewModel.ROUTE_REQUEST_FAILED) {
+        if (Objects.equals(message, MapViewModel.ROUTE_REQUEST_FAILED)) {
             MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.error_on_calculating_route),
                     Toast.LENGTH_LONG).show());
             showMapLayoutView();
         }
-        if (message == viewModel.ADD_FAVORITES_REQUEST_STARTED) {
-
-        }
-        if (message == viewModel.ADD_FAVORITES_REQUEST_SUCCEEDED) {
-            /**
-             *
-             */
-        }
-        if (message == viewModel.ADD_FAVORITES_REQUEST_FAILED_LOADING) {
-
-        }
-        if (message == viewModel.LOCATION_REQUEST_STARTED) {
-
-        }
-        if (message == viewModel.LOCATION_REQUEST_SUCCEEDED) {
-
-        }
-        if (message == viewModel.LOCATION_REQUEST_SUCCEEDED_ON_CREATE) {
+        if (Objects.equals(message, MapViewModel.LOCATION_REQUEST_SUCCEEDED_ON_CREATE)) {
             Toast.makeText(this, getResources().getString(R.string.getting_your_location),
                     Toast.LENGTH_LONG).show();
         }
-        if (message == viewModel.LOCATION_REQUEST_FAILED) {
-
-        }
-        if (message == viewModel.MAP_CENTERING_REQUEST_SUCCEEDED) {
+        if (Objects.equals(message, MapViewModel.MAP_CENTERING_REQUEST_SUCCEEDED)) {
             getViewHolder().routeBtn.setVisibility(View.VISIBLE);
         }
     }
@@ -654,27 +621,21 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         String codeGtsi = "";
         if (requestCode == Constants.SUBJECTS_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                if(data.getExtras().containsKey(Constants.SELECTED_GTSI_CODE)){
+                if(Objects.requireNonNull(data.getExtras()).containsKey(Constants.SELECTED_GTSI_CODE)){
                     codeGtsi = data.getExtras().getString(Constants.SELECTED_GTSI_CODE);
                     cleanMapLayoutView();
                     viewModel.centerMapOnResult(codeGtsi);
                 }
-            }
-            else if (resultCode == RESULT_CANCELED) {
-                // Write the code if there's no result
             }
         }
 
         else if(requestCode == Constants.FAVORITES_REQUEST_CODE){
             if (resultCode == RESULT_OK) {
-                if(data.getExtras().containsKey(Constants.SELECTED_GTSI_CODE)){
+                if(Objects.requireNonNull(data.getExtras()).containsKey(Constants.SELECTED_GTSI_CODE)){
                     codeGtsi = data.getExtras().getString(Constants.SELECTED_GTSI_CODE);
                     cleanMapLayoutView();
                     viewModel.centerMapOnResult(codeGtsi);
                 }
-            }
-            else if (resultCode == RESULT_CANCELED) {
-                // Write the code if there's no result
             }
         }
     }

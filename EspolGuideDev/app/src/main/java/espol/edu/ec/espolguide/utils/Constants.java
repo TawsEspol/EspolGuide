@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Created by galo on 14/04/18.
@@ -110,7 +111,7 @@ public class Constants {
 
     public static boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
-        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+        return Objects.requireNonNull(connectivityManager).getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 
     public static String getAlternativeNamesURL(){

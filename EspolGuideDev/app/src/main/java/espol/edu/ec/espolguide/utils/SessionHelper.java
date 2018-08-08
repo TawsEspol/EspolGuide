@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -46,10 +45,6 @@ public class SessionHelper {
     public static String getEspolUsername(Context context){
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPref.getString(ESPOL_USERNAME, "");
-    }
-
-    public static void saveEspolClasses(){
-
     }
 
     public static void saveAccessToken(Context context, String accessToken){

@@ -6,8 +6,8 @@ import android.content.Context;
  */
 
 public class SubjectRoom extends android.support.v7.widget.AppCompatButton {
-    private String day;
-    private String place;
+    private final String day;
+    private final String place;
 
     public SubjectRoom(Context ctx, String day, String place){
         super(ctx);

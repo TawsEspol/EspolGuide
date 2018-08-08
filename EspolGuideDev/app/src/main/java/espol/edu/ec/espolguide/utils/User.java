@@ -8,10 +8,10 @@ import android.widget.LinearLayout;
  */
 
 public class User{
-    private Context context;
-    private String usr;
-    private Boolean type;
-    private LinearLayout layout;
+    private final Context context;
+    private final String usr;
+    private final Boolean type;
+    private final LinearLayout layout;
 
     public User(Context ctx, String usr, Boolean type, LinearLayout layout) {
         this.context = ctx;
