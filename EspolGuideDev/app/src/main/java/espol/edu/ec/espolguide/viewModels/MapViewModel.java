@@ -231,94 +231,88 @@ public class MapViewModel extends Observable{
             }
             else {
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                        POIS_NAMES_WS, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Iterator<String> iter = response.keys();
-                        while (iter.hasNext()) {
-                            String identifier = iter.next();
-                            if (identifier != null) {
-                                try {
-                                    String blockString = "";
-                                    JSONObject blockInfo = (JSONObject) response.get(identifier);
-                                    String blockName = blockInfo.getString(Constants.BLOCKNAME_FIELD);
-                                    String type = blockInfo.getString(Constants.TYPE_FIELD);
-                                    String codeGtsi = blockInfo.getString(Constants.CODE_GTSI_FIELD);
-                                    JSONArray alternativeNames = blockInfo.getJSONArray(Constants.ALTERNATIVE_NAMES_FIELD);
-                                    int totalAlternatives = alternativeNames.length();
-                                    String alternativeString = "";
-                                    for (int i = 0; i < totalAlternatives; i++) {
-                                        String alternative = (String) alternativeNames.get(i);
-                                        alternativeString = alternativeString + " | " + alternative;
+                        POIS_NAMES_WS, null, response -> {
+                            Iterator<String> iter = response.keys();
+                            while (iter.hasNext()) {
+                                String identifier = iter.next();
+                                if (identifier != null) {
+                                    try {
+                                        String blockString = "";
+                                        JSONObject blockInfo = (JSONObject) response.get(identifier);
+                                        String blockName = blockInfo.getString(Constants.BLOCKNAME_FIELD);
+                                        String type = blockInfo.getString(Constants.TYPE_FIELD);
+                                        String codeGtsi = blockInfo.getString(Constants.CODE_GTSI_FIELD);
+                                        JSONArray alternativeNames = blockInfo.getJSONArray(Constants.ALTERNATIVE_NAMES_FIELD);
+                                        int totalAlternatives = alternativeNames.length();
+                                        String alternativeString = "";
+                                        for (int i = 0; i < totalAlternatives; i++) {
+                                            String alternative = (String) alternativeNames.get(i);
+                                            alternativeString = alternativeString + " | " + alternative;
+                                        }
+                                        if(codeGtsi.length() < 1){
+                                            codeGtsi = " ";
+                                        }
+                                        blockString = identifier +
+                                                ";" + blockName + ";" + alternativeString + ";" + codeGtsi;
+                                        namesItems.add(blockString);
+                                    } catch (JSONException e) {
+                                        setChanged();
+                                        notifyObservers(NAMES_REQUEST_FAILED_LOADING);
+                                        continue;
                                     }
-                                    if(codeGtsi.length() < 1){
-                                        codeGtsi = " ";
-                                    }
-                                    blockString = identifier +
-                                            ";" + blockName + ";" + alternativeString + ";" + codeGtsi;
-                                    namesItems.add(blockString);
-                                } catch (JSONException e) {
-                                    setChanged();
-                                    notifyObservers(NAMES_REQUEST_FAILED_LOADING);
-                                    continue;
                                 }
                             }
-                        }
 
-                        adapter = new SearchViewAdapter(activity, activity.getViewHolder().mapboxMap, namesItems, activity.getViewHolder().editSearch,
-                                activity.getViewHolder().featureMarker);
-                        adapter.setMapView(activity.getViewHolder().mapView);
-                        activity.getViewHolder().searchPoiLv.setAdapter(adapter);
-                        activity.getViewHolder().editSearch.addTextChangedListener(new TextWatcher() {
-                            @Override
-                            public void afterTextChanged(Editable arg0) {
-                                // TODO Auto-generated method stub
-                                String text = activity.getViewHolder().editSearch.getText().toString().toLowerCase(Locale.getDefault());
-                                adapter.filter(text);
-                            }
-                            @Override
-                            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-                                // TODO Auto-generated method stub
-                            }
-                            @Override
-                            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-                                                      int arg3) {
-                                // TODO Auto-generated method stub
-                                activity.getViewHolder().searchPoiLv.setVisibility(View.VISIBLE);
-                            }
-                        });
+                            adapter = new SearchViewAdapter(activity, activity.getViewHolder().mapboxMap, namesItems, activity.getViewHolder().editSearch,
+                                    activity.getViewHolder().featureMarker);
+                            adapter.setMapView(activity.getViewHolder().mapView);
+                            activity.getViewHolder().searchPoiLv.setAdapter(adapter);
+                            activity.getViewHolder().editSearch.addTextChangedListener(new TextWatcher() {
+                                @Override
+                                public void afterTextChanged(Editable arg0) {
+                                    // TODO Auto-generated method stub
+                                    String text = activity.getViewHolder().editSearch.getText().toString().toLowerCase(Locale.getDefault());
+                                    adapter.filter(text);
+                                }
+                                @Override
+                                public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+                                    // TODO Auto-generated method stub
+                                }
+                                @Override
+                                public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+                                                          int arg3) {
+                                    // TODO Auto-generated method stub
+                                    activity.getViewHolder().searchPoiLv.setVisibility(View.VISIBLE);
+                                }
+                            });
 
-                        RouteAdapter routeAdapter = new RouteAdapter(namesItems, activity);
-                        activity.getViewHolder().routesLv.setAdapter(routeAdapter);
-                        activity.getViewHolder().editSearchRoutes.addTextChangedListener(new TextWatcher() {
-                            @Override
-                            public void afterTextChanged(Editable arg0) {
-                                // TODO Auto-generated method stub
-                                String text = activity.getViewHolder().editSearchRoutes.getText().toString().toLowerCase(Locale.getDefault());
-                                routeAdapter.filter(text);
-                            }
-                            @Override
-                            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-                                // TODO Auto-generated method stub
-                            }
-                            @Override
-                            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-                                                      int arg3) {
-                                activity.getViewHolder().routesLv.setVisibility(View.VISIBLE);
-                                // TODO Auto-generated method stub
-                            }
+                            RouteAdapter routeAdapter = new RouteAdapter(namesItems, activity);
+                            activity.getViewHolder().routesLv.setAdapter(routeAdapter);
+                            activity.getViewHolder().editSearchRoutes.addTextChangedListener(new TextWatcher() {
+                                @Override
+                                public void afterTextChanged(Editable arg0) {
+                                    // TODO Auto-generated method stub
+                                    String text = activity.getViewHolder().editSearchRoutes.getText().toString().toLowerCase(Locale.getDefault());
+                                    routeAdapter.filter(text);
+                                }
+                                @Override
+                                public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+                                    // TODO Auto-generated method stub
+                                }
+                                @Override
+                                public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+                                                          int arg3) {
+                                    activity.getViewHolder().routesLv.setVisibility(View.VISIBLE);
+                                    // TODO Auto-generated method stub
+                                }
+                            });
+                            setChanged();
+                            notifyObservers(NAMES_REQUEST_SUCCEEDED);
+                        }, error -> {
+                            VolleyLog.d("tag", "Error: " + error.getMessage());
+                            setChanged();
+                            notifyObservers(REQUEST_FAILED_HTTP);
                         });
-                        setChanged();
-                        notifyObservers(NAMES_REQUEST_SUCCEEDED);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d("tag", "Error: " + error.getMessage());
-                        setChanged();
-                        notifyObservers(REQUEST_FAILED_HTTP);
-                    }
-                });
                 AppController.getInstance(context).addToRequestQueue(jsonObjReq);
             }
             return namesItems;
@@ -429,73 +423,64 @@ public class MapViewModel extends Observable{
     }
 
     public void setMapOnClickListener(){
-        activity.getViewHolder().mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(final MapboxMap mapboxMap) {
-                activity.getViewHolder().setMapboxMap(mapboxMap);
-                activity.getViewHolder().getMapboxMap().addOnMapClickListener(new MapboxMap.OnMapClickListener() {
-                    @Override
-                    public void onMapClick(@NonNull LatLng point) {
-                        setChanged();
-                        notifyObservers(POI_INFO_REQUEST_STARTED);
-                        try{
-                            final PointF pixel = activity.getViewHolder().mapboxMap.getProjection().toScreenLocation(point);
-                            List<Feature> features = activity.getViewHolder().mapboxMap.queryRenderedFeatures(pixel);
-                            if (features.size() > 0) {
-                                Feature feature = features.get(0);
-                                String blockName = "";
-                                String academicUnit = "";
-                                String description = "";
-                                String codeInfrastructure = "";
-                                if (feature.properties() != null && hasEspolAttributes(feature)) {
-                                    removeMarkers();
-                                    activity.getViewHolder().poiRoute.setEnabled(true);
-                                    activity.getViewHolder().poiRoute.setClickable(true);
-                                    activity.setSelectedPoi("");
-                                    if(feature.properties().has(Constants.BLOCKNAME_FIELD)){
-                                        blockName = feature.getStringProperty(Constants.BLOCKNAME_FIELD).toString();
-                                    }
-                                    if(feature.properties().has(Constants.ACADEMIC_UNIT_FIELD)){
-                                        academicUnit = feature.getStringProperty(Constants.ACADEMIC_UNIT_FIELD).toString();
-                                    }
-                                    if(feature.properties().has(Constants.CODE_INFRASTRUCTURE)){
-                                        codeInfrastructure = feature.getStringProperty(Constants.CODE_INFRASTRUCTURE).toString();
-                                    }
-                                    if(feature.properties().has(Constants.DESCRIPTION_FIELD)){
-                                        description = feature.getStringProperty(Constants.DESCRIPTION_FIELD).toString();
-                                    }
-                                    if(feature.properties().has(Constants.CODE_GTSI_FIELD)){
-                                        String codeGtsi = feature.getStringProperty(Constants.CODE_GTSI_FIELD).toString();
-                                        System.out.println("--->" + codeGtsi + "<---");
-                                        if(codeGtsi.trim().length() > 0){
-                                            activity.setSelectedPoi(codeGtsi);
-                                            setSelectedPoiCoords();
-                                            updateFavBtnColor(activity.getSelectedPoi());
-                                        }
-                                        else{
-                                            activity.getViewHolder().poiRoute.setEnabled(false);
-                                            activity.getViewHolder().poiRoute.setClickable(false);
-                                        }
-                                    }
-                                    else{
-                                        activity.getViewHolder().poiRoute.setEnabled(false);
-                                        activity.getViewHolder().poiRoute.setClickable(false);
-                                    }
-                                    new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description,
-                                            codeInfrastructure, activity, activity.getViewHolder().info)).show();
-                                    setChanged();
-                                    notifyObservers(POI_INFO_REQUEST_SUCCEEDED);
-                                }
+        activity.getViewHolder().mapView.getMapAsync(mapboxMap -> {
+            activity.getViewHolder().setMapboxMap(mapboxMap);
+            activity.getViewHolder().getMapboxMap().addOnMapClickListener(point -> {
+                setChanged();
+                notifyObservers(POI_INFO_REQUEST_STARTED);
+                try {
+                    final PointF pixel = activity.getViewHolder().mapboxMap.getProjection().toScreenLocation(point);
+                    List<Feature> features = activity.getViewHolder().mapboxMap.queryRenderedFeatures(pixel);
+                    if (features.size() > 0) {
+                        Feature feature = features.get(0);
+                        String blockName = "";
+                        String academicUnit = "";
+                        String description = "";
+                        String codeInfrastructure = "";
+                        if (feature.properties() != null && hasEspolAttributes(feature)) {
+                            removeMarkers();
+                            activity.getViewHolder().poiRoute.setEnabled(true);
+                            activity.getViewHolder().poiRoute.setClickable(true);
+                            activity.setSelectedPoi("");
+                            if (feature.properties().has(Constants.BLOCKNAME_FIELD)) {
+                                blockName = feature.getStringProperty(Constants.BLOCKNAME_FIELD).toString();
                             }
-                        } catch (Exception e){
+                            if (feature.properties().has(Constants.ACADEMIC_UNIT_FIELD)) {
+                                academicUnit = feature.getStringProperty(Constants.ACADEMIC_UNIT_FIELD).toString();
+                            }
+                            if (feature.properties().has(Constants.CODE_INFRASTRUCTURE)) {
+                                codeInfrastructure = feature.getStringProperty(Constants.CODE_INFRASTRUCTURE).toString();
+                            }
+                            if (feature.properties().has(Constants.DESCRIPTION_FIELD)) {
+                                description = feature.getStringProperty(Constants.DESCRIPTION_FIELD).toString();
+                            }
+                            if (feature.properties().has(Constants.CODE_GTSI_FIELD)) {
+                                String codeGtsi = feature.getStringProperty(Constants.CODE_GTSI_FIELD).toString();
+                                System.out.println("--->" + codeGtsi + "<---");
+                                if (codeGtsi.trim().length() > 0) {
+                                    activity.setSelectedPoi(codeGtsi);
+                                    setSelectedPoiCoords();
+                                    updateFavBtnColor(activity.getSelectedPoi());
+                                } else {
+                                    activity.getViewHolder().poiRoute.setEnabled(false);
+                                    activity.getViewHolder().poiRoute.setClickable(false);
+                                }
+                            } else {
+                                activity.getViewHolder().poiRoute.setEnabled(false);
+                                activity.getViewHolder().poiRoute.setClickable(false);
+                            }
+                            new PoiInfoViewModel(new PoiInfo(blockName, academicUnit, description,
+                                    codeInfrastructure, activity, activity.getViewHolder().info)).show();
                             setChanged();
-                            notifyObservers(POI_INFO_REQUEST_FAILED_LOADING);
+                            notifyObservers(POI_INFO_REQUEST_SUCCEEDED);
                         }
-
                     }
+                } catch (Exception e) {
+                    setChanged();
+                    notifyObservers(POI_INFO_REQUEST_FAILED_LOADING);
+                }
 
-                });
-            }
+            });
         });
     }
 
@@ -505,36 +490,30 @@ public class MapViewModel extends Observable{
                     Toast.LENGTH_LONG).show();
         } else {
             JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                    COORDINATES_WS + activity.getSelectedPoi(), null, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        if(response.length() > 0){
-                            double lat = response.getDouble(Constants.LATITUDE_KEY);
-                            double lon = response.getDouble(Constants.LONGITUDE_KEY);
-                            LatLng point = new LatLng(lat, lon);
-                            activity.setSelectedDestination(point);
-                        }
-                        else{
-                            activity.setSelectedDestination(null);
-                        }
+                    COORDINATES_WS + activity.getSelectedPoi(), null, response -> {
+                        try {
+                            if(response.length() > 0){
+                                double lat = response.getDouble(Constants.LATITUDE_KEY);
+                                double lon = response.getDouble(Constants.LONGITUDE_KEY);
+                                LatLng point = new LatLng(lat, lon);
+                                activity.setSelectedDestination(point);
+                            }
+                            else{
+                                activity.setSelectedDestination(null);
+                            }
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(activity, activity.getResources().getString(R.string.loading_poi_info_error_msg),
-                                Toast.LENGTH_LONG).show();
-                    } finally {
-                        System.gc();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyLog.d("tag", "Error: " + error.getMessage());
-                    Toast.makeText(activity, activity.getResources().getString(R.string.http_error_msg),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(activity, activity.getResources().getString(R.string.loading_poi_info_error_msg),
+                                    Toast.LENGTH_LONG).show();
+                        } finally {
+                            System.gc();
+                        }
+                    }, error -> {
+                        VolleyLog.d("tag", "Error: " + error.getMessage());
+                        Toast.makeText(activity, activity.getResources().getString(R.string.http_error_msg),
+                                Toast.LENGTH_SHORT).show();
+                    });
             AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
         }
     }
@@ -646,33 +625,27 @@ public class MapViewModel extends Observable{
      * @return The method returns nothing.
      */
     public void setRouteModeButtonsListeners(){
-        activity.getViewHolder().walkBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(getSelectedRouteMode() != Constants.WALKING_ROUTE_MODE){
-                    if(activity.getViewHolder().editOrigin.getText().toString().trim()
-                            .equals(activity.getApplicationContext().getString(R.string.your_location))){
-                        updateOriginLocation();
-                    }
-                    setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
-                    getRoute(activity.getOriginPosition(), activity.getDestinationPosition());
+        activity.getViewHolder().walkBtn.setOnClickListener(v -> {
+            if(getSelectedRouteMode() != Constants.WALKING_ROUTE_MODE){
+                if(activity.getViewHolder().editOrigin.getText().toString().trim()
+                        .equals(activity.getApplicationContext().getString(R.string.your_location))){
+                    updateOriginLocation();
                 }
+                setSelectedRouteMode(Constants.WALKING_ROUTE_MODE);
+                getRoute(activity.getOriginPosition(), activity.getDestinationPosition());
             }
         });
 
-        activity.getViewHolder().carBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(getSelectedRouteMode() != Constants.CAR_ROUTE_MODE){
-                    if(activity.getViewHolder().editOrigin.getText().toString().trim()
-                            .equals(activity.getApplicationContext().getString(R.string.your_location))){
-                        updateOriginLocation();
-                    }
-                    setSelectedRouteMode(Constants.CAR_ROUTE_MODE);
-                    getRoute(activity.getOriginPosition(), activity.getDestinationPosition());
+        activity.getViewHolder().carBtn.setOnClickListener(v -> {
+            if(getSelectedRouteMode() != Constants.CAR_ROUTE_MODE){
+                if(activity.getViewHolder().editOrigin.getText().toString().trim()
+                        .equals(activity.getApplicationContext().getString(R.string.your_location))){
+                    updateOriginLocation();
                 }
-
+                setSelectedRouteMode(Constants.CAR_ROUTE_MODE);
+                getRoute(activity.getOriginPosition(), activity.getDestinationPosition());
             }
+
         });
     }
 
@@ -695,34 +668,28 @@ public class MapViewModel extends Observable{
                 ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) ==
                         PackageManager.PERMISSION_GRANTED) {
             mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                activity.setOriginLocation(location);
-                                if(onState == Constants.ON_CREATE){
-                                    setChanged();
-                                    notifyObservers(LOCATION_REQUEST_SUCCEEDED_ON_CREATE);
-                                }
-                                else{
-                                    setChanged();
-                                    notifyObservers(LOCATION_REQUEST_SUCCEEDED);
-                                }
+                    .addOnSuccessListener(activity, location -> {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            activity.setOriginLocation(location);
+                            if(onState == Constants.ON_CREATE){
+                                setChanged();
+                                notifyObservers(LOCATION_REQUEST_SUCCEEDED_ON_CREATE);
                             }
                             else{
                                 setChanged();
-                                notifyObservers(LOCATION_REQUEST_FAILED);
+                                notifyObservers(LOCATION_REQUEST_SUCCEEDED);
                             }
                         }
-                    });
-            mFusedLocationClient.getLastLocation()
-                    .addOnFailureListener(activity, new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
+                        else{
                             setChanged();
                             notifyObservers(LOCATION_REQUEST_FAILED);
                         }
+                    });
+            mFusedLocationClient.getLastLocation()
+                    .addOnFailureListener(activity, e -> {
+                        setChanged();
+                        notifyObservers(LOCATION_REQUEST_FAILED);
                     });
             return;
         }
@@ -789,37 +756,31 @@ public class MapViewModel extends Observable{
                     }
                     String accessToken = SessionHelper.getAccessToken(activity);
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                            url, jsonBody, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            try{
-                                JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
-                                Set<String> favoritesSet = new HashSet<>();
-                                if (jsonArray != null) {
-                                    int jsonArrayLen = jsonArray.length();
-                                    for (int i=0; i<jsonArrayLen; i++){
-                                        favoritesSet.add(jsonArray.get(i).toString());
-                                        System.out.println(jsonArray.get(i).toString());
+                            url, jsonBody, response -> {
+                                try{
+                                    JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
+                                    Set<String> favoritesSet = new HashSet<>();
+                                    if (jsonArray != null) {
+                                        int jsonArrayLen = jsonArray.length();
+                                        for (int i=0; i<jsonArrayLen; i++){
+                                            favoritesSet.add(jsonArray.get(i).toString());
+                                            System.out.println(jsonArray.get(i).toString());
+                                        }
                                     }
+                                    SessionHelper.saveFavoritePois(activity, favoritesSet);
+                                    updateFavBtnColor(codeGtsi);
+                                    setChanged();
+                                    notifyObservers(ADD_FAVORITES_REQUEST_SUCCEEDED);
                                 }
-                                SessionHelper.saveFavoritePois(activity, favoritesSet);
-                                updateFavBtnColor(codeGtsi);
+                                catch (Exception e){
+                                    setChanged();
+                                    notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
+                                }
+                            }, error -> {
+                                VolleyLog.d("tag", "Error: " + error.getMessage());
                                 setChanged();
-                                notifyObservers(ADD_FAVORITES_REQUEST_SUCCEEDED);
-                            }
-                            catch (Exception e){
-                                setChanged();
-                                notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            VolleyLog.d("tag", "Error: " + error.getMessage());
-                            setChanged();
-                            notifyObservers(REQUEST_FAILED_HTTP);
-                        }
-                    }) {
+                                notifyObservers(REQUEST_FAILED_HTTP);
+                            }) {
                         /**
                          * Passing some request headers
                          */
@@ -872,20 +833,16 @@ public class MapViewModel extends Observable{
             }
             else {
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                        COORDINATES_WS + codeGtsi, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            double lat = response.getDouble(Constants.LATITUDE_KEY);
-                            double lon = response.getDouble(Constants.LONGITUDE_KEY);
-                            LatLng point = new LatLng(lat, lon);
-                            activity.setSelectedDestination(point);
-                            activity.getViewHolder().editDestination.setText(codeGtsi);
-                            activity.getViewHolder().editSearch.setText(codeGtsi);
-                            activity.getViewHolder().editSearch.clearFocus();
-                            activity.getViewHolder().mapView.getMapAsync(new OnMapReadyCallback() {
-                                @Override
-                                public void onMapReady(MapboxMap mapboxMap) {
+                        COORDINATES_WS + codeGtsi, null, response -> {
+                            try {
+                                double lat = response.getDouble(Constants.LATITUDE_KEY);
+                                double lon = response.getDouble(Constants.LONGITUDE_KEY);
+                                LatLng point = new LatLng(lat, lon);
+                                activity.setSelectedDestination(point);
+                                activity.getViewHolder().editDestination.setText(codeGtsi);
+                                activity.getViewHolder().editSearch.setText(codeGtsi);
+                                activity.getViewHolder().editSearch.clearFocus();
+                                activity.getViewHolder().mapView.getMapAsync(mapboxMap -> {
                                     if (activity.getViewHolder().featureMarker != null) {
                                         mapboxMap.removeMarker(activity.getViewHolder().featureMarker);
                                     }
@@ -896,26 +853,21 @@ public class MapViewModel extends Observable{
                                             .target(point)
                                             .zoom(Constants.CLOSE_ZOOM)
                                             .build());
-                                }
-                            });
+                                });
+                                setChanged();
+                                notifyObservers(MAP_CENTERING_REQUEST_SUCCEEDED);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                setChanged();
+                                notifyObservers(MAP_CENTERING_REQUEST_FAILED_LOADING);
+                            } finally {
+                                System.gc();
+                                adapter.getPois().clear();
+                            }
+                        }, error -> {
                             setChanged();
-                            notifyObservers(MAP_CENTERING_REQUEST_SUCCEEDED);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            setChanged();
-                            notifyObservers(MAP_CENTERING_REQUEST_FAILED_LOADING);
-                        } finally {
-                            System.gc();
-                            adapter.getPois().clear();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        setChanged();
-                        notifyObservers(REQUEST_FAILED_HTTP);
-                    }
-                });
+                            notifyObservers(REQUEST_FAILED_HTTP);
+                        });
                 AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
             }
         return null;

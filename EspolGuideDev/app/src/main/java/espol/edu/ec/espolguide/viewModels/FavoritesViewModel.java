@@ -75,37 +75,31 @@ public class FavoritesViewModel extends Observable {
                 }
                 else {
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                            FAVORITES_WS, null, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            try{
-                                JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
-                                ArrayList<String> favoritesList = new ArrayList<String>();
-                                if (jsonArray != null) {
-                                    int len = jsonArray.length();
-                                    for (int i=0;i<len;i++){
-                                        favoritesList.add(jsonArray.get(i).toString());
+                            FAVORITES_WS, null, response -> {
+                                try{
+                                    JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
+                                    ArrayList<String> favoritesList = new ArrayList<String>();
+                                    if (jsonArray != null) {
+                                        int len = jsonArray.length();
+                                        for (int i=0;i<len;i++){
+                                            favoritesList.add(jsonArray.get(i).toString());
+                                        }
                                     }
+                                    Set<String> favoritesSet = new HashSet<>();
+                                    favoritesSet.addAll(favoritesList);
+                                    SessionHelper.saveFavoritePois(activity, favoritesSet);
+                                    setChanged();
+                                    notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
                                 }
-                                Set<String> favoritesSet = new HashSet<>();
-                                favoritesSet.addAll(favoritesList);
-                                SessionHelper.saveFavoritePois(activity, favoritesSet);
+                                catch (Exception e){
+                                    setChanged();
+                                    notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
+                                }
+                            }, error -> {
+                                VolleyLog.d("tag", "Error: " + error.getMessage());
                                 setChanged();
-                                notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
-                            }
-                            catch (Exception e){
-                                setChanged();
-                                notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            VolleyLog.d("tag", "Error: " + error.getMessage());
-                            setChanged();
-                            notifyObservers(REQUEST_FAILED_HTTP);
-                        }
-                    }){
+                                notifyObservers(REQUEST_FAILED_HTTP);
+                            }){
                         /**
                          * Passing some request headers
                          */

@@ -165,21 +165,11 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         }
 
         private void setDrawerBtnListener(){
-            drawerBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Util.openDrawer(MapActivity.this);
-                }
-            });
+            drawerBtn.setOnClickListener(v -> Util.openDrawer(MapActivity.this));
         }
 
         private void setFavBtnListener(){
-            this.favBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    viewModel.makeUpdateFavoriteRequest(selectedPoi);
-                }
-            });
+            this.favBtn.setOnClickListener(v -> viewModel.makeUpdateFavoriteRequest(selectedPoi));
         }
 
         public MapboxMap getMapboxMap(){
@@ -191,21 +181,11 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         }
 
         private void setBackButtonListener(){
-            this.backBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    showMapLayoutView();
-                }
-            });
+            this.backBtn.setOnClickListener(view -> showMapLayoutView());
         }
 
         private void setClosePoiButtonListener(){
-            this.closePoiInfoBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    closePoiInfo();
-                }
-            });
+            this.closePoiInfoBtn.setOnClickListener(view -> closePoiInfo());
         }
 
         public void closePoiInfo(){
@@ -218,12 +198,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         }
 
         private void setDrawRouteButtonListener(){
-            this.routeBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    drawRoute();
-                }
-            });
+            this.routeBtn.setOnClickListener(view -> drawRoute());
         }
 
         public void drawRoute(){
@@ -243,79 +218,57 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             }
             catch(Exception e){
                 if (!Constants.isNetworkAvailable(MapActivity.this)) {
-                    MapActivity.this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
-                                    Toast.LENGTH_LONG).show();
-
-                        }
-                    });
+                    MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
+                            Toast.LENGTH_LONG).show());
                 }
 
                 else if(getSelectedDestination() == null){
-                    MapActivity.this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toast.makeText(MapActivity.this, getResources().getString(R.string.error_on_calculating_route),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.error_on_calculating_route),
+                            Toast.LENGTH_LONG).show());
                 }
                 else{
-                    MapActivity.this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toast.makeText(MapActivity.this, getResources().getString(R.string.error_on_getting_location),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.error_on_getting_location),
+                            Toast.LENGTH_LONG).show());
                 }
             }
         }
 
         private void setEditTextListeners(){
-            this.editSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if(hasFocus){
-                        routeBtn.setVisibility(View.GONE);
-                    }
+            this.editSearch.setOnFocusChangeListener((v, hasFocus) -> {
+                if(hasFocus){
+                    routeBtn.setVisibility(View.GONE);
                 }
             });
-            this.editOrigin.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if(MotionEvent.ACTION_UP == event.getAction()){
-                        String text = editOrigin.getText().toString().trim();
-                        viewHolder.editSearchRoutes.setText(text);
-                        viewHolder.editSearchRoutes.setHint(R.string.search_origin);
-                        viewHolder.editOrigin.setFocusable(false);
-                        viewHolder.editSearchRoutes.requestFocus();
-                        viewHolder.editSearchRoutes.setSelection(text.length());
-                        setSelectedEditText(Constants.FROM_ORIGIN);
-                        viewHolder.mapLayout.setVisibility(View.GONE);
-                        viewHolder.routeSearchLayout.setVisibility(View.VISIBLE);
-                        Util.openKeyboard(MapActivity.this);
-                    }
-                    return false;
+            this.editOrigin.setOnTouchListener((v, event) -> {
+                if(MotionEvent.ACTION_UP == event.getAction()){
+                    String text = editOrigin.getText().toString().trim();
+                    viewHolder.editSearchRoutes.setText(text);
+                    viewHolder.editSearchRoutes.setHint(R.string.search_origin);
+                    viewHolder.editOrigin.setFocusable(false);
+                    viewHolder.editSearchRoutes.requestFocus();
+                    viewHolder.editSearchRoutes.setSelection(text.length());
+                    setSelectedEditText(Constants.FROM_ORIGIN);
+                    viewHolder.mapLayout.setVisibility(View.GONE);
+                    viewHolder.routeSearchLayout.setVisibility(View.VISIBLE);
+                    Util.openKeyboard(MapActivity.this);
                 }
+                return false;
             });
 
-            this.editDestination.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if(MotionEvent.ACTION_UP == event.getAction()){
-                        String text = editDestination.getText().toString().trim();
-                        viewHolder.editSearchRoutes.setText(text);
-                        viewHolder.editSearchRoutes.setHint(R.string.search_destination);
-                        viewHolder.editDestination.setFocusable(false);
-                        viewHolder.editSearchRoutes.requestFocus();
-                        viewHolder.editSearchRoutes.setSelection(text.length());
-                        setSelectedEditText(Constants.FROM_DESTINATION);
-                        viewHolder.mapLayout.setVisibility(View.GONE);
-                        viewHolder.routeSearchLayout.setVisibility(View.VISIBLE);
-                        Util.openKeyboard(MapActivity.this);
-                    }
-                    return false;
+            this.editDestination.setOnTouchListener((v, event) -> {
+                if(MotionEvent.ACTION_UP == event.getAction()){
+                    String text = editDestination.getText().toString().trim();
+                    viewHolder.editSearchRoutes.setText(text);
+                    viewHolder.editSearchRoutes.setHint(R.string.search_destination);
+                    viewHolder.editDestination.setFocusable(false);
+                    viewHolder.editSearchRoutes.requestFocus();
+                    viewHolder.editSearchRoutes.setSelection(text.length());
+                    setSelectedEditText(Constants.FROM_DESTINATION);
+                    viewHolder.mapLayout.setVisibility(View.GONE);
+                    viewHolder.routeSearchLayout.setVisibility(View.VISIBLE);
+                    Util.openKeyboard(MapActivity.this);
                 }
+                return false;
             });
 
         }
@@ -328,28 +281,16 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
         }
         if (message == viewModel.REQUEST_FAILED_CONNECTION) {
-            MapActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
+                    Toast.LENGTH_LONG).show());
         }
         if (message == viewModel.NAMES_REQUEST_FAILED_LOADING) {
-            MapActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_pois_names_error_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_pois_names_error_msg),
+                    Toast.LENGTH_LONG).show());
         }
         if (message == viewModel.REQUEST_FAILED_HTTP) {
-            MapActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(MapActivity.this, getResources().getString(R.string.http_error_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.http_error_msg),
+                    Toast.LENGTH_LONG).show());
         }
         if (message == viewModel.POI_INFO_REQUEST_STARTED) {
 
@@ -362,12 +303,8 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
             getViewHolder().editSearch.setText("");
         }
         if (message == viewModel.POI_INFO_REQUEST_FAILED_LOADING) {
-            MapActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_poi_info_error_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_poi_info_error_msg),
+                    Toast.LENGTH_LONG).show());
         }
 
         if (message == viewModel.ROUTE_REQUEST_STARTED) {
@@ -377,12 +314,8 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
 
         }
         if (message == viewModel.ROUTE_REQUEST_FAILED) {
-            MapActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(MapActivity.this, getResources().getString(R.string.error_on_calculating_route),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.error_on_calculating_route),
+                    Toast.LENGTH_LONG).show());
             showMapLayoutView();
         }
         if (message == viewModel.ADD_FAVORITES_REQUEST_STARTED) {
@@ -607,15 +540,10 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         this.cleanMapLayoutView();
         this.viewHolder.drawerBtn.setVisibility(View.VISIBLE);
         this.viewHolder.editSearch.setVisibility(View.VISIBLE);
-        this.viewHolder.mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(MapboxMap mapboxMap) {
-                mapboxMap.setCameraPosition(new CameraPosition.Builder()
-                        .target(new LatLng(Constants.ESPOL_CENTRAL_LAT, Constants.ESPOL_CENTRAL_LNG))
-                        .zoom(Constants.FAR_AWAY_ZOOM)
-                        .build());
-            }
-        });
+        this.viewHolder.mapView.getMapAsync(mapboxMap -> mapboxMap.setCameraPosition(new CameraPosition.Builder()
+                .target(new LatLng(Constants.ESPOL_CENTRAL_LAT, Constants.ESPOL_CENTRAL_LNG))
+                .zoom(Constants.FAR_AWAY_ZOOM)
+                .build()));
         if(Util.isDrawerOpen(this)){
             Util.closeDrawer(this);
         }

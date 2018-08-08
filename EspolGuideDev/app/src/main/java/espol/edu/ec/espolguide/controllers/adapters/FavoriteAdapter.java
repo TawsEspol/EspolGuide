@@ -84,12 +84,7 @@ public class FavoriteAdapter extends BaseAdapter {
         }
         holder.setCodeGtsi(favoritePlaces.get(position));
         holder.codeGtsi_tv.setText(holder.getCodeGtsi());
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToBuilding(holder.getCodeGtsi());
-            }
-        });
+        view.setOnClickListener(v -> goToBuilding(holder.getCodeGtsi()));
         return view;
     }
 

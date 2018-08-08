@@ -150,73 +150,60 @@ public class SearchViewAdapter extends BaseAdapter {
 
         holder.codeGtsi = parts[3];
 
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                Util.closeKeyboard(mContext);
-                if (!Constants.isNetworkAvailable(getmContext())) {
-                    Toast.makeText(getmContext(), mContext.getResources().getString(R.string.failed_connection_msg),
-                            Toast.LENGTH_LONG).show();
-                } else if (holder.getCodeGtsi().trim().length() > 0){
-                    JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                            COORDINATES_WS + holder.getCodeGtsi(), null, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            MapActivity mapActivity = (MapActivity) mContext;
-                            try {
-                                if(response.length() > 0){
-                                    double lat = response.getDouble(Constants.LATITUDE_KEY);
-                                    double lon = response.getDouble(Constants.LONGITUDE_KEY);
-                                    LatLng point = new LatLng(lat, lon);
-                                    mapActivity.setSelectedDestination(point);
-                                    mapActivity.getViewHolder().editDestination.setText(name1);
-                                    TextView f = (TextView) bar;
-                                    f.setText(name1);
-                                    pois.clear();
-                                    mapActivity.getViewHolder().editSearch.clearFocus();
-                                    mapView.getMapAsync(new OnMapReadyCallback() {
-                                        @Override
-                                        public void onMapReady(MapboxMap mapboxMap) {
-                                            if (featureMarker != null) {
-                                                mapboxMap.removeMarker(featureMarker);
-                                            }
-                                            featureMarker = mapboxMap.addMarker(new MarkerOptions()
-                                                    .position(point)
-                                            );
-                                            mapboxMap.setCameraPosition(new CameraPosition.Builder()
-                                                    .target(point)
-                                                    .zoom(Constants.CLOSE_ZOOM)
-                                                    .build());
-                                        }
-                                    });
-                                    mapActivity.getViewHolder().routeBtn.setVisibility(View.VISIBLE);
+        view.setOnClickListener(arg0 -> {
+            Util.closeKeyboard(mContext);
+            if (!Constants.isNetworkAvailable(getmContext())) {
+                Toast.makeText(getmContext(), mContext.getResources().getString(R.string.failed_connection_msg),
+                        Toast.LENGTH_LONG).show();
+            } else if (holder.getCodeGtsi().trim().length() > 0){
+                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                        COORDINATES_WS + holder.getCodeGtsi(), null, response -> {
+                    MapActivity mapActivity = (MapActivity) mContext;
+                    try {
+                        if (response.length() > 0) {
+                            double lat = response.getDouble(Constants.LATITUDE_KEY);
+                            double lon = response.getDouble(Constants.LONGITUDE_KEY);
+                            LatLng point = new LatLng(lat, lon);
+                            mapActivity.setSelectedDestination(point);
+                            mapActivity.getViewHolder().editDestination.setText(name1);
+                            TextView f = (TextView) bar;
+                            f.setText(name1);
+                            pois.clear();
+                            mapActivity.getViewHolder().editSearch.clearFocus();
+                            mapView.getMapAsync(mapboxMap -> {
+                                if (featureMarker != null) {
+                                    mapboxMap.removeMarker(featureMarker);
                                 }
-                                else{
-                                    mapActivity.setSelectedDestination(null);
-                                }
+                                featureMarker = mapboxMap.addMarker(new MarkerOptions()
+                                        .position(point)
+                                );
+                                mapboxMap.setCameraPosition(new CameraPosition.Builder()
+                                        .target(point)
+                                        .zoom(Constants.CLOSE_ZOOM)
+                                        .build());
+                            });
+                            mapActivity.getViewHolder().routeBtn.setVisibility(View.VISIBLE);
+                        } else {
+                            mapActivity.setSelectedDestination(null);
+                        }
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Toast.makeText(getmContext(), mContext.getResources().getString(R.string.loading_poi_info_error_msg),
-                                        Toast.LENGTH_LONG).show();
-                            } finally {
-                                System.gc();
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            VolleyLog.d("tag", "Error: " + error.getMessage());
-                            Toast.makeText(getmContext(), mContext.getResources().getString(R.string.http_error_msg),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    AppController.getInstance(getmContext()).addToRequestQueue(jsonObjReq);
-                }
-                else{
-                    Toast.makeText(getmContext(), mContext.getResources().getString(R.string.loading_poi_info_error_msg),
-                            Toast.LENGTH_LONG).show();
-                }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getmContext(), mContext.getResources().getString(R.string.loading_poi_info_error_msg),
+                                Toast.LENGTH_LONG).show();
+                    } finally {
+                        System.gc();
+                    }
+                }, error -> {
+                    VolleyLog.d("tag", "Error: " + error.getMessage());
+                    Toast.makeText(getmContext(), mContext.getResources().getString(R.string.http_error_msg),
+                            Toast.LENGTH_SHORT).show();
+                });
+                AppController.getInstance(getmContext()).addToRequestQueue(jsonObjReq);
+            }
+            else{
+                Toast.makeText(getmContext(), mContext.getResources().getString(R.string.loading_poi_info_error_msg),
+                        Toast.LENGTH_LONG).show();
             }
         });
         return view;

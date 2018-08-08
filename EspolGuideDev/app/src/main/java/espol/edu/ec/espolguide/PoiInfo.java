@@ -59,30 +59,18 @@ public class PoiInfo extends AppCompatActivity implements Observer {
         }
         if (message == viewModel.POI_INFO_REQUEST_FAILED_CONNECTION) {
             Activity activityTemp = (Activity) getCtx();
-            activityTemp.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(getCtx(), getResources().getString(R.string.failed_connection_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            activityTemp.runOnUiThread(() -> Toast.makeText(getCtx(), getResources().getString(R.string.failed_connection_msg),
+                    Toast.LENGTH_LONG).show());
         }
         if (message == viewModel.POI_INFO_REQUEST_FAILED_LOADING) {
             Activity activityTemp = (Activity) getCtx();
-            activityTemp.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(getCtx(), getResources().getString(R.string.loading_poi_info_error_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            activityTemp.runOnUiThread(() -> Toast.makeText(getCtx(), getResources().getString(R.string.loading_poi_info_error_msg),
+                    Toast.LENGTH_LONG).show());
         }
         if (message == viewModel.POI_INFO_REQUEST_FAILED_HTTP) {
             Activity activityTemp = (Activity) getCtx();
-            activityTemp.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(getCtx(), getResources().getString(R.string.http_error_msg),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
+            activityTemp.runOnUiThread(() -> Toast.makeText(getCtx(), getResources().getString(R.string.http_error_msg),
+                    Toast.LENGTH_SHORT).show());
         }
     }
 
@@ -108,15 +96,12 @@ public class PoiInfo extends AppCompatActivity implements Observer {
         }
 
         public void setPoiRouteListener(){
-            this.poiRoute.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    MapActivity parentActivity = (MapActivity) ctx;
-                    if(parentActivity.getSelectedPoi().trim().length()>0){
-                        parentActivity.getViewHolder().editDestination.setText(parentActivity.getSelectedPoi());
-                        parentActivity.getViewHolder().closePoiInfo();
-                        parentActivity.getViewHolder().drawRoute();
-                    }
+            this.poiRoute.setOnClickListener(v -> {
+                MapActivity parentActivity = (MapActivity) ctx;
+                if(parentActivity.getSelectedPoi().trim().length()>0){
+                    parentActivity.getViewHolder().editDestination.setText(parentActivity.getSelectedPoi());
+                    parentActivity.getViewHolder().closePoiInfo();
+                    parentActivity.getViewHolder().drawRoute();
                 }
             });
         }

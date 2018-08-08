@@ -88,46 +88,43 @@ public class BaseActivity extends AppCompatActivity implements Observer {
         this.viewModel.verifyMenuItems();
         //this.handleSelectedOptionUI();
 
-        viewHolder.navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                if(item.isChecked()){
-                    Util.closeDrawer(BaseActivity.this);
-                    return true;
-                }
-                switch (item.getItemId()) {
-                    case R.id.map_op:
-                        showMapLayoutView();
-                        break;
-
-                    case R.id.courses_op:
-                        Intent subjIntent = new Intent(getApplicationContext(), SubjectsActivity.class);
-                        subjIntent.putExtra(Constants.SELECTED_OPTION, R.id.courses_op);
-                        startActivityForResult(subjIntent, Constants.SUBJECTS_REQUEST_CODE);
-                        break;
-
-                    case R.id.favorites_op:
-                        Intent favIntent = new Intent(getApplicationContext(), FavoritesActivity.class);
-                        favIntent.putExtra(Constants.SELECTED_OPTION, R.id.favorites_op);
-                        startActivityForResult(favIntent, Constants.FAVORITES_REQUEST_CODE);
-                        break;
-
-                    case R.id.link_op:
-                        Intent linkIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                        linkIntent.putExtra(Constants.TO_LINK_ACCOUNT, Constants.TO_LINK_ACCOUNT);
-                        linkIntent.putExtra(Constants.SELECTED_OPTION, R.id.link_op);
-                        startActivity(linkIntent);
-                        break;
-
-                    case R.id.logout_op:
-                        SessionHelper.logout(getApplicationContext());
-                        Intent logoutIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                        startActivity(logoutIntent);
-                        finish();
-                        break;
-                }
-                return false;
+        viewHolder.navigationView.setNavigationItemSelectedListener(item -> {
+            if(item.isChecked()){
+                Util.closeDrawer(BaseActivity.this);
+                return true;
             }
+            switch (item.getItemId()) {
+                case R.id.map_op:
+                    showMapLayoutView();
+                    break;
+
+                case R.id.courses_op:
+                    Intent subjIntent = new Intent(getApplicationContext(), SubjectsActivity.class);
+                    subjIntent.putExtra(Constants.SELECTED_OPTION, R.id.courses_op);
+                    startActivityForResult(subjIntent, Constants.SUBJECTS_REQUEST_CODE);
+                    break;
+
+                case R.id.favorites_op:
+                    Intent favIntent = new Intent(getApplicationContext(), FavoritesActivity.class);
+                    favIntent.putExtra(Constants.SELECTED_OPTION, R.id.favorites_op);
+                    startActivityForResult(favIntent, Constants.FAVORITES_REQUEST_CODE);
+                    break;
+
+                case R.id.link_op:
+                    Intent linkIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                    linkIntent.putExtra(Constants.TO_LINK_ACCOUNT, Constants.TO_LINK_ACCOUNT);
+                    linkIntent.putExtra(Constants.SELECTED_OPTION, R.id.link_op);
+                    startActivity(linkIntent);
+                    break;
+
+                case R.id.logout_op:
+                    SessionHelper.logout(getApplicationContext());
+                    Intent logoutIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(logoutIntent);
+                    finish();
+                    break;
+            }
+            return false;
         });
     }
 

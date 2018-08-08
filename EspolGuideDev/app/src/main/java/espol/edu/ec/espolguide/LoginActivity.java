@@ -131,21 +131,11 @@ public class LoginActivity extends BaseActivity implements Observer {
         }
 
         private void setAuthButtonListener() {
-            this.authBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    viewModel.auth();
-                }
-            });
+            this.authBtn.setOnClickListener(view -> viewModel.auth());
         }
 
         private void setGoogleAuthButtonListener(){
-            this.googlAuthBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    viewModel.googleAuth(mGoogleSignInClient);
-                }
-            });
+            this.googlAuthBtn.setOnClickListener(view -> viewModel.googleAuth(mGoogleSignInClient));
         }
     }
 
@@ -195,55 +185,31 @@ public class LoginActivity extends BaseActivity implements Observer {
         }
 
         else if (message == viewModel.REQUEST_FAILED_CONNECTION) {
-            LoginActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.failed_connection_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, getResources().getString(R.string.failed_connection_msg),
+                    Toast.LENGTH_LONG).show());
         }
         else if (message == viewModel.GOOGL_AUTH_WRONG_CREDENTIALS) {
             this.viewHolder.username.setText("");
             this.viewHolder.password.setText("");
-            LoginActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.google_wrong_credentials_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, getResources().getString(R.string.google_wrong_credentials_msg),
+                    Toast.LENGTH_LONG).show());
         }
         else if (message == viewModel.AUTH_WRONG_CREDENTIALS) {
             this.viewHolder.password.setText("");
-            LoginActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.wrong_credentials_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, getResources().getString(R.string.wrong_credentials_msg),
+                    Toast.LENGTH_LONG).show());
         }
         else if (message == viewModel.REQUEST_FAILED_HTTP) {
-            LoginActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.http_error_msg),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
+            LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, getResources().getString(R.string.http_error_msg),
+                    Toast.LENGTH_SHORT).show());
         }
         else if (message == viewModel.FB_AUTHENTICATION) {
-            LoginActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.fb_auth),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
+            LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, getResources().getString(R.string.fb_auth),
+                    Toast.LENGTH_SHORT).show());
         }
         else if (message == viewModel.GOOGLE_AUTHENTICATION) {
-            LoginActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.google_auth),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
+            LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, getResources().getString(R.string.google_auth),
+                    Toast.LENGTH_SHORT).show());
         }
         else if (message == viewModel.IS_ESPOL_LOGGED_IN) {
             Bundle bundle = getIntent().getExtras();
@@ -270,12 +236,8 @@ public class LoginActivity extends BaseActivity implements Observer {
 
         }
         else if (message == viewModel.GET_FAVORITES_REQUEST_FAILED_LOADING) {
-            LoginActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.error_on_loading_favorites),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
+            LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, getResources().getString(R.string.error_on_loading_favorites),
+                    Toast.LENGTH_SHORT).show());
         }
         else if (message == viewModel.NAME_REQUEST_STARTED) {
 

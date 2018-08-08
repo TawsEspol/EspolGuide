@@ -157,12 +157,7 @@ public class LoginViewModel extends Observable {
             // If the user has not previously signed in on this device or the sign-in has expired,
             // this asynchronous branch will attempt to sign in the user silently.  Cross-device
             // single sign-on will occur in this branch.
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(GoogleSignInResult googleSignInResult) {
-                    handleSignInResult(googleSignInResult);
-                }
-            });
+            opr.setResultCallback(googleSignInResult -> handleSignInResult(googleSignInResult));
         }
     }
     private class AuthScreen {
@@ -268,30 +263,24 @@ public class LoginViewModel extends Observable {
                 catch (Exception e){ ;
                 }
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                        EG_LOGIN_WS, jsonBody, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        String accessToken;
-                        try {
-                            if(response.has(Constants.ACCESS_TOKEN_KEY)){
-                                accessToken = response.getString(Constants.ACCESS_TOKEN_KEY);
-                                System.out.println(accessToken);
-                                SessionHelper.saveAccessToken(activity, accessToken);
-                                setChanged();
-                                notifyObservers(EG_LOGIN_REQUEST_SUCCEED);
+                        EG_LOGIN_WS, jsonBody, response -> {
+                            String accessToken;
+                            try {
+                                if(response.has(Constants.ACCESS_TOKEN_KEY)){
+                                    accessToken = response.getString(Constants.ACCESS_TOKEN_KEY);
+                                    System.out.println(accessToken);
+                                    SessionHelper.saveAccessToken(activity, accessToken);
+                                    setChanged();
+                                    notifyObservers(EG_LOGIN_REQUEST_SUCCEED);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d("tag", "Error: " + error.getMessage());
-                        setChanged();
-                        notifyObservers(REQUEST_FAILED_HTTP);
-                    }
-                });
+                        }, error -> {
+                            VolleyLog.d("tag", "Error: " + error.getMessage());
+                            setChanged();
+                            notifyObservers(REQUEST_FAILED_HTTP);
+                        });
                 AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
             }
             return null;
@@ -319,39 +308,33 @@ public class LoginViewModel extends Observable {
                 }
                 else {
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                            FAVORITES_WS, null, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            try{
-                                JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
-                                ArrayList<String> favoritesList = new ArrayList<String>();
-                                if (jsonArray != null) {
-                                    int len = jsonArray.length();
-                                    for (int i=0;i<len;i++){
-                                        favoritesList.add(jsonArray.get(i).toString());
+                            FAVORITES_WS, null, response -> {
+                                try{
+                                    JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
+                                    ArrayList<String> favoritesList = new ArrayList<String>();
+                                    if (jsonArray != null) {
+                                        int len = jsonArray.length();
+                                        for (int i=0;i<len;i++){
+                                            favoritesList.add(jsonArray.get(i).toString());
+                                        }
                                     }
+                                    Set<String> favoritesSet = new HashSet<>();
+                                    favoritesSet.addAll(favoritesList);
+                                    SessionHelper.saveFavoritePois(activity, favoritesSet);
+                                    setChanged();
+                                    notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
                                 }
-                                Set<String> favoritesSet = new HashSet<>();
-                                favoritesSet.addAll(favoritesList);
-                                SessionHelper.saveFavoritePois(activity, favoritesSet);
-                                setChanged();
-                                notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
-                            }
-                            catch (Exception e){
-                                setChanged();
-                                notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            System.out.println("======================== ERROR EN RESPONSE ========================");
+                                catch (Exception e){
+                                    setChanged();
+                                    notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
+                                }
+                            }, error -> {
+                                System.out.println("======================== ERROR EN RESPONSE ========================");
 
-                            VolleyLog.d("tag", "Error: " + error.getMessage());
-                            setChanged();
-                            notifyObservers(REQUEST_FAILED_HTTP);
-                        }
-                    }){
+                                VolleyLog.d("tag", "Error: " + error.getMessage());
+                                setChanged();
+                                notifyObservers(REQUEST_FAILED_HTTP);
+                            }){
                         /**
                          * Passing some request headers
                          */
