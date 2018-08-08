@@ -2,7 +2,6 @@ package espol.edu.ec.espolguide.viewModels;
 
 import android.os.AsyncTask;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -97,7 +96,7 @@ public class FavoritesViewModel extends Observable {
                          * Passing some request headers
                          */
                         @Override
-                        public Map<String, String> getHeaders() throws AuthFailureError {
+                        public Map<String, String> getHeaders() {
                             HashMap<String, String> headers = new HashMap<>();
                             headers.put(Constants.ACCESS_TOKEN_HEADER_KEY, accessToken);
                             return headers;

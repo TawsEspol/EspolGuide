@@ -50,17 +50,17 @@ public class PoiInfo extends AppCompatActivity implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         String message = (String)arg;
-        if (Objects.equals(message, PoiInfoViewModel.POI_INFO_REQUEST_FAILED_CONNECTION)) {
+        if (message.equals(PoiInfoViewModel.POI_INFO_REQUEST_FAILED_CONNECTION)) {
             Activity activityTemp = (Activity) getCtx();
             activityTemp.runOnUiThread(() -> Toast.makeText(getCtx(), getResources().getString(R.string.failed_connection_msg),
                     Toast.LENGTH_LONG).show());
         }
-        if (Objects.equals(message, PoiInfoViewModel.POI_INFO_REQUEST_FAILED_LOADING)) {
+        if (message.equals(PoiInfoViewModel.POI_INFO_REQUEST_FAILED_LOADING)) {
             Activity activityTemp = (Activity) getCtx();
             activityTemp.runOnUiThread(() -> Toast.makeText(getCtx(), getResources().getString(R.string.loading_poi_info_error_msg),
                     Toast.LENGTH_LONG).show());
         }
-        if (Objects.equals(message, PoiInfoViewModel.POI_INFO_REQUEST_FAILED_HTTP)) {
+        if (message.equals(PoiInfoViewModel.POI_INFO_REQUEST_FAILED_HTTP)) {
             Activity activityTemp = (Activity) getCtx();
             activityTemp.runOnUiThread(() -> Toast.makeText(getCtx(), getResources().getString(R.string.http_error_msg),
                     Toast.LENGTH_SHORT).show());
@@ -83,7 +83,6 @@ public class PoiInfo extends AppCompatActivity implements Observer {
             Activity parentActivity = (Activity) ctx;
             nameTv = parentActivity.findViewById(R.id.name_tv);
             unityTv = parentActivity.findViewById(R.id.unity_tv);
-            //descriptionTv = (TextView) parentActivity.findViewById(R.id.description_tv);
             photo = parentActivity.findViewById(R.id.flag);
             poiRoute = parentActivity.findViewById(R.id.poi_route_btn);
         }

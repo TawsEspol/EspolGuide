@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * Created by fabricio on 02/08/18.
@@ -19,7 +18,7 @@ public class SubjectsSet extends HashSet {
         Iterator it = this.iterator();
         ArrayList<String> days = new ArrayList<>();
         while (it.hasNext()) {
-            if (!Objects.equals(language, "es")) {
+            if (!language.equals("es")) {
                 days.add(daysTraductor.get(language).get(it.next()));
             } else {
                 days.add((String) it.next());
@@ -30,8 +29,6 @@ public class SubjectsSet extends HashSet {
                 result = days.get(i);
             } else {
                 result = result + "," + days.get(i);
-
-
             }
         }
         return result;

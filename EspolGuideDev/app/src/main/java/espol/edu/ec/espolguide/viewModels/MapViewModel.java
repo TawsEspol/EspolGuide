@@ -18,7 +18,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -252,7 +251,6 @@ public class MapViewModel extends Observable{
                                     } catch (JSONException e) {
                                         setChanged();
                                         notifyObservers(NAMES_REQUEST_FAILED_LOADING);
-                                        continue;
                                     }
                                 }
                             }
@@ -318,7 +316,7 @@ public class MapViewModel extends Observable{
     }
 
     public void changeRouteModeView(){
-        if(Objects.equals(this.selectedRouteMode, Constants.CAR_ROUTE_MODE)){
+        if(this.selectedRouteMode.equals(Constants.CAR_ROUTE_MODE)){
             LinearLayout carButtonBackground = (LinearLayout) activity.getViewHolder().carBtn.getParent();
             carButtonBackground.setBackgroundResource(R.drawable.selected_mode_button);
             activity.getViewHolder().carBtn.setColorFilter(
@@ -344,7 +342,7 @@ public class MapViewModel extends Observable{
 
     public String getDirectionCriteria(){
         String directionsCriteria = DirectionsCriteria.PROFILE_WALKING;
-        if(Objects.equals(this.selectedRouteMode, Constants.CAR_ROUTE_MODE)){
+        if(this.selectedRouteMode.equals(Constants.CAR_ROUTE_MODE)){
             directionsCriteria = DirectionsCriteria.PROFILE_DRIVING;
         }
         return directionsCriteria;
@@ -617,7 +615,7 @@ public class MapViewModel extends Observable{
      */
     public void setRouteModeButtonsListeners(){
         activity.getViewHolder().walkBtn.setOnClickListener(v -> {
-            if(!Objects.equals(getSelectedRouteMode(), Constants.WALKING_ROUTE_MODE)){
+            if(!getSelectedRouteMode().equals(Constants.WALKING_ROUTE_MODE)){
                 if(activity.getViewHolder().editOrigin.getText().toString().trim()
                         .equals(activity.getApplicationContext().getString(R.string.your_location))){
                     updateOriginLocation();
@@ -628,7 +626,7 @@ public class MapViewModel extends Observable{
         });
 
         activity.getViewHolder().carBtn.setOnClickListener(v -> {
-            if(!Objects.equals(getSelectedRouteMode(), Constants.CAR_ROUTE_MODE)){
+            if(!getSelectedRouteMode().equals(Constants.CAR_ROUTE_MODE)){
                 if(activity.getViewHolder().editOrigin.getText().toString().trim()
                         .equals(activity.getApplicationContext().getString(R.string.your_location))){
                     updateOriginLocation();
@@ -663,7 +661,7 @@ public class MapViewModel extends Observable{
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             activity.setOriginLocation(location);
-                            if(Objects.equals(onState, Constants.ON_CREATE)){
+                            if(onState.equals(Constants.ON_CREATE)){
                                 setChanged();
                                 notifyObservers(LOCATION_REQUEST_SUCCEEDED_ON_CREATE);
                             }
@@ -682,7 +680,6 @@ public class MapViewModel extends Observable{
                         setChanged();
                         notifyObservers(LOCATION_REQUEST_FAILED);
                     });
-            return;
         }
     }
 
@@ -776,7 +773,7 @@ public class MapViewModel extends Observable{
                          * Passing some request headers
                          */
                         @Override
-                        public Map<String, String> getHeaders() throws AuthFailureError {
+                        public Map<String, String> getHeaders() {
                             HashMap<String, String> headers = new HashMap<>();
                             headers.put(Constants.ACCESS_TOKEN_HEADER_KEY, accessToken);
                             return headers;

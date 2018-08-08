@@ -27,6 +27,8 @@
     <string name="your_location">Tu ubicación</string>
     <string name="search_origin">Buscar punto de partida</string>
     <string name="search_destination">Buscar punto de llegada</string>
+    <string name="draw_route">Ver\nRuta</string>
+    <string name="draw_route_poi">Ver ruta</string>
 
     <string name="greeting">Hola</string>
 

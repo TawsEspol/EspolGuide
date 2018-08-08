@@ -129,13 +129,13 @@ public class RouteAdapter extends BaseAdapter {
                         double selectedLng = response.getDouble(Constants.LONGITUDE_KEY);
                         pois.clear();
                         MapActivity activity = (MapActivity) mContext;
-                        if (Objects.equals(activity.getSelectedEditText(), Constants.FROM_ORIGIN)) {
+                        if (activity.getSelectedEditText().equals(Constants.FROM_ORIGIN)) {
                             LatLng selectedOrigin = new LatLng(selectedLat, selectedLng);
                             activity.setSelectedOrigin(selectedOrigin);
                             activity.getViewHolder().editOrigin.setText(name1);
                             activity.setOriginPosition(Point.fromLngLat(activity.getSelectedOrigin().getLongitude(),
                                     activity.getSelectedOrigin().getLatitude()));
-                        } else if (Objects.equals(activity.getSelectedEditText(), Constants.FROM_DESTINATION)) {
+                        } else if (activity.getSelectedEditText().equals(Constants.FROM_DESTINATION)) {
                             LatLng selectedDestination = new LatLng(selectedLat, selectedLng);
                             activity.setSelectedDestination(selectedDestination);
                             activity.getViewHolder().editDestination.setText(name1);

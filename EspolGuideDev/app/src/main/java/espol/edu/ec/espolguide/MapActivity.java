@@ -273,43 +273,43 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
     @Override
     public void update(Observable o, Object arg) {
         String message = (String)arg;
-        if (Objects.equals(message, MapViewModel.REQUEST_FAILED_CONNECTION)) {
+        if (message.equals(MapViewModel.REQUEST_FAILED_CONNECTION)) {
             MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.failed_connection_msg),
                     Toast.LENGTH_LONG).show());
         }
-        if (Objects.equals(message, MapViewModel.NAMES_REQUEST_FAILED_LOADING)) {
+        if (message.equals(MapViewModel.NAMES_REQUEST_FAILED_LOADING)) {
             MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_pois_names_error_msg),
                     Toast.LENGTH_LONG).show());
         }
-        if (Objects.equals(message, MapViewModel.REQUEST_FAILED_HTTP)) {
+        if (message.equals(MapViewModel.REQUEST_FAILED_HTTP)) {
             MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.http_error_msg),
                     Toast.LENGTH_LONG).show());
         }
-        if (Objects.equals(message, MapViewModel.POI_INFO_REQUEST_SUCCEEDED)) {
+        if (message.equals(MapViewModel.POI_INFO_REQUEST_SUCCEEDED)) {
             getViewHolder().editSearch.setVisibility(View.GONE);
             getViewHolder().getMapboxMap().getUiSettings().setAllGesturesEnabled(false);
             getViewModel().removeMarkers();
             getViewHolder().routeBtn.setVisibility(View.GONE);
             getViewHolder().editSearch.setText("");
         }
-        if (Objects.equals(message, MapViewModel.POI_INFO_REQUEST_FAILED_LOADING)) {
+        if (message.equals(MapViewModel.POI_INFO_REQUEST_FAILED_LOADING)) {
             MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.loading_poi_info_error_msg),
                     Toast.LENGTH_LONG).show());
         }
 
-        if (Objects.equals(message, MapViewModel.ROUTE_REQUEST_STARTED)) {
+        if (message.equals(MapViewModel.ROUTE_REQUEST_STARTED)) {
             getViewHolder().timeTv.setText(getApplicationContext().getString(R.string.empty_time));
         }
-        if (Objects.equals(message, MapViewModel.ROUTE_REQUEST_FAILED)) {
+        if (message.equals(MapViewModel.ROUTE_REQUEST_FAILED)) {
             MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.error_on_calculating_route),
                     Toast.LENGTH_LONG).show());
             showMapLayoutView();
         }
-        if (Objects.equals(message, MapViewModel.LOCATION_REQUEST_SUCCEEDED_ON_CREATE)) {
+        if (message.equals(MapViewModel.LOCATION_REQUEST_SUCCEEDED_ON_CREATE)) {
             Toast.makeText(this, getResources().getString(R.string.getting_your_location),
                     Toast.LENGTH_LONG).show();
         }
-        if (Objects.equals(message, MapViewModel.MAP_CENTERING_REQUEST_SUCCEEDED)) {
+        if (message.equals(MapViewModel.MAP_CENTERING_REQUEST_SUCCEEDED)) {
             getViewHolder().routeBtn.setVisibility(View.VISIBLE);
         }
     }

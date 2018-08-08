@@ -14,19 +14,21 @@
 
     <string name="failed_connection_msg">Internet connection not available</string>
     <string name="http_error_msg">Error on connecting with server</string>
-    <string name="loading_pois_names_error_msg">Error on loading place names...</string>
-    <string name="loading_poi_info_error_msg">Error on loading place information...</string>
-    <string name="wrong_credentials_msg">Wrong credentials entered...</string>
-    <string name="error_on_getting_location">Error on getting your location...</string>
-    <string name="error_on_calculating_route">Error on calculating route...</string>
-    <string name="error_on_loading_favorites">Error on loading favorite places...</string>
+    <string name="loading_pois_names_error_msg">Error on loading place names</string>
+    <string name="loading_poi_info_error_msg">Error on loading place information</string>
+    <string name="wrong_credentials_msg">Wrong credentials entered</string>
+    <string name="error_on_getting_location">Error on getting your location</string>
+    <string name="error_on_calculating_route">Error on calculating route</string>
+    <string name="error_on_loading_favorites">Error on loading favorite places</string>
 
-    <string name="google_wrong_credentials_msg">Google wrong credentials entered...</string>
+    <string name="google_wrong_credentials_msg">Google wrong credentials entered</string>
     <string name="google_auth">Authenticated with Google</string>
 
     <string name="your_location">Your location</string>
     <string name="search_origin">Search a origin</string>
     <string name="search_destination">Search a destination</string>
+    <string name="draw_route">Draw\nRoute</string>
+    <string name="draw_route_poi">Draw route</string>
 
     <string name="greeting">Hello</string>
 
