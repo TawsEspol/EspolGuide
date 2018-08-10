@@ -41,7 +41,7 @@ public class Constants {
     public final static String SELECTED_OPTION = "selected_option";
 
     public final static String CODE_GTSI_FIELD = "code_gtsi";
-    public final static String BLOCKNAME_FIELD = "name";
+    public final static String BLOCKNAME_FIELD = "name_espol";
     public final static String ACADEMIC_UNIT_FIELD = "unity";
     public final static String DESCRIPTION_FIELD = "descriptio";
     public final static String CODE_INFRASTRUCTURE = "code_infra";

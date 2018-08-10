@@ -237,6 +237,9 @@ public class MapViewModel extends Observable{
                                         String codeGtsi = blockInfo.getString(Constants.CODE_GTSI_FIELD);
                                         JSONArray alternativeNames = blockInfo.getJSONArray(Constants.ALTERNATIVE_NAMES_FIELD);
                                         int totalAlternatives = alternativeNames.length();
+                                        if(totalAlternatives < 1){
+                                            continue;
+                                        }
                                         String alternativeString = "";
                                         for (int i = 0; i < totalAlternatives; i++) {
                                             String alternative = (String) alternativeNames.get(i);
