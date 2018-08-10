@@ -23,10 +23,10 @@ import static android.app.Activity.RESULT_OK;
  */
 
 public class FavoriteAdapter extends BaseAdapter {
-    private List<String> favoritePlaces;
+    private final List<String> favoritePlaces;
     private ViewHolder viewHolder;
-    private Context mContext;
-    private LayoutInflater inflater;
+    private final Context mContext;
+    private final LayoutInflater inflater;
 
     private class ViewHolder{
         private String codeGtsi;
@@ -77,19 +77,14 @@ public class FavoriteAdapter extends BaseAdapter {
         if(view == null){
             holder = new ViewHolder();
             view = inflater.inflate(R.layout.favorites_item, null);
-            holder.codeGtsi_tv = (TextView) view.findViewById(R.id.favorite_gtsi_tv);
+            holder.codeGtsi_tv = view.findViewById(R.id.favorite_gtsi_tv);
             view.setTag(holder);
         } else{
             holder = (ViewHolder) view.getTag();
         }
         holder.setCodeGtsi(favoritePlaces.get(position));
         holder.codeGtsi_tv.setText(holder.getCodeGtsi());
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToBuilding(holder.getCodeGtsi());
-            }
-        });
+        view.setOnClickListener(v -> goToBuilding(holder.getCodeGtsi()));
         return view;
     }
 

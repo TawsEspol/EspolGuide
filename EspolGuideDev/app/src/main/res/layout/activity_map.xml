@@ -89,8 +89,7 @@
                                 android:paddingTop="5dp"
                                 android:paddingLeft="15dp"
                                 android:paddingBottom="5dp"
-                                style="@style/input_barra_pois"
-                                >
+                                style="@style/input_barra_pois">
                                 <requestFocus />
                             </EditText>
                             <ListView
@@ -239,7 +238,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/login_button"
-                android:text="Ver\nRuta"
+                android:text="@string/draw_route"
                 android:textColor="#ffffff"
                 android:textAllCaps="false"
                 android:textSize="16dp"
@@ -328,7 +327,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/login_button"
-                            android:text="Ver Ruta"
+                            android:text="@string/draw_route_poi"
                             android:textColor="#ffffff"
                             android:textAllCaps="false"
                             android:textSize="14dp"

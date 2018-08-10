@@ -1,29 +1,21 @@
 package espol.edu.ec.espolguide.viewModels;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
 
 import espol.edu.ec.espolguide.FavoritesActivity;
-import espol.edu.ec.espolguide.MapActivity;
-import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.controllers.adapters.FavoriteAdapter;
 import espol.edu.ec.espolguide.utils.Constants;
@@ -34,21 +26,21 @@ import espol.edu.ec.espolguide.utils.SessionHelper;
  */
 
 public class FavoritesViewModel extends Observable {
-    public static String LOAD_FAVORITES_STARTED = "load_favorites_started";
-    public static String LOAD_FAVORITES_SUCCEEDED = "load_favorites_succeeded";
-    public static String FAVORITES_NOT_FOUND = "favorites_not_found";
-    public static String LOAD_FAVORITES_FAILED = "load_favorites_failed";
+    public static final String LOAD_FAVORITES_STARTED = "load_favorites_started";
+    public static final String LOAD_FAVORITES_SUCCEEDED = "load_favorites_succeeded";
+    public static final String FAVORITES_NOT_FOUND = "favorites_not_found";
+    public static final String LOAD_FAVORITES_FAILED = "load_favorites_failed";
 
-    public static String REQUEST_FAILED_CONNECTION = "request_failed_connection";
-    public static String REQUEST_FAILED_HTTP = "request_failed_http";
-    public static String GET_FAVORITES_REQUEST_STARTED = "get_favorites_request_started";
-    public static String GET_FAVORITES_REQUEST_SUCCEEDED = "get_favorites_request_succeeded";
-    public static String GET_FAVORITES_REQUEST_FAILED_LOADING = "get_favorites_request_failed_loading";
+    public static final String REQUEST_FAILED_CONNECTION = "request_failed_connection";
+    public static final String REQUEST_FAILED_HTTP = "request_failed_http";
+    public static final String GET_FAVORITES_REQUEST_STARTED = "get_favorites_request_started";
+    public static final String GET_FAVORITES_REQUEST_SUCCEEDED = "get_favorites_request_succeeded";
+    public static final String GET_FAVORITES_REQUEST_FAILED_LOADING = "get_favorites_request_failed_loading";
 
-    private String FAVORITES_WS = Constants.getFavoritesURL();
+    private final String FAVORITES_WS = Constants.getFavoritesURL();
     private ArrayList<String> favoritePlaces = new ArrayList<>();
     private FavoriteAdapter favoriteAdapter;
-    private FavoritesActivity activity;
+    private final FavoritesActivity activity;
 
     public FavoritesViewModel(FavoritesActivity activity){
         this.activity = activity;
@@ -75,43 +67,37 @@ public class FavoritesViewModel extends Observable {
                 }
                 else {
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                            FAVORITES_WS, null, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            try{
-                                JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
-                                ArrayList<String> favoritesList = new ArrayList<String>();
-                                if (jsonArray != null) {
-                                    int len = jsonArray.length();
-                                    for (int i=0;i<len;i++){
-                                        favoritesList.add(jsonArray.get(i).toString());
+                            FAVORITES_WS, null, response -> {
+                                try{
+                                    JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
+                                    ArrayList<String> favoritesList = new ArrayList<>();
+                                    if (jsonArray != null) {
+                                        int len = jsonArray.length();
+                                        for (int i=0;i<len;i++){
+                                            favoritesList.add(jsonArray.get(i).toString());
+                                        }
                                     }
+                                    Set<String> favoritesSet = new HashSet<>();
+                                    favoritesSet.addAll(favoritesList);
+                                    SessionHelper.saveFavoritePois(activity, favoritesSet);
+                                    setChanged();
+                                    notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
                                 }
-                                Set<String> favoritesSet = new HashSet<>();
-                                favoritesSet.addAll(favoritesList);
-                                SessionHelper.saveFavoritePois(activity, favoritesSet);
+                                catch (Exception e){
+                                    setChanged();
+                                    notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
+                                }
+                            }, error -> {
+                                VolleyLog.d("tag", "Error: " + error.getMessage());
                                 setChanged();
-                                notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
-                            }
-                            catch (Exception e){
-                                setChanged();
-                                notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            VolleyLog.d("tag", "Error: " + error.getMessage());
-                            setChanged();
-                            notifyObservers(REQUEST_FAILED_HTTP);
-                        }
-                    }){
+                                notifyObservers(REQUEST_FAILED_HTTP);
+                            }){
                         /**
                          * Passing some request headers
                          */
                         @Override
-                        public Map<String, String> getHeaders() throws AuthFailureError {
-                            HashMap<String, String> headers = new HashMap<String, String>();
+                        public Map<String, String> getHeaders() {
+                            HashMap<String, String> headers = new HashMap<>();
                             headers.put(Constants.ACCESS_TOKEN_HEADER_KEY, accessToken);
                             return headers;
                         }

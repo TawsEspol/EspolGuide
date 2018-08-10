@@ -17,8 +17,8 @@ import static android.app.Activity.RESULT_OK;
 
 public class ToPoiListener implements View.OnClickListener {
 
-    private String codeGtsi;
-    private Context context;
+    private final String codeGtsi;
+    private final Context context;
 
     public ToPoiListener(String codeGtsi, Context ctx) {
         this.codeGtsi = codeGtsi;
@@ -27,8 +27,7 @@ public class ToPoiListener implements View.OnClickListener {
     }
 
     public Activity getActivity(){
-        Activity activity = (Activity) this.context;
-        return activity;
+        return (Activity) this.context;
     }
 
     @Override

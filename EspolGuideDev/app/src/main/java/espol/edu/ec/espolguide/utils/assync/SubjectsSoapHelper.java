@@ -14,10 +14,8 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
-import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 
 import espol.edu.ec.espolguide.R;
@@ -56,20 +54,19 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void,HashMap>{
     //Creates a box for containing info about subject (room, place)
 
     private void addRooms(LinearLayout subjectBox, HashMap rooms) {
-        Iterator it = rooms.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry e = (Map.Entry) it.next();
+        for (Object o : rooms.entrySet()) {
+            Map.Entry e = (Map.Entry) o;
             SubjectRoom subjectRoom;
             try {
                 subjectRoom = new SubjectRoom(ctx, (e.getValue()).toString(), (String) e.getKey());
-            }catch (Exception a){
+            } catch (Exception a) {
                 subjectRoom = new SubjectRoom(ctx, (String) e.getValue(), (String) e.getKey());
             }
             subjectRoom.setBackgroundColor(Color.parseColor(Constants.COLOR_FOURTH));
 
             String[] placeInfo = ((String) e.getKey()).split("\\|");
 
-            subjectRoom.setOnClickListener(new ToPoiListener(placeInfo[1].trim(),ctx));
+            subjectRoom.setOnClickListener(new ToPoiListener(placeInfo[1].trim(), ctx));
             subjectRoom.setTextColor(Color.parseColor(Constants.COLOR_SECOND));
             subjectRoom.setText(subjectRoom.toString());
             subjectBox.addView(subjectRoom);
@@ -120,16 +117,15 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void,HashMap>{
                             }
                         }
                         if (subjectsMap.get(subjectName) != null){
-                            Iterator it = lecturesMap.entrySet().iterator();
-                            while (it.hasNext()) {
-                                Map.Entry e = (Map.Entry)it.next();
-                                if (subjectsMap.get(subjectName).get( e.getKey()) != null ){
+                            for (Object o : lecturesMap.entrySet()) {
+                                Map.Entry e = (Map.Entry) o;
+                                if (subjectsMap.get(subjectName).get(e.getKey()) != null) {
                                     //distribuidos,bloque16c,com3
-                                    HashSet sM = (HashSet) subjectsMap.get(subjectName).get( e.getKey());
+                                    HashSet sM = (HashSet) subjectsMap.get(subjectName).get(e.getKey());
                                     sM.addAll(lecturesMap.get(e.getKey()));
-                                    subjectsMap.get(subjectName).put( e.getKey(),sM );
-                                }else{
-                                    subjectsMap.get(subjectName).put( e.getKey(),
+                                    subjectsMap.get(subjectName).put(e.getKey(), sM);
+                                } else {
+                                    subjectsMap.get(subjectName).put(e.getKey(),
                                             lecturesMap.get(e.getKey()));
                                 }
                             }
@@ -169,10 +165,9 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void,HashMap>{
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     protected void onPostExecute(HashMap data) {
-        Iterator it = data.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry e = (Map.Entry)it.next();
-            addSubject(layout,(HashMap) data.get(e.getKey()),(String)e.getKey());
+        for (Object o : data.entrySet()) {
+            Map.Entry e = (Map.Entry) o;
+            addSubject(layout, (HashMap) data.get(e.getKey()), (String) e.getKey());
         }
     }
 }

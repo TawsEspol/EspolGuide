@@ -3,7 +3,6 @@ package espol.edu.ec.espolguide.viewModels;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.view.View;
 import android.widget.EditText;
 
 import org.apache.commons.lang3.text.WordUtils;
@@ -18,11 +17,9 @@ import org.ksoap2.transport.HttpTransportSE;
 import org.kxml2.kdom.Element;
 import org.kxml2.kdom.Node;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
@@ -33,12 +30,8 @@ import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SessionHelper;
-import espol.edu.ec.espolguide.utils.User;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.AccessToken;
@@ -46,40 +39,39 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 
 /**
  * Created by fabricio on 19/05/18.
  */
 
 public class LoginViewModel extends Observable {
-    public static String AUTH_REQUEST_STARTED = "auth_request_started";
-    public static String AUTH_REQUEST_SUCCEED = "auth_request_succeed";
-    public static String AUTH_WRONG_CREDENTIALS = "auth_wrong_credentials";
-    public static String NAMESPACE = "http://tempuri.org/";
-    public static String GOOGL_AUTH_REQUEST_STARTED = "google_auth_request_started";
-    public static String GOOGL_AUTH_REQUEST_SUCCEED = "google_auth_request_succeed";
-    public static String GOOGL_AUTH_WRONG_CREDENTIALS = "google_auth_wrong_credentials";
-    public static String FB_AUTHENTICATION = "facebook_authentication";
-    public static String GOOGLE_AUTHENTICATION = "google_authentication";
-    public static String IS_ESPOL_LOGGED_IN = "is_espol_logged_in";
-    public static String IS_NOT_LOGGED_IN = "is_not_logged_in";
-    public static String EG_LOGIN_REQUEST_STARTED = "eg_login_request_started";
-    public static String EG_LOGIN_REQUEST_SUCCEED = "eg_login_request_succeed";
-    public static String REQUEST_FAILED_CONNECTION = "request_failed_connection";
-    public static String REQUEST_FAILED_HTTP = "request_failed_http";
-    public static String GET_FAVORITES_REQUEST_STARTED = "get_favorites_request_started";
-    public static String GET_FAVORITES_REQUEST_SUCCEEDED = "get_favorites_request_succeeded";
-    public static String GET_FAVORITES_REQUEST_FAILED_LOADING = "get_favorites_request_failed_loading";
-    public static String NAME_REQUEST_STARTED = "name_request_started";
-    public static String NAME_REQUEST_SUCCEED = "name_request_succeed";
-    public static String PHOTO_REQUEST_STARTED = "photo_request_started";
-    public static String PHOTO_REQUEST_SUCCEED = "photo_request_succeed";
+    public static final String AUTH_REQUEST_STARTED = "auth_request_started";
+    public static final String AUTH_REQUEST_SUCCEED = "auth_request_succeed";
+    public static final String AUTH_WRONG_CREDENTIALS = "auth_wrong_credentials";
+    public static final String NAMESPACE = "http://tempuri.org/";
+    public static final String GOOGL_AUTH_REQUEST_STARTED = "google_auth_request_started";
+    public static final String GOOGL_AUTH_REQUEST_SUCCEED = "google_auth_request_succeed";
+    public static final String GOOGL_AUTH_WRONG_CREDENTIALS = "google_auth_wrong_credentials";
+    public static final String FB_AUTHENTICATION = "facebook_authentication";
+    public static final String GOOGLE_AUTHENTICATION = "google_authentication";
+    public static final String IS_ESPOL_LOGGED_IN = "is_espol_logged_in";
+    public static final String IS_NOT_LOGGED_IN = "is_not_logged_in";
+    public static final String EG_LOGIN_REQUEST_STARTED = "eg_login_request_started";
+    public static final String EG_LOGIN_REQUEST_SUCCEED = "eg_login_request_succeed";
+    public static final String REQUEST_FAILED_CONNECTION = "request_failed_connection";
+    public static final String REQUEST_FAILED_HTTP = "request_failed_http";
+    public static final String GET_FAVORITES_REQUEST_STARTED = "get_favorites_request_started";
+    public static final String GET_FAVORITES_REQUEST_SUCCEEDED = "get_favorites_request_succeeded";
+    public static final String GET_FAVORITES_REQUEST_FAILED_LOADING = "get_favorites_request_failed_loading";
+    public static final String NAME_REQUEST_STARTED = "name_request_started";
+    public static final String NAME_REQUEST_SUCCEED = "name_request_succeed";
+    public static final String PHOTO_REQUEST_STARTED = "photo_request_started";
+    public static final String PHOTO_REQUEST_SUCCEED = "photo_request_succeed";
 
-    private String EG_LOGIN_WS = Constants.getLoginURL();
-    private String FAVORITES_WS = Constants.getFavoritesURL();
+    private final String EG_LOGIN_WS = Constants.getLoginURL();
+    private final String FAVORITES_WS = Constants.getFavoritesURL();
 
-    private LoginActivity activity;
+    private final LoginActivity activity;
 
     public LoginViewModel(LoginActivity activity) {
         this.activity = activity;
@@ -157,18 +149,13 @@ public class LoginViewModel extends Observable {
             // If the user has not previously signed in on this device or the sign-in has expired,
             // this asynchronous branch will attempt to sign in the user silently.  Cross-device
             // single sign-on will occur in this branch.
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(GoogleSignInResult googleSignInResult) {
-                    handleSignInResult(googleSignInResult);
-                }
-            });
+            opr.setResultCallback(this::handleSignInResult);
         }
     }
     private class AuthScreen {
-        Context context;
-        EditText usr;
-        EditText pass;
+        final Context context;
+        final EditText usr;
+        final EditText pass;
 
         public AuthScreen(Context ctx, EditText usr, EditText pass) {
             this.context = ctx;
@@ -265,33 +252,27 @@ public class LoginViewModel extends Observable {
                     data.put(Constants.USERNAME_KEY, username);
                     jsonBody.put(Constants.DATA_KEY, data);
                 }
-                catch (Exception e){ ;
+                catch (Exception ignored){ ;
                 }
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                        EG_LOGIN_WS, jsonBody, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        String accessToken;
-                        try {
-                            if(response.has(Constants.ACCESS_TOKEN_KEY)){
-                                accessToken = response.getString(Constants.ACCESS_TOKEN_KEY);
-                                System.out.println(accessToken);
-                                SessionHelper.saveAccessToken(activity, accessToken);
-                                setChanged();
-                                notifyObservers(EG_LOGIN_REQUEST_SUCCEED);
+                        EG_LOGIN_WS, jsonBody, response -> {
+                            String accessToken;
+                            try {
+                                if(response.has(Constants.ACCESS_TOKEN_KEY)){
+                                    accessToken = response.getString(Constants.ACCESS_TOKEN_KEY);
+                                    System.out.println(accessToken);
+                                    SessionHelper.saveAccessToken(activity, accessToken);
+                                    setChanged();
+                                    notifyObservers(EG_LOGIN_REQUEST_SUCCEED);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d("tag", "Error: " + error.getMessage());
-                        setChanged();
-                        notifyObservers(REQUEST_FAILED_HTTP);
-                    }
-                });
+                        }, error -> {
+                            VolleyLog.d("tag", "Error: " + error.getMessage());
+                            setChanged();
+                            notifyObservers(REQUEST_FAILED_HTTP);
+                        });
                 AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
             }
             return null;
@@ -319,45 +300,39 @@ public class LoginViewModel extends Observable {
                 }
                 else {
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                            FAVORITES_WS, null, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            try{
-                                JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
-                                ArrayList<String> favoritesList = new ArrayList<String>();
-                                if (jsonArray != null) {
-                                    int len = jsonArray.length();
-                                    for (int i=0;i<len;i++){
-                                        favoritesList.add(jsonArray.get(i).toString());
+                            FAVORITES_WS, null, response -> {
+                                try{
+                                    JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
+                                    ArrayList<String> favoritesList = new ArrayList<>();
+                                    if (jsonArray != null) {
+                                        int len = jsonArray.length();
+                                        for (int i=0;i<len;i++){
+                                            favoritesList.add(jsonArray.get(i).toString());
+                                        }
                                     }
+                                    Set<String> favoritesSet = new HashSet<>();
+                                    favoritesSet.addAll(favoritesList);
+                                    SessionHelper.saveFavoritePois(activity, favoritesSet);
+                                    setChanged();
+                                    notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
                                 }
-                                Set<String> favoritesSet = new HashSet<>();
-                                favoritesSet.addAll(favoritesList);
-                                SessionHelper.saveFavoritePois(activity, favoritesSet);
-                                setChanged();
-                                notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
-                            }
-                            catch (Exception e){
-                                setChanged();
-                                notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            System.out.println("======================== ERROR EN RESPONSE ========================");
+                                catch (Exception e){
+                                    setChanged();
+                                    notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
+                                }
+                            }, error -> {
+                                System.out.println("======================== ERROR EN RESPONSE ========================");
 
-                            VolleyLog.d("tag", "Error: " + error.getMessage());
-                            setChanged();
-                            notifyObservers(REQUEST_FAILED_HTTP);
-                        }
-                    }){
+                                VolleyLog.d("tag", "Error: " + error.getMessage());
+                                setChanged();
+                                notifyObservers(REQUEST_FAILED_HTTP);
+                            }){
                         /**
                          * Passing some request headers
                          */
                         @Override
-                        public Map<String, String> getHeaders() throws AuthFailureError {
-                            HashMap<String, String> headers = new HashMap<String, String>();
+                        public Map<String, String> getHeaders() {
+                            HashMap<String, String> headers = new HashMap<>();
                             headers.put(Constants.ACCESS_TOKEN_HEADER_KEY, accessToken);
                             return headers;
                         }

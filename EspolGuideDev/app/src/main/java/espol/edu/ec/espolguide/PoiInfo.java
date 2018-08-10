@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +12,7 @@ import android.widget.Toast;
 import espol.edu.ec.espolguide.viewModels.PoiInfoViewModel;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -31,9 +30,9 @@ public class PoiInfo extends AppCompatActivity implements Observer {
     private int favoritesCount;
     private String description;
     private String codeInfrastructure;
-    private ArrayList<String> alternativeNames = new ArrayList<String>();
-    private ViewHolder viewHolder;
-    private PoiInfoViewModel viewModel;
+    private ArrayList<String> alternativeNames = new ArrayList<>();
+    private final ViewHolder viewHolder;
+    private final PoiInfoViewModel viewModel;
 
     public PoiInfo(String blockName, String academicUnit, String description, String codeInfrastructure,
                    Context ctx, View view){
@@ -51,38 +50,20 @@ public class PoiInfo extends AppCompatActivity implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         String message = (String)arg;
-        if (message == viewModel.POI_INFO_REQUEST_STARTED) {
-
-        }
-        if (message == viewModel.POI_INFO_REQUEST_SUCCEED) {
-
-        }
-        if (message == viewModel.POI_INFO_REQUEST_FAILED_CONNECTION) {
+        if (message.equals(PoiInfoViewModel.POI_INFO_REQUEST_FAILED_CONNECTION)) {
             Activity activityTemp = (Activity) getCtx();
-            activityTemp.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(getCtx(), getResources().getString(R.string.failed_connection_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            activityTemp.runOnUiThread(() -> Toast.makeText(getCtx(), getResources().getString(R.string.failed_connection_msg),
+                    Toast.LENGTH_LONG).show());
         }
-        if (message == viewModel.POI_INFO_REQUEST_FAILED_LOADING) {
+        if (message.equals(PoiInfoViewModel.POI_INFO_REQUEST_FAILED_LOADING)) {
             Activity activityTemp = (Activity) getCtx();
-            activityTemp.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(getCtx(), getResources().getString(R.string.loading_poi_info_error_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            activityTemp.runOnUiThread(() -> Toast.makeText(getCtx(), getResources().getString(R.string.loading_poi_info_error_msg),
+                    Toast.LENGTH_LONG).show());
         }
-        if (message == viewModel.POI_INFO_REQUEST_FAILED_HTTP) {
+        if (message.equals(PoiInfoViewModel.POI_INFO_REQUEST_FAILED_HTTP)) {
             Activity activityTemp = (Activity) getCtx();
-            activityTemp.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(getCtx(), getResources().getString(R.string.http_error_msg),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
+            activityTemp.runOnUiThread(() -> Toast.makeText(getCtx(), getResources().getString(R.string.http_error_msg),
+                    Toast.LENGTH_SHORT).show());
         }
     }
 
@@ -100,23 +81,19 @@ public class PoiInfo extends AppCompatActivity implements Observer {
 
         public void findViews(){
             Activity parentActivity = (Activity) ctx;
-            nameTv = (TextView) parentActivity.findViewById(R.id.name_tv);
-            unityTv = (TextView) parentActivity.findViewById(R.id.unity_tv);
-            //descriptionTv = (TextView) parentActivity.findViewById(R.id.description_tv);
-            photo = (ImageView) parentActivity.findViewById(R.id.flag);
-            poiRoute = (Button) parentActivity.findViewById(R.id.poi_route_btn);
+            nameTv = parentActivity.findViewById(R.id.name_tv);
+            unityTv = parentActivity.findViewById(R.id.unity_tv);
+            photo = parentActivity.findViewById(R.id.flag);
+            poiRoute = parentActivity.findViewById(R.id.poi_route_btn);
         }
 
         public void setPoiRouteListener(){
-            this.poiRoute.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    MapActivity parentActivity = (MapActivity) ctx;
-                    if(parentActivity.getSelectedPoi().trim().length()>0){
-                        parentActivity.getViewHolder().editDestination.setText(parentActivity.getSelectedPoi());
-                        parentActivity.getViewHolder().closePoiInfo();
-                        parentActivity.getViewHolder().drawRoute();
-                    }
+            this.poiRoute.setOnClickListener(v -> {
+                MapActivity parentActivity = (MapActivity) ctx;
+                if(parentActivity.getSelectedPoi().trim().length()>0){
+                    parentActivity.getViewHolder().editDestination.setText(parentActivity.getSelectedPoi());
+                    parentActivity.getViewHolder().closePoiInfo();
+                    parentActivity.getViewHolder().drawRoute();
                 }
             });
         }

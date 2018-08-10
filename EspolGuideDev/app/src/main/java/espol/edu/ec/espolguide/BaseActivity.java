@@ -3,12 +3,7 @@ package espol.edu.ec.espolguide;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
@@ -16,9 +11,9 @@ import android.text.SpannableString;
 import android.text.style.StyleSpan;
 import android.util.Base64;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -47,8 +42,8 @@ public class BaseActivity extends AppCompatActivity implements Observer {
         }
 
         private void findViews(){
-            navigationView = (NavigationView) findViewById(R.id.navigation_view);
-            greetingTxt =(TextView) navigationView.getHeaderView(0).findViewById(R.id.greeting_tv);
+            navigationView = findViewById(R.id.navigation_view);
+            greetingTxt = navigationView.getHeaderView(0).findViewById(R.id.greeting_tv);
             imgView = navigationView.getHeaderView(0).findViewById(R.id.profile_image);
         }
 
@@ -88,63 +83,49 @@ public class BaseActivity extends AppCompatActivity implements Observer {
         this.viewModel.verifyMenuItems();
         //this.handleSelectedOptionUI();
 
-        viewHolder.navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                if(item.isChecked()){
-                    Util.closeDrawer(BaseActivity.this);
-                    return true;
-                }
-                switch (item.getItemId()) {
-                    case R.id.map_op:
-                        showMapLayoutView();
-                        break;
-
-                    case R.id.courses_op:
-                        Intent subjIntent = new Intent(getApplicationContext(), SubjectsActivity.class);
-                        subjIntent.putExtra(Constants.SELECTED_OPTION, R.id.courses_op);
-                        startActivityForResult(subjIntent, Constants.SUBJECTS_REQUEST_CODE);
-                        break;
-
-                    case R.id.favorites_op:
-                        Intent favIntent = new Intent(getApplicationContext(), FavoritesActivity.class);
-                        favIntent.putExtra(Constants.SELECTED_OPTION, R.id.favorites_op);
-                        startActivityForResult(favIntent, Constants.FAVORITES_REQUEST_CODE);
-                        break;
-
-                    case R.id.link_op:
-                        Intent linkIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                        linkIntent.putExtra(Constants.TO_LINK_ACCOUNT, Constants.TO_LINK_ACCOUNT);
-                        linkIntent.putExtra(Constants.SELECTED_OPTION, R.id.link_op);
-                        startActivity(linkIntent);
-                        break;
-
-                    case R.id.logout_op:
-                        SessionHelper.logout(getApplicationContext());
-                        Intent logoutIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                        startActivity(logoutIntent);
-                        finish();
-                        break;
-                }
-                return false;
+        viewHolder.navigationView.setNavigationItemSelectedListener(item -> {
+            if(item.isChecked()){
+                Util.closeDrawer(BaseActivity.this);
+                return true;
             }
-        });
-    }
+            switch (item.getItemId()) {
+                case R.id.map_op:
+                    showMapLayoutView();
+                    break;
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
+                case R.id.courses_op:
+                    Intent subjIntent = new Intent(getApplicationContext(), SubjectsActivity.class);
+                    subjIntent.putExtra(Constants.SELECTED_OPTION, R.id.courses_op);
+                    startActivityForResult(subjIntent, Constants.SUBJECTS_REQUEST_CODE);
+                    break;
+
+                case R.id.favorites_op:
+                    Intent favIntent = new Intent(getApplicationContext(), FavoritesActivity.class);
+                    favIntent.putExtra(Constants.SELECTED_OPTION, R.id.favorites_op);
+                    startActivityForResult(favIntent, Constants.FAVORITES_REQUEST_CODE);
+                    break;
+
+                case R.id.link_op:
+                    Intent linkIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                    linkIntent.putExtra(Constants.TO_LINK_ACCOUNT, Constants.TO_LINK_ACCOUNT);
+                    linkIntent.putExtra(Constants.SELECTED_OPTION, R.id.link_op);
+                    startActivity(linkIntent);
+                    break;
+
+                case R.id.logout_op:
+                    SessionHelper.logout(getApplicationContext());
+                    Intent logoutIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(logoutIntent);
+                    finish();
+                    break;
+            }
+            return false;
+        });
     }
 
     @Override
     public void update(Observable o, Object arg) {
         String message = (String)arg;
-        if (message == viewModel.EXTERNAL_USER_AUTHENTICATED) {
-
-        }
-        if (message == viewModel.ESPOL_USER_AUTHENTICATED) {
-
-        }
     }
 
     public ViewHolder getBaseViewHolder() {
@@ -176,7 +157,7 @@ public class BaseActivity extends AppCompatActivity implements Observer {
 
     public void handleSelectedOptionUI(){
         Bundle bundle = getIntent().getExtras();
-        if(bundle.containsKey(Constants.SELECTED_OPTION)){
+        if(Objects.requireNonNull(bundle).containsKey(Constants.SELECTED_OPTION)){
             unCheckAllItems(viewHolder.navigationView.getMenu());
             int id = -1;
             try{

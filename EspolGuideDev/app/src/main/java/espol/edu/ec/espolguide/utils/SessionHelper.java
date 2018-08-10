@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,10 +22,7 @@ public class SessionHelper {
 
     public static boolean isEspolLoggedIn(Context context){
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        if(sharedPref.contains(ESPOL_USERNAME)){
-            return true;
-        }
-        return false;
+        return sharedPref.contains(ESPOL_USERNAME);
     }
 
     public static void saveEspolSession(Context context, String username){
@@ -48,10 +44,6 @@ public class SessionHelper {
         return sharedPref.getString(ESPOL_USERNAME, "");
     }
 
-    public static void saveEspolClasses(){
-
-    }
-
     public static void saveAccessToken(Context context, String accessToken){
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -61,10 +53,7 @@ public class SessionHelper {
 
     public static boolean hasAccessToken(Context context){
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        if(sharedPref.contains(ACCESS_TOKEN)){
-            return true;
-        }
-        return false;
+        return sharedPref.contains(ACCESS_TOKEN);
     }
 
     public static String getAccessToken(Context context){
@@ -86,18 +75,13 @@ public class SessionHelper {
 
     public static boolean hasFavorites(Context context){
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        if(isEspolLoggedIn(context) && sharedPref.contains(FAVORITES)){
-            return true;
-        }
-        return false;
+        return isEspolLoggedIn(context) && sharedPref.contains(FAVORITES);
     }
 
     public static boolean isFavorite(Context context, String codeGtsi){
         if(isEspolLoggedIn(context) && hasFavorites(context)){
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-            if(sharedPref.getStringSet(FAVORITES, new HashSet<>()).contains(codeGtsi)){
-                return true;
-            }
+            return sharedPref.getStringSet(FAVORITES, new HashSet<>()).contains(codeGtsi);
         }
         return false;
     }

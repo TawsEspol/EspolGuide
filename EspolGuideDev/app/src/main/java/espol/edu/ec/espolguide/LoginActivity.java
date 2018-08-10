@@ -25,6 +25,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import com.mapbox.mapboxsdk.Mapbox;
 
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -58,7 +59,7 @@ public class LoginActivity extends BaseActivity implements Observer {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
+        FrameLayout contentFrameLayout = findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
         getLayoutInflater().inflate(R.layout.start, contentFrameLayout);
 
         this.viewHolder = new ViewHolder(this);
@@ -73,7 +74,7 @@ public class LoginActivity extends BaseActivity implements Observer {
         public Button authBtn;
         public LoginButton fbAuthBtn;
         public SignInButton googlAuthBtn;
-        public Activity activity;
+        public final Activity activity;
         private Activity ctx;
         NavigationView navigationView;
 
@@ -88,7 +89,7 @@ public class LoginActivity extends BaseActivity implements Observer {
 
         public void checkToLinkStatus(){
             Bundle bundle = getIntent().getExtras();
-            if(bundle.containsKey(Constants.TO_LINK_ACCOUNT)){
+            if(Objects.requireNonNull(bundle).containsKey(Constants.TO_LINK_ACCOUNT)){
                 Util.allowSwipeGesture(LoginActivity.this);
                 this.fbAuthBtn.setVisibility(View.INVISIBLE);
             }
@@ -122,30 +123,20 @@ public class LoginActivity extends BaseActivity implements Observer {
         }
 
         private void findViews() {
-            username = (EditText) findViewById(R.id.username);
-            password = (EditText) findViewById(R.id.password);
-            authBtn = (Button) findViewById(R.id.buttonAuth);
-            fbAuthBtn = (LoginButton) findViewById(R.id.fbAuthBtn);
-            googlAuthBtn = (SignInButton) findViewById(R.id.googlAuthbutton);
-            navigationView = (NavigationView) findViewById(R.id.navigation_view);
+            username = findViewById(R.id.username);
+            password = findViewById(R.id.password);
+            authBtn = findViewById(R.id.buttonAuth);
+            fbAuthBtn = findViewById(R.id.fbAuthBtn);
+            googlAuthBtn = findViewById(R.id.googlAuthbutton);
+            navigationView = findViewById(R.id.navigation_view);
         }
 
         private void setAuthButtonListener() {
-            this.authBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    viewModel.auth();
-                }
-            });
+            this.authBtn.setOnClickListener(view -> viewModel.auth());
         }
 
         private void setGoogleAuthButtonListener(){
-            this.googlAuthBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    viewModel.googleAuth(mGoogleSignInClient);
-                }
-            });
+            this.googlAuthBtn.setOnClickListener(view -> viewModel.googleAuth(mGoogleSignInClient));
         }
     }
 
@@ -173,11 +164,11 @@ public class LoginActivity extends BaseActivity implements Observer {
     @Override
     public void update(Observable observable, Object arg) {
         String message = (String)arg;
-        if (message == viewModel.AUTH_REQUEST_STARTED) {
+        if (message.equals(LoginViewModel.AUTH_REQUEST_STARTED)) {
             System.out.println("STARTED");
 
         }
-        else if (message == viewModel.AUTH_REQUEST_SUCCEED) {
+        else if (message.equals(LoginViewModel.AUTH_REQUEST_SUCCEED)) {
             Intent intent = new Intent(this, MapActivity.class);
             this.startActivity(intent);
             String espolUsername = this.getViewHolder().username.getText().toString().trim();
@@ -188,105 +179,53 @@ public class LoginActivity extends BaseActivity implements Observer {
             this.finish();
         }
 
-        else if (message == viewModel.GOOGL_AUTH_REQUEST_SUCCEED) {
+        else if (message.equals(LoginViewModel.GOOGL_AUTH_REQUEST_SUCCEED)) {
             Intent intent = new Intent(this, MapActivity.class);
             this.startActivity(intent);
             this.finish();
         }
 
-        else if (message == viewModel.REQUEST_FAILED_CONNECTION) {
-            LoginActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.failed_connection_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+        else if (message.equals(LoginViewModel.REQUEST_FAILED_CONNECTION)) {
+            LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, getResources().getString(R.string.failed_connection_msg),
+                    Toast.LENGTH_LONG).show());
         }
-        else if (message == viewModel.GOOGL_AUTH_WRONG_CREDENTIALS) {
+        else if (message.equals(LoginViewModel.GOOGL_AUTH_WRONG_CREDENTIALS)) {
             this.viewHolder.username.setText("");
             this.viewHolder.password.setText("");
-            LoginActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.google_wrong_credentials_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, getResources().getString(R.string.google_wrong_credentials_msg),
+                    Toast.LENGTH_LONG).show());
         }
-        else if (message == viewModel.AUTH_WRONG_CREDENTIALS) {
+        else if (message.equals(LoginViewModel.AUTH_WRONG_CREDENTIALS)) {
             this.viewHolder.password.setText("");
-            LoginActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.wrong_credentials_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+            LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, getResources().getString(R.string.wrong_credentials_msg),
+                    Toast.LENGTH_LONG).show());
         }
-        else if (message == viewModel.REQUEST_FAILED_HTTP) {
-            LoginActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.http_error_msg),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
+        else if (message.equals(LoginViewModel.REQUEST_FAILED_HTTP)) {
+            LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, getResources().getString(R.string.http_error_msg),
+                    Toast.LENGTH_SHORT).show());
         }
-        else if (message == viewModel.FB_AUTHENTICATION) {
-            LoginActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.fb_auth),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
+        else if (message.equals(LoginViewModel.FB_AUTHENTICATION)) {
+            LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, getResources().getString(R.string.fb_auth),
+                    Toast.LENGTH_SHORT).show());
         }
-        else if (message == viewModel.GOOGLE_AUTHENTICATION) {
-            LoginActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.google_auth),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
+        else if (message.equals(LoginViewModel.GOOGLE_AUTHENTICATION)) {
+            LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, getResources().getString(R.string.google_auth),
+                    Toast.LENGTH_SHORT).show());
         }
-        else if (message == viewModel.IS_ESPOL_LOGGED_IN) {
+        else if (message.equals(LoginViewModel.IS_ESPOL_LOGGED_IN)) {
             Bundle bundle = getIntent().getExtras();
-            if(!bundle.containsKey(Constants.TO_LINK_ACCOUNT)){
+            if(!Objects.requireNonNull(bundle).containsKey(Constants.TO_LINK_ACCOUNT)){
                 Intent intent = new Intent(this, MapActivity.class);
                 this.startActivity(intent);
                 this.finish();
             }
         }
-        else if (message == viewModel.IS_NOT_LOGGED_IN) {
-
-        }
-        else if (message == viewModel.EG_LOGIN_REQUEST_STARTED) {
-
-        }
-        else if (message == viewModel.EG_LOGIN_REQUEST_SUCCEED) {
-            System.out.println("======================== FUNCIONA EL PATRON ========================");
+        else if (message.equals(LoginViewModel.EG_LOGIN_REQUEST_SUCCEED)) {
             viewModel.makeGetFavoritesRequest();
         }
-        else if (message == viewModel.GET_FAVORITES_REQUEST_STARTED) {
-
-        }
-        else if (message == viewModel.GET_FAVORITES_REQUEST_SUCCEEDED) {
-
-        }
-        else if (message == viewModel.GET_FAVORITES_REQUEST_FAILED_LOADING) {
-            LoginActivity.this.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(LoginActivity.this, getResources().getString(R.string.error_on_loading_favorites),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        else if (message == viewModel.NAME_REQUEST_STARTED) {
-
-        }
-        else if (message == viewModel.NAME_REQUEST_SUCCEED) {
-
-        }else if (message == viewModel.PHOTO_REQUEST_STARTED) {
-
-        }
-        else if (message == viewModel.PHOTO_REQUEST_SUCCEED) {
-
+        else if (message.equals(LoginViewModel.GET_FAVORITES_REQUEST_FAILED_LOADING)) {
+            LoginActivity.this.runOnUiThread(() -> Toast.makeText(LoginActivity.this, getResources().getString(R.string.error_on_loading_favorites),
+                    Toast.LENGTH_SHORT).show());
         }
     }
 }

@@ -1,10 +1,13 @@
 package espol.edu.ec.espolguide.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.Objects;
 
 import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.utils.SessionHelper;
@@ -18,14 +21,14 @@ import espol.edu.ec.espolguide.utils.assync.SubjectsSoapHelper;
 public class ExamsFragment extends Fragment {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.activity_exams, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String username = SessionHelper.getEspolUsername(getView().getContext());
+        String username = SessionHelper.getEspolUsername(Objects.requireNonNull(getView()).getContext());
         User user = new User(getView().getContext(), username, false, getView().findViewById(R.id.exams_container) );
         new SubjectsSoapHelper().execute(user);
     }

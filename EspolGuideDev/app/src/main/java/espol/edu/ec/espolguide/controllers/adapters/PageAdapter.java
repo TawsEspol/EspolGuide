@@ -13,10 +13,10 @@ import espol.edu.ec.espolguide.fragments.LecturesFragment;
  */
 
 public class PageAdapter extends FragmentStatePagerAdapter {
-    int mNumOfTabs;
+    final int mNumOfTabs;
     Context ctx;
-    LecturesFragment lecturesTab;
-    ExamsFragment examsTab;
+    final LecturesFragment lecturesTab;
+    final ExamsFragment examsTab;
 
     public PageAdapter(FragmentManager fm, int NumOfTabs) {
         super(fm);

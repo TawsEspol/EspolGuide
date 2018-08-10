@@ -2,13 +2,8 @@ package espol.edu.ec.espolguide.viewModels;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -19,8 +14,6 @@ import espol.edu.ec.espolguide.PoiInfo;
 import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.utils.Constants;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Observable;
 
 /**
@@ -28,18 +21,18 @@ import java.util.Observable;
  */
 
 public class PoiInfoViewModel extends Observable {
-    public static String POI_INFO_REQUEST_STARTED = "poi_info_request_started";
-    public static String POI_INFO_REQUEST_SUCCEED = "poi_info_request_succeed";
-    public static String POI_INFO_REQUEST_FAILED_CONNECTION = "poi_info_request_failed_connection";
-    public static String POI_INFO_REQUEST_FAILED_HTTP = "poi_info_request_failed_http";
-    public static String POI_INFO_REQUEST_FAILED_LOADING = "poi_info_request_failed_loading";
+    public static final String POI_INFO_REQUEST_STARTED = "poi_info_request_started";
+    public static final String POI_INFO_REQUEST_SUCCEED = "poi_info_request_succeed";
+    public static final String POI_INFO_REQUEST_FAILED_CONNECTION = "poi_info_request_failed_connection";
+    public static final String POI_INFO_REQUEST_FAILED_HTTP = "poi_info_request_failed_http";
+    public static final String POI_INFO_REQUEST_FAILED_LOADING = "poi_info_request_failed_loading";
     public static String POI_PHOTO_REQUEST_STARTED = "poi_photo_request_started";
     public static String POI_PHOTO_REQUEST_SUCCEED = "poi_photo_request_succeed";
     public static String POI_PHOTO_REQUEST_FAILED_CONNECTION = "poi_photo_request_failed_connection";
-    public static String POI_PHOTO_REQUEST_FAILED_HTTP = "poi_photo_request_failed_http";
+    public static final String POI_PHOTO_REQUEST_FAILED_HTTP = "poi_photo_request_failed_http";
     public static String POI_PHOTO_REQUEST_FAILED_LOADING = "poi_photo_request_failed_loading";
 
-    private PoiInfo activity;
+    private final PoiInfo activity;
 
     public PoiInfoViewModel(PoiInfo activity) {
         this.activity = activity;
@@ -77,9 +70,9 @@ public class PoiInfoViewModel extends Observable {
     }
 
     private class PhotoData{
-        Context context;
-        ImageView imgvw;
-        String id;
+        final Context context;
+        final ImageView imgvw;
+        final String id;
 
         public PhotoData(Context ctx, ImageView imgvw, String id) {
             this.context = ctx;
