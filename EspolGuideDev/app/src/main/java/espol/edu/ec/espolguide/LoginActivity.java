@@ -2,8 +2,10 @@ package espol.edu.ec.espolguide;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +16,8 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -25,6 +29,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import com.mapbox.mapboxsdk.Mapbox;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
@@ -104,6 +112,7 @@ public class LoginActivity extends BaseActivity implements Observer {
             fbAuthBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
+                    setFacebookData(loginResult);
                     Intent intent;
                     intent = new Intent(activity, MapActivity.class);
                     activity.startActivity(intent);
@@ -118,6 +127,38 @@ public class LoginActivity extends BaseActivity implements Observer {
                 @Override
                 public void onError(FacebookException e) {
 
+                }
+
+                private void setFacebookData(final LoginResult loginResult) {
+                    GraphRequest request = GraphRequest.newMeRequest(
+                            loginResult.getAccessToken(),
+                            new GraphRequest.GraphJSONObjectCallback() {
+                                @Override
+                                public void onCompleted(JSONObject object, GraphResponse response) {
+                                    try {
+                                        String firstName = response.getJSONObject().getString("name");
+                                        String userID = response.getJSONObject().getString("id");
+                                        String uri_photo = "https://graph.facebook.com/" + userID + "/picture?type=large";
+                                        SessionHelper.saveFbName(getApplicationContext(), firstName);
+                                        SessionHelper.saveFbPhoto(getApplicationContext(), uri_photo);
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                    Thread t = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            GraphResponse gResponse = request.executeAndWait();
+                        }
+                    });
+                    t.start();
+                    try {
+                        t.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
@@ -149,7 +190,7 @@ public class LoginActivity extends BaseActivity implements Observer {
         if (requestCode == Constants.RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach a listener.
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            viewModel.handleSignInResult(result);
+            viewModel.handleSignInResult(result,this.getGoogleApiClient());
         }
     }
 

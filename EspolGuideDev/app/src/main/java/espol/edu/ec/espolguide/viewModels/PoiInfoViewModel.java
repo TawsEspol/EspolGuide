@@ -43,7 +43,7 @@ public class PoiInfoViewModel extends Observable {
         activity.getViewHolder().unityTv.setText(activity.getacAdemicUnit());
         String url = Constants.getBlockPhotoURL() + activity.getCodeInfrastructure();
         ImageView img = activity.getViewHolder().photo;
-        img.setImageResource(R.drawable.nophoto);
+        img.setImageResource(R.drawable.noplace);
         activity.getView().setVisibility(View.VISIBLE);
 
 

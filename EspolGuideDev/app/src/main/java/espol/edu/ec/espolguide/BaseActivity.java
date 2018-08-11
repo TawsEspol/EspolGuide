@@ -13,6 +13,9 @@ import android.util.Base64;
 import android.view.Menu;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.squareup.picasso.Picasso;
+
 import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
@@ -30,6 +33,7 @@ import espol.edu.ec.espolguide.viewModels.BaseViewModel;
 public class BaseActivity extends AppCompatActivity implements Observer {
     private BaseViewModel viewModel;
     private ViewHolder viewHolder;
+    private static GoogleApiClient client;
 
     public class ViewHolder {
         public NavigationView navigationView;
@@ -48,27 +52,59 @@ public class BaseActivity extends AppCompatActivity implements Observer {
         }
 
         private void setUserInfo(){
+            String startGreeting = getResources().getString(R.string.greeting) + ", ";
+            String name  = "";
+            String endGreeting = "!";
             if(SessionHelper.isEspolLoggedIn(BaseActivity.this.getApplicationContext())){
-                String espolName = SessionHelper.getEspolName(BaseActivity.this).trim();
+                name = SessionHelper.getEspolName(BaseActivity.this).trim();
                 String espolPhoto = SessionHelper.getEspolPhoto(BaseActivity.this);
-                String startGreeting = getResources().getString(R.string.greeting) + ", ";
-                String endGreeting = "!";
-                String greeting = startGreeting + espolName + endGreeting;
-                Spannable sb = new SpannableString(greeting);
-
-                final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD); // Span to make text bold
-                sb.setSpan(bss, startGreeting.length(), startGreeting.length() + espolName.length(),
-                        Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                greetingTxt.setText(sb);
-
                 byte[] imageAsBytes = Base64.decode(espolPhoto.getBytes(), Base64.DEFAULT);
                 Bitmap imgBitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
                 imgView.setImageBitmap(imgBitmap);
+            }else{
+                String photo = "";
+                if(SessionHelper.isFacebookLoggedIn(getApplicationContext())){
+                    name = SessionHelper.getFbName(BaseActivity.this).split(" ")[0].trim();
+                    photo = SessionHelper.getFbPhoto(BaseActivity.this);
+                }
+                else {
+                    name = SessionHelper.getGoogleName(getApplicationContext());
+                    photo = SessionHelper.getGooglePhoto(BaseActivity.this);
+                }
+                try {
+                    Picasso.with(getApplicationContext())
+                            .load(photo)
+                            .into(imgView);
+                }catch(Exception e){
+                    imgView.setImageResource(R.drawable.profileblank);
+                }
             }
-            else{
-                String greeting = getResources().getString(R.string.greeting) + "!";
-                greetingTxt.setText(greeting);
-                imgView.setImageResource(R.drawable.nophoto);
+
+            String greeting = startGreeting + name + endGreeting;
+            Spannable sb = new SpannableString(greeting);
+            final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD); // Span to make text bold
+            sb.setSpan(bss, startGreeting.length(), startGreeting.length() + name.length(),
+                    Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+            greetingTxt.setText(sb);
+
+        }
+
+    }
+
+    public static GoogleApiClient getClient() {
+        return client;
+    }
+
+    public static void setClient(GoogleApiClient client) {
+        BaseActivity.client = client;
+    }
+
+    private void GoogleLogout(GoogleApiClient mGoogleSignInClient){
+        if (mGoogleSignInClient != null) {
+            if (mGoogleSignInClient.isConnected()) {
+                com.google.android.gms.auth.api.Auth.GoogleSignInApi.signOut(mGoogleSignInClient);
+                mGoogleSignInClient.disconnect();
+                setClient(null);
             }
         }
     }
@@ -106,6 +142,10 @@ public class BaseActivity extends AppCompatActivity implements Observer {
                     break;
 
                 case R.id.link_op:
+                    if (getClient()!=null){
+                        GoogleLogout(getClient());
+                    }
+                    SessionHelper.fbLogout(getApplicationContext());
                     Intent linkIntent = new Intent(getApplicationContext(), LoginActivity.class);
                     linkIntent.putExtra(Constants.TO_LINK_ACCOUNT, Constants.TO_LINK_ACCOUNT);
                     linkIntent.putExtra(Constants.SELECTED_OPTION, R.id.link_op);
@@ -113,7 +153,12 @@ public class BaseActivity extends AppCompatActivity implements Observer {
                     break;
 
                 case R.id.logout_op:
-                    SessionHelper.logout(getApplicationContext());
+                    if (getClient()!=null){
+                        GoogleLogout(getClient());
+                        SessionHelper.clear(getApplicationContext());
+                    }else{
+                        SessionHelper.logout(getApplicationContext());
+                    }
                     Intent logoutIntent = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(logoutIntent);
                     finish();

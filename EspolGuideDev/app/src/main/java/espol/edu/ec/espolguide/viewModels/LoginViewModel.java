@@ -2,6 +2,7 @@ package espol.edu.ec.espolguide.viewModels;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.widget.EditText;
 
@@ -25,6 +26,7 @@ import java.util.Observable;
 import java.util.Set;
 import java.util.Vector;
 
+import espol.edu.ec.espolguide.BaseActivity;
 import espol.edu.ec.espolguide.LoginActivity;
 import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.controllers.AppController;
@@ -39,6 +41,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 
 /**
  * Created by fabricio on 19/05/18.
@@ -113,16 +116,33 @@ public class LoginViewModel extends Observable {
         }
     }
 
-    public void handleSignInResult(GoogleSignInResult result) {
+    public void handleSignInResult(GoogleSignInResult result, GoogleApiClient googleClient) {
         if (result.isSuccess()) {
+            googleClient.connect();
+            BaseActivity.setClient(googleClient);
             setChanged();
             notifyObservers(GOOGL_AUTH_REQUEST_SUCCEED);
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             //con este account puedes manejar la data.
-            //System.out.println(acct.getEmail());
-            //System.out.println(acct.getIdToken());
-            updateUI();
+            if (acct != null) {
+                String personName = acct.getDisplayName();
+                System.out.println(personName);
+                String personGivenName = acct.getGivenName();
+                SessionHelper.saveGoogleName(activity.getApplicationContext(),personGivenName);
+
+                String personFamilyName = acct.getFamilyName();
+                String personEmail = acct.getEmail();
+                String personId = acct.getId();
+                Uri personPhoto = acct.getPhotoUrl();
+                try {
+                    SessionHelper.saveGooglePhoto(activity.getApplicationContext(), personPhoto.toString());
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                updateUI();
+
+            }
         } else {
             setChanged();
             notifyObservers(GOOGL_AUTH_WRONG_CREDENTIALS);
@@ -144,12 +164,17 @@ public class LoginViewModel extends Observable {
             setChanged();
             notifyObservers(GOOGLE_AUTHENTICATION);
             GoogleSignInResult result = opr.get();
-            handleSignInResult(result);
+            handleSignInResult(result,mGoogleSignInClient);
         } else {
             // If the user has not previously signed in on this device or the sign-in has expired,
             // this asynchronous branch will attempt to sign in the user silently.  Cross-device
             // single sign-on will occur in this branch.
-            opr.setResultCallback(this::handleSignInResult);
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(GoogleSignInResult googleSignInResult) {
+                    handleSignInResult(googleSignInResult,mGoogleSignInClient);
+                }
+            });
         }
     }
     private class AuthScreen {
