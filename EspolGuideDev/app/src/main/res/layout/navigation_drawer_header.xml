@@ -19,7 +19,7 @@
                 android:id="@+id/profile_image"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:src="@drawable/fiec"
+                android:src="@drawable/profileblank"
                 app:civ_border_width="2dp"
                 app:civ_border_color="@color/first"/>
             <TextView

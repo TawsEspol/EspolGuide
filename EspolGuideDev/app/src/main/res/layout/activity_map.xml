@@ -289,7 +289,7 @@
                     android:layout_marginTop="10dip"
                     android:layout_marginBottom="10dip"
                     android:scaleType="fitXY"
-                    android:src="@drawable/nophoto"
+                    android:src="@drawable/noplace"
                     />
             </LinearLayout>
             <LinearLayout
