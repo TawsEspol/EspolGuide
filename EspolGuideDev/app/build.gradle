@@ -10,7 +10,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.example.galo.espolguide"
+        applicationId "espol.edu.ec.espolguide"
         minSdkVersion 15
         targetSdkVersion 27
         versionCode 1
