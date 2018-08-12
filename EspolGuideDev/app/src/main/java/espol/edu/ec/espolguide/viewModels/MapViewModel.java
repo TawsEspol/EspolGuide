@@ -432,6 +432,7 @@ public class MapViewModel extends Observable{
                         String blockName = "";
                         String academicUnit = "";
                         String description = "";
+                        String codeGtsi = "";
                         String codeInfrastructure = "";
                         if (feature.properties() != null && hasEspolAttributes(feature)) {
                             removeMarkers();
@@ -451,16 +452,18 @@ public class MapViewModel extends Observable{
                                 description = feature.getStringProperty(Constants.DESCRIPTION_FIELD).toString();
                             }
                             if (Objects.requireNonNull(feature.properties()).has(Constants.CODE_GTSI_FIELD)) {
-                                String codeGtsi = feature.getStringProperty(Constants.CODE_GTSI_FIELD).toString();
-                                System.out.println("--->" + codeGtsi + "<---");
-                                if (codeGtsi.trim().length() > 0) {
-                                    activity.setSelectedPoi(codeGtsi);
-                                    setSelectedPoiCoords();
-                                    updateFavBtnColor(activity.getSelectedPoi());
-                                } else {
-                                    activity.getViewHolder().poiRoute.setEnabled(false);
-                                    activity.getViewHolder().poiRoute.setClickable(false);
+                                codeGtsi = feature.getStringProperty(Constants.CODE_GTSI_FIELD).toString();
+                            }
+                            if (codeGtsi.trim().length() > 0 || codeInfrastructure.trim().length() > 0) {
+                                if(codeGtsi.trim().length() < 1){
+                                    codeGtsi = " ";
                                 }
+                                if(codeInfrastructure.trim().length() < 1){
+                                    codeInfrastructure = " ";
+                                }
+                                activity.setSelectedPoi(codeGtsi + "|" + codeInfrastructure);
+                                setSelectedPoiCoords();
+                                updateFavBtnColor(activity.getSelectedPoi());
                             } else {
                                 activity.getViewHolder().poiRoute.setEnabled(false);
                                 activity.getViewHolder().poiRoute.setClickable(false);
@@ -485,8 +488,11 @@ public class MapViewModel extends Observable{
             Toast.makeText(activity, activity.getResources().getString(R.string.failed_connection_msg),
                     Toast.LENGTH_LONG).show();
         } else {
+            String[] codes = activity.getSelectedPoi().split("\\|");
+            String codeGtsi = codes[0];
+            String codeInfrastrucure = codes[1];
             JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                    COORDINATES_WS + activity.getSelectedPoi(), null, response -> {
+                    COORDINATES_WS + codeGtsi + "/" + codeInfrastrucure + "/", null, response -> {
                         try {
                             if(response.length() > 0){
                                 double lat = response.getDouble(Constants.LATITUDE_KEY);
@@ -810,7 +816,7 @@ public class MapViewModel extends Observable{
     /**
      * Auxiliary class that handles the map zoom and centering.
      *
-     * This uxiliary class handles the map zoom and centering of an specified POI when requested.
+     * This Auxiliary class handles the map zoom and centering of an specified POI when requested.
      * This class calls a the coordinates web service to obtain a POI's central coordinate.
      *
      * @author Galo Castillo

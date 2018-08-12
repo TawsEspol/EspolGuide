@@ -202,7 +202,6 @@ public class SearchViewAdapter extends BaseAdapter {
                 AppController.getInstance(getmContext()).addToRequestQueue(jsonObjReq);
             }
             else{
-                System.out.println("========= EN EL ELSE FINAL =========");
                 Toast.makeText(getmContext(), mContext.getResources().getString(R.string.loading_poi_info_error_msg),
                         Toast.LENGTH_LONG).show();
             }
