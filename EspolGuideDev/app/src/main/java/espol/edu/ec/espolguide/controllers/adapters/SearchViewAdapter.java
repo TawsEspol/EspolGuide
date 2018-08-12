@@ -48,6 +48,7 @@ public class SearchViewAdapter extends BaseAdapter {
     public class ViewHolder {
         String id;
         String codeGtsi;
+        String codeInfra;
         TextView name;
         TextView alternativeName;
 
@@ -140,15 +141,23 @@ public class SearchViewAdapter extends BaseAdapter {
         holder.id = parts[0];
 
         holder.codeGtsi = parts[3];
+        try{
+            holder.codeInfra = parts[4];
+        }
+        catch (Exception e){
+            holder.codeInfra = " ";
+        }
+
 
         view.setOnClickListener(arg0 -> {
             Util.closeKeyboard(mContext);
             if (!Constants.isNetworkAvailable(getmContext())) {
                 Toast.makeText(getmContext(), mContext.getResources().getString(R.string.failed_connection_msg),
                         Toast.LENGTH_LONG).show();
-            } else if (holder.getCodeGtsi().trim().length() > 0){
+            } else if (holder.getCodeGtsi().trim().length() > 0 ||
+                    holder.codeInfra.trim().length() > 0){
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                        COORDINATES_WS + holder.getCodeGtsi(), null, response -> {
+                        COORDINATES_WS + holder.getCodeGtsi() + "/" + holder.codeInfra + "/", null, response -> {
                     MapActivity mapActivity = (MapActivity) mContext;
                     try {
                         if (response.length() > 0) {
@@ -193,6 +202,7 @@ public class SearchViewAdapter extends BaseAdapter {
                 AppController.getInstance(getmContext()).addToRequestQueue(jsonObjReq);
             }
             else{
+                System.out.println("========= EN EL ELSE FINAL =========");
                 Toast.makeText(getmContext(), mContext.getResources().getString(R.string.loading_poi_info_error_msg),
                         Toast.LENGTH_LONG).show();
             }

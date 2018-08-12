@@ -235,11 +235,9 @@ public class MapViewModel extends Observable{
                                         String blockName = blockInfo.getString(Constants.BLOCKNAME_FIELD);
                                         String type = blockInfo.getString(Constants.TYPE_FIELD);
                                         String codeGtsi = blockInfo.getString(Constants.CODE_GTSI_FIELD);
+                                        String codeInfra = blockInfo.getString(Constants.CODE_INFRA_FIELD);
                                         JSONArray alternativeNames = blockInfo.getJSONArray(Constants.ALTERNATIVE_NAMES_FIELD);
                                         int totalAlternatives = alternativeNames.length();
-                                        if(totalAlternatives < 1){
-                                            continue;
-                                        }
                                         String alternativeString = "";
                                         for (int i = 0; i < totalAlternatives; i++) {
                                             String alternative = (String) alternativeNames.get(i);
@@ -248,8 +246,11 @@ public class MapViewModel extends Observable{
                                         if(codeGtsi.length() < 1){
                                             codeGtsi = " ";
                                         }
-                                        blockString = identifier +
-                                                ";" + blockName + ";" + alternativeString + ";" + codeGtsi;
+                                        if(codeInfra.length() < 1){
+                                            codeInfra = " ";
+                                        }
+                                        blockString = identifier + ";" + blockName + ";" +
+                                                alternativeString + ";" + codeGtsi + ";" + codeInfra;
                                         namesItems.add(blockString);
                                     } catch (JSONException e) {
                                         setChanged();
