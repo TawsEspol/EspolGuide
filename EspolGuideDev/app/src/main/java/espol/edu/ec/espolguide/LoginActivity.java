@@ -73,7 +73,7 @@ public class LoginActivity extends BaseActivity implements Observer {
         this.viewHolder = new ViewHolder(this);
         this.viewModel = new LoginViewModel(this);
         this.viewModel.addObserver(this);
-        this.viewModel.checkSessions();
+        this.viewHolder.checkToLinkStatus();
     }
 
     public class ViewHolder {
@@ -92,7 +92,6 @@ public class LoginActivity extends BaseActivity implements Observer {
             setAuthButtonListener();
             setFbLogin();
             setGoogleAuthButtonListener();
-            checkToLinkStatus();
         }
 
         public void checkToLinkStatus(){
@@ -100,6 +99,9 @@ public class LoginActivity extends BaseActivity implements Observer {
             if(Objects.requireNonNull(bundle).containsKey(Constants.TO_LINK_ACCOUNT)){
                 this.fbAuthBtn.setVisibility(View.GONE);
                 this.googlAuthBtn.setVisibility(View.GONE);
+            }
+            else{
+                viewModel.checkSessions();
             }
             Util.lockSwipeGesture(LoginActivity.this);
         }

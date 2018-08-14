@@ -142,10 +142,6 @@ public class BaseActivity extends AppCompatActivity implements Observer {
                     break;
 
                 case R.id.link_op:
-                    if (getClient()!=null){
-                        GoogleLogout(getClient());
-                    }
-                    SessionHelper.fbLogout(getApplicationContext());
                     Intent linkIntent = new Intent(getApplicationContext(), LoginActivity.class);
                     linkIntent.putExtra(Constants.TO_LINK_ACCOUNT, Constants.TO_LINK_ACCOUNT);
                     linkIntent.putExtra(Constants.SELECTED_OPTION, R.id.link_op);
@@ -159,6 +155,7 @@ public class BaseActivity extends AppCompatActivity implements Observer {
                     }else{
                         SessionHelper.logout(getApplicationContext());
                     }
+                    SessionHelper.fbLogout(getApplicationContext());
                     Intent logoutIntent = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(logoutIntent);
                     finish();
