@@ -24,14 +24,14 @@ public class LecturesFragment extends Fragment implements Observer {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_lectures, container, false);
+        return inflater.inflate(R.layout.activity_subjects_boxes, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String username = SessionHelper.getEspolUsername(Objects.requireNonNull(getView()).getContext());
-        User user = new User(getView().getContext(), username, true, getView().findViewById(R.id.lectures_container) );
+        String username = SessionHelper.getEspolUsername(getView().getContext());
+        User user = new User(getView().getContext(), username, true, getView().findViewById(R.id.subjects_container) );
         new SubjectsSoapHelper().execute(user);
     }
 

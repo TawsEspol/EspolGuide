@@ -7,23 +7,30 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import espol.edu.ec.espolguide.R;
+import espol.edu.ec.espolguide.controllers.adapters.SubjectsAdapter;
 import espol.edu.ec.espolguide.controllers.listeners.ToPoiListener;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SubjectRoom;
 import espol.edu.ec.espolguide.utils.SubjectsSet;
 import espol.edu.ec.espolguide.utils.User;
+import espol.edu.ec.espolguide.utils.Util;
 
 /**
  * Created by fabricio on 14/07/18.
@@ -31,25 +38,25 @@ import espol.edu.ec.espolguide.utils.User;
 public class SubjectsSoapHelper extends AsyncTask<User, Void,HashMap>{
 
     private Context ctx;
-    private LinearLayout layout;
+    private ListView layout;
 
     //Creates a box for containing info about subject (room, place)
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void addSubject(LinearLayout container, HashMap subjectData, String name){
+    private void addSubject(List container, HashMap subjectData, String name){
         LayoutInflater inflater = LayoutInflater.from(ctx);
 
-        LinearLayout subjectBox = (LinearLayout) inflater.inflate(R.layout.subject_box, null, false);
+        LinearLayout subjectBox = (LinearLayout) inflater.inflate(R.layout.subject_box, null);
 
         subjectBox.setOrientation(LinearLayout.VERTICAL);
-        TextView subjectName = new TextView(ctx);
+        TextView subjectName = subjectBox.findViewById(R.id.subjectName);
+        name = Util.toTitleCase(name);
         subjectName.setText(name);
-        subjectName.setTextColor(Color.parseColor(Constants.COLOR_FIRST));
-        subjectBox.addView(subjectName);
         addRooms(subjectBox,subjectData);
 
-        container.addView(subjectBox);
+        container.add(subjectBox);
 
     }
+
 
     //Creates a box for containing info about subject (room, place)
 
@@ -165,10 +172,17 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void,HashMap>{
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     protected void onPostExecute(HashMap data) {
-        for (Object o : data.entrySet()) {
-            Map.Entry e = (Map.Entry) o;
-            addSubject(layout, (HashMap) data.get(e.getKey()), (String) e.getKey());
+        List<LinearLayout> subjects = new ArrayList<>();
+
+
+        Iterator it = data.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry e = (Map.Entry) it.next();
+            addSubject(subjects, (HashMap) data.get(e.getKey()), (String) e.getKey());
         }
+
+        SubjectsAdapter favoriteAdapter = new SubjectsAdapter(ctx, subjects);
+        layout.setAdapter(favoriteAdapter);
     }
 }
 

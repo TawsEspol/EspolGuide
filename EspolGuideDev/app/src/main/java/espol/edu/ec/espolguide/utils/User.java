@@ -2,6 +2,7 @@ package espol.edu.ec.espolguide.utils;
 
 import android.content.Context;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 
 /**
  * Created by fabricio on 14/07/18.
@@ -11,9 +12,9 @@ public class User{
     private final Context context;
     private final String usr;
     private final Boolean type;
-    private final LinearLayout layout;
+    private final ListView layout;
 
-    public User(Context ctx, String usr, Boolean type, LinearLayout layout) {
+    public User(Context ctx, String usr, Boolean type, ListView layout) {
         this.context = ctx;
         this.usr = usr;
         this.type = type;
@@ -33,7 +34,7 @@ public class User{
         return type;
     }
 
-    public LinearLayout getLayout() {
+    public ListView getLayout() {
         return layout;
     }
 }

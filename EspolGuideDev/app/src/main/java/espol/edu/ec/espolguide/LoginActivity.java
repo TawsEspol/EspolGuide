@@ -52,6 +52,7 @@ public class LoginActivity extends BaseActivity implements Observer {
     private CallbackManager callbackManager;
     private GoogleApiClient mGoogleSignInClient;
 
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
