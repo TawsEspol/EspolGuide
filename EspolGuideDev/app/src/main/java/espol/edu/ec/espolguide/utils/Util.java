@@ -157,4 +157,28 @@ public class Util {
         }
         return timeString;
     }
+
+    public static String choseName(String selectedPoi){
+        System.out.println("========= " + selectedPoi + " =============");
+        if(selectedPoi.contains("|")) {
+            System.out.println("========= EN IF =============");
+            String[] codes = selectedPoi.split("\\|");
+            try {
+                String codeGtsi = codes[0].trim();
+                if (codeGtsi.length() > 0) {
+                    return codeGtsi;
+                }
+            } catch (Exception ignored) {
+            }
+            try {
+                String codeInfra = codes[1].trim();
+                if (codeInfra.length() > 0) {
+                    return codeInfra;
+                }
+            } catch (Exception ignored) {
+            }
+            return "";
+        }
+        return selectedPoi;
+    }
 }

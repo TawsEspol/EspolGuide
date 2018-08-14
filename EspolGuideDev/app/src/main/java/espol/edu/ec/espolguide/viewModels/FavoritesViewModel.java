@@ -68,30 +68,40 @@ public class FavoritesViewModel extends Observable {
                 else {
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                             FAVORITES_WS, null, response -> {
-                                try{
-                                    JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
-                                    ArrayList<String> favoritesList = new ArrayList<>();
-                                    if (jsonArray != null) {
-                                        int len = jsonArray.length();
-                                        for (int i=0;i<len;i++){
-                                            favoritesList.add(jsonArray.get(i).toString());
-                                        }
+                        try{
+                            JSONArray codesGtsi = response.getJSONArray(Constants.CODES_GTSI_KEY);                                    JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
+                            JSONArray codesInfra = response.getJSONArray(Constants.CODES_INFRA_KEY);
+                            Set<String> favoritesSet = new HashSet<>();
+                            if (codesGtsi != null && codesInfra != null &&
+                                    codesGtsi.length() == codesInfra.length()) {
+                                int len = codesGtsi.length();
+                                for (int i=0; i<len; i++){
+                                    String favGtsi = " ";
+                                    String favInfra = " ";
+                                    if(codesGtsi.get(i).toString().trim().length() > 0){
+                                        favGtsi = codesGtsi.get(i).toString();
                                     }
-                                    Set<String> favoritesSet = new HashSet<>();
-                                    favoritesSet.addAll(favoritesList);
-                                    SessionHelper.saveFavoritePois(activity, favoritesSet);
-                                    setChanged();
-                                    notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
+                                    if(codesInfra.get(i).toString().trim().length() > 0){
+                                        favInfra = codesInfra.get(i).toString();
+                                    }
+                                    favoritesSet.add(favGtsi + "|" + favInfra);
+                                    System.out.println("======== UN FAVORITO ========");
+                                    System.out.println(favGtsi + "|" + favInfra);
                                 }
-                                catch (Exception e){
-                                    setChanged();
-                                    notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
-                                }
-                            }, error -> {
-                                VolleyLog.d("tag", "Error: " + error.getMessage());
-                                setChanged();
-                                notifyObservers(REQUEST_FAILED_HTTP);
-                            }){
+                            }
+                            SessionHelper.saveFavoritePois(activity, favoritesSet);
+                            setChanged();
+                            notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
+                        }
+                        catch (Exception e){
+                            setChanged();
+                            notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
+                        }
+                    }, error -> {
+                        VolleyLog.d("tag", "Error: " + error.getMessage());
+                        setChanged();
+                        notifyObservers(REQUEST_FAILED_HTTP);
+                    }){
                         /**
                          * Passing some request headers
                          */

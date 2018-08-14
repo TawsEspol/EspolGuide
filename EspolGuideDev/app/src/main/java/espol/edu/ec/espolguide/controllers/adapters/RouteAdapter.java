@@ -15,6 +15,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -39,6 +41,7 @@ public class RouteAdapter extends BaseAdapter {
     public class ViewHolder {
         String id;
         String codeGtsi;
+        String codeInfra;
         TextView name;
         TextView alternativeName;
 
@@ -114,16 +117,29 @@ public class RouteAdapter extends BaseAdapter {
         holder.alternativeName.setText(name2);
         holder.id = parts[0];
         holder.codeGtsi = parts[3];
+        try{
+            holder.codeInfra = parts[4];
+        }
+        catch (Exception e){
+            holder.codeInfra = " ";
+        }
 
         view.setOnClickListener(arg0 -> {
             Util.closeKeyboard(mContext);
             if (!Constants.isNetworkAvailable(getmContext())) {
                 Toast.makeText(getmContext(), mContext.getResources().getString(R.string.failed_connection_msg),
                         Toast.LENGTH_LONG).show();
-            } else if (holder.getCodeGtsi().trim().length() > 0) {
-
-                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                        COORDINATES_WS + holder.getCodeGtsi(), null, response -> {
+            } else if (holder.getCodeGtsi().trim().length() > 0 ||
+                    holder.codeInfra.trim().length() > 0){
+                JSONObject jsonBody = new JSONObject();
+                try{
+                    jsonBody.put(Constants.CODE_GTSI_KEY, holder.codeGtsi);
+                    jsonBody.put(Constants.CODE_INFRA_KEY, holder.codeInfra);
+                }
+                catch (Exception ignored){ ;
+                }
+                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                        COORDINATES_WS, jsonBody, response -> {
                     try {
                         double selectedLat = response.getDouble(Constants.LATITUDE_KEY);
                         double selectedLng = response.getDouble(Constants.LONGITUDE_KEY);

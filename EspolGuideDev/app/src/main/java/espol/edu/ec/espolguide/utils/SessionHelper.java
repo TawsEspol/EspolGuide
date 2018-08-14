@@ -80,10 +80,10 @@ public class SessionHelper {
         return isEspolLoggedIn(context) && sharedPref.contains(FAVORITES);
     }
 
-    public static boolean isFavorite(Context context, String codeGtsi){
+    public static boolean isFavorite(Context context, String selectedPoi){
         if(isEspolLoggedIn(context) && hasFavorites(context)){
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-            return sharedPref.getStringSet(FAVORITES, new HashSet<>()).contains(codeGtsi);
+            return sharedPref.getStringSet(FAVORITES, new HashSet<>()).contains(selectedPoi);
         }
         return false;
     }
