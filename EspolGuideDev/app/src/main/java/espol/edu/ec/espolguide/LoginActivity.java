@@ -206,6 +206,7 @@ public class LoginActivity extends BaseActivity implements Observer {
         }
         else if (message.equals(LoginViewModel.AUTH_REQUEST_SUCCEED)) {
             Intent intent = new Intent(this, MapActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             this.startActivity(intent);
             String espolUsername = this.getViewHolder().username.getText().toString().trim();
             SessionHelper.saveEspolSession(getApplicationContext(), espolUsername);
