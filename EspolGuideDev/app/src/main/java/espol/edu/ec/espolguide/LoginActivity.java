@@ -98,13 +98,10 @@ public class LoginActivity extends BaseActivity implements Observer {
         public void checkToLinkStatus(){
             Bundle bundle = getIntent().getExtras();
             if(Objects.requireNonNull(bundle).containsKey(Constants.TO_LINK_ACCOUNT)){
-                Util.allowSwipeGesture(LoginActivity.this);
                 this.fbAuthBtn.setVisibility(View.GONE);
                 this.googlAuthBtn.setVisibility(View.GONE);
             }
-            else{
-                Util.lockSwipeGesture(LoginActivity.this);
-            }
+            Util.lockSwipeGesture(LoginActivity.this);
         }
 
         private void setFbLogin() {
@@ -184,10 +181,8 @@ public class LoginActivity extends BaseActivity implements Observer {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
-
-        //callbackManager.onActivityResult(requestCode, resultCode, data);
-
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach a listener.
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
@@ -208,7 +203,6 @@ public class LoginActivity extends BaseActivity implements Observer {
         String message = (String)arg;
         if (message.equals(LoginViewModel.AUTH_REQUEST_STARTED)) {
             System.out.println("STARTED");
-
         }
         else if (message.equals(LoginViewModel.AUTH_REQUEST_SUCCEED)) {
             Intent intent = new Intent(this, MapActivity.class);

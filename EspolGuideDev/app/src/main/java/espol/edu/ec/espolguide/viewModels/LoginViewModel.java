@@ -124,7 +124,7 @@ public class LoginViewModel extends Observable {
             notifyObservers(GOOGL_AUTH_REQUEST_SUCCEED);
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            //con este account puedes manejar la data.
+            //Google account data can be managed with 'acct'.
             if (acct != null) {
                 String personName = acct.getDisplayName();
                 String personGivenName = acct.getGivenName();
@@ -139,13 +139,10 @@ public class LoginViewModel extends Observable {
                 }catch(Exception e){
                     e.printStackTrace();
                 }
-                updateUI();
-
             }
         } else {
             setChanged();
             notifyObservers(GOOGL_AUTH_WRONG_CREDENTIALS);
-            // Signed out, show unauthenticated UI.
         }
     }
 
@@ -164,16 +161,6 @@ public class LoginViewModel extends Observable {
             notifyObservers(GOOGLE_AUTHENTICATION);
             GoogleSignInResult result = opr.get();
             handleSignInResult(result,mGoogleSignInClient);
-        } else {
-            // If the user has not previously signed in on this device or the sign-in has expired,
-            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-            // single sign-on will occur in this branch.
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(GoogleSignInResult googleSignInResult) {
-                    handleSignInResult(googleSignInResult,mGoogleSignInClient);
-                }
-            });
         }
     }
     private class AuthScreen {
