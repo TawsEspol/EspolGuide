@@ -99,7 +99,8 @@ public class LoginActivity extends BaseActivity implements Observer {
             Bundle bundle = getIntent().getExtras();
             if(Objects.requireNonNull(bundle).containsKey(Constants.TO_LINK_ACCOUNT)){
                 Util.allowSwipeGesture(LoginActivity.this);
-                this.fbAuthBtn.setVisibility(View.INVISIBLE);
+                this.fbAuthBtn.setVisibility(View.GONE);
+                this.googlAuthBtn.setVisibility(View.GONE);
             }
             else{
                 Util.lockSwipeGesture(LoginActivity.this);
@@ -183,9 +184,9 @@ public class LoginActivity extends BaseActivity implements Observer {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        //super.onActivityResult(requestCode, resultCode, data);
 
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        //callbackManager.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == Constants.RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach a listener.

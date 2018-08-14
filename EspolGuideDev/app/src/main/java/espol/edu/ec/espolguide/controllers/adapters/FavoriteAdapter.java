@@ -15,6 +15,7 @@ import java.util.List;
 import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.utils.Constants;
+import espol.edu.ec.espolguide.utils.Util;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -83,7 +84,7 @@ public class FavoriteAdapter extends BaseAdapter {
             holder = (ViewHolder) view.getTag();
         }
         holder.setCodeGtsi(favoritePlaces.get(position));
-        holder.codeGtsi_tv.setText(holder.getCodeGtsi());
+        holder.codeGtsi_tv.setText(Util.choseName(holder.getCodeGtsi()));
         view.setOnClickListener(v -> goToBuilding(holder.getCodeGtsi()));
         return view;
     }

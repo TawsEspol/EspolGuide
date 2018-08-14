@@ -127,7 +127,6 @@ public class LoginViewModel extends Observable {
             //con este account puedes manejar la data.
             if (acct != null) {
                 String personName = acct.getDisplayName();
-                System.out.println(personName);
                 String personGivenName = acct.getGivenName();
                 SessionHelper.saveGoogleName(activity.getApplicationContext(),personGivenName);
 
@@ -285,7 +284,6 @@ public class LoginViewModel extends Observable {
                             try {
                                 if(response.has(Constants.ACCESS_TOKEN_KEY)){
                                     accessToken = response.getString(Constants.ACCESS_TOKEN_KEY);
-                                    System.out.println(accessToken);
                                     SessionHelper.saveAccessToken(activity, accessToken);
                                     setChanged();
                                     notifyObservers(EG_LOGIN_REQUEST_SUCCEED);
@@ -343,8 +341,6 @@ public class LoginViewModel extends Observable {
                                                 favInfra = codesInfra.get(i).toString();
                                             }
                                             favoritesSet.add(favGtsi + "|" + favInfra);
-                                            System.out.println("======== UN FAVORITO ========");
-                                            System.out.println(favGtsi + "|" + favInfra);
                                         }
                                     }
                                     SessionHelper.saveFavoritePois(activity, favoritesSet);

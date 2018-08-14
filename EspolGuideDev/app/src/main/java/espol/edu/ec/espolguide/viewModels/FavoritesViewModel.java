@@ -85,8 +85,6 @@ public class FavoritesViewModel extends Observable {
                                         favInfra = codesInfra.get(i).toString();
                                     }
                                     favoritesSet.add(favGtsi + "|" + favInfra);
-                                    System.out.println("======== UN FAVORITO ========");
-                                    System.out.println(favGtsi + "|" + favInfra);
                                 }
                             }
                             SessionHelper.saveFavoritePois(activity, favoritesSet);

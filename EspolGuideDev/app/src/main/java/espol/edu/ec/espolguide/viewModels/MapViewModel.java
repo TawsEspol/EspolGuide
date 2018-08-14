@@ -532,11 +532,9 @@ public class MapViewModel extends Observable{
         Integer colorInt;
         if(SessionHelper.isFavorite(activity, selectedPoi)){
             colorInt = ContextCompat.getColor(activity, R.color.fifth);
-            System.out.println("======== NO EN ELSE");
         }
         else{
             colorInt = ContextCompat.getColor(activity, R.color.third);
-            System.out.println("======== EN ELSE");
         }
         ImageViewCompat.setImageTintList(activity.getViewHolder().favBtn, ColorStateList.valueOf(colorInt));
     }
