@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import espol.edu.ec.espolguide.utils.Util;
 import espol.edu.ec.espolguide.viewModels.PoiInfoViewModel;
 
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ public class PoiInfo extends AppCompatActivity implements Observer {
             this.poiRoute.setOnClickListener(v -> {
                 MapActivity parentActivity = (MapActivity) ctx;
                 if(parentActivity.getSelectedPoi().trim().length()>0){
-                    parentActivity.getViewHolder().editDestination.setText(parentActivity.getSelectedPoi());
+                    parentActivity.getViewHolder().editDestination.setText(Util.choseName(parentActivity.getSelectedPoi()));
                     parentActivity.getViewHolder().closePoiInfo();
                     parentActivity.getViewHolder().drawRoute();
                 }

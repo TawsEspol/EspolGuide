@@ -889,8 +889,9 @@ public class MapViewModel extends Observable{
                                 double lon = response.getDouble(Constants.LONGITUDE_KEY);
                                 LatLng point = new LatLng(lat, lon);
                                 activity.setSelectedDestination(point);
-                                activity.getViewHolder().editDestination.setText(selectedPoi);
-                                activity.getViewHolder().editSearch.setText(selectedPoi);
+                                activity.getViewHolder().editDestination.setText(Util.choseName(selectedPoi));
+                                activity.getViewHolder().editSearch.setText(Util.choseName(selectedPoi));
+                                activity.setSelectedPoi(selectedPoi);
                                 activity.getViewHolder().editSearch.clearFocus();
                                 activity.getViewHolder().mapView.getMapAsync(mapboxMap -> {
                                     if (activity.getViewHolder().featureMarker != null) {

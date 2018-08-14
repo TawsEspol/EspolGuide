@@ -311,6 +311,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         }
         if (message.equals(MapViewModel.MAP_CENTERING_REQUEST_SUCCEEDED)) {
             getViewHolder().routeBtn.setVisibility(View.VISIBLE);
+            getViewHolder().editSearch.setVisibility(View.VISIBLE);
         }
         if (message.equals(MapViewModel.ADD_FAVORITES_REQUEST_FAILED_LOADING)) {
             Toast.makeText(this, getResources().getString(R.string.error_on_adding_favorite),
@@ -323,6 +324,11 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         if (message.equals(MapViewModel.REMOVE_FAVORITES_REQUEST_SUCCEEDED)) {
             Toast.makeText(this, getResources().getString(R.string.removed_from_favorites),
                     Toast.LENGTH_SHORT).show();
+        }
+        if (message.equals(MapViewModel.MAP_CENTERING_REQUEST_FAILED_LOADING)) {
+            Toast.makeText(this, getResources().getString(R.string.loading_poi_info_error_msg),
+                    Toast.LENGTH_SHORT).show();
+            showMapLayoutView();
         }
     }
 
