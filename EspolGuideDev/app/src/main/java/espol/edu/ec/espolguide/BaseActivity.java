@@ -99,7 +99,7 @@ public class BaseActivity extends AppCompatActivity implements Observer {
         BaseActivity.client = client;
     }
 
-    private void GoogleLogout(GoogleApiClient mGoogleSignInClient){
+    public void GoogleLogout(GoogleApiClient mGoogleSignInClient){
         if (mGoogleSignInClient != null) {
             if (mGoogleSignInClient.isConnected()) {
                 com.google.android.gms.auth.api.Auth.GoogleSignInApi.signOut(mGoogleSignInClient);
@@ -142,10 +142,6 @@ public class BaseActivity extends AppCompatActivity implements Observer {
                     break;
 
                 case R.id.link_op:
-                    if (getClient()!=null){
-                        GoogleLogout(getClient());
-                    }
-                    SessionHelper.fbLogout(getApplicationContext());
                     Intent linkIntent = new Intent(getApplicationContext(), LoginActivity.class);
                     linkIntent.putExtra(Constants.TO_LINK_ACCOUNT, Constants.TO_LINK_ACCOUNT);
                     linkIntent.putExtra(Constants.SELECTED_OPTION, R.id.link_op);
@@ -156,9 +152,9 @@ public class BaseActivity extends AppCompatActivity implements Observer {
                     if (getClient()!=null){
                         GoogleLogout(getClient());
                         SessionHelper.clear(getApplicationContext());
-                    }else{
-                        SessionHelper.logout(getApplicationContext());
                     }
+                    SessionHelper.logout(getApplicationContext());
+                    SessionHelper.fbLogout();
                     Intent logoutIntent = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(logoutIntent);
                     finish();

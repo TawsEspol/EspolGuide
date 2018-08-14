@@ -22,7 +22,6 @@ public class ToPoiListener implements View.OnClickListener {
 
     public ToPoiListener(String codeGtsi, Context ctx) {
         this.codeGtsi = codeGtsi;
-        System.out.println(codeGtsi);
         this.context = ctx;
     }
 
