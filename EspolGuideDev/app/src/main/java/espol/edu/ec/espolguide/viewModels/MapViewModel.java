@@ -88,6 +88,7 @@ public class MapViewModel extends Observable{
     public static final String ROUTE_REQUEST_FAILED = "route_request_failed";
     public static final String ADD_FAVORITES_REQUEST_STARTED = "add_favorites_request_started";
     public static final String ADD_FAVORITES_REQUEST_SUCCEEDED = "add_favorites_request_succeeded";
+    public static final String REMOVE_FAVORITES_REQUEST_SUCCEEDED = "remove_favorites_request_succeeded";
     public static final String ADD_FAVORITES_REQUEST_FAILED_LOADING = "add_favorites_request_failed_loading";
     public static final String REQUEST_FAILED_HTTP = "request_failed_http";
     public static final String REQUEST_FAILED_CONNECTION = "request_failed_connection";
@@ -445,8 +446,8 @@ public class MapViewModel extends Observable{
                             if (Objects.requireNonNull(feature.properties()).has(Constants.ACADEMIC_UNIT_FIELD)) {
                                 academicUnit = feature.getStringProperty(Constants.ACADEMIC_UNIT_FIELD).toString();
                             }
-                            if (Objects.requireNonNull(feature.properties()).has(Constants.CODE_INFRASTRUCTURE)) {
-                                codeInfrastructure = feature.getStringProperty(Constants.CODE_INFRASTRUCTURE).toString();
+                            if (Objects.requireNonNull(feature.properties()).has(Constants.CODE_INFRA_FIELD)) {
+                                codeInfrastructure = feature.getStringProperty(Constants.CODE_INFRA_FIELD).toString();
                             }
                             if (Objects.requireNonNull(feature.properties()).has(Constants.DESCRIPTION_FIELD)) {
                                 description = feature.getStringProperty(Constants.DESCRIPTION_FIELD).toString();
@@ -491,8 +492,15 @@ public class MapViewModel extends Observable{
             String[] codes = activity.getSelectedPoi().split("\\|");
             String codeGtsi = codes[0];
             String codeInfrastrucure = codes[1];
-            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                    COORDINATES_WS + codeGtsi + "/" + codeInfrastrucure + "/", null, response -> {
+            JSONObject jsonBody = new JSONObject();
+            try{
+                jsonBody.put(Constants.CODE_GTSI_KEY, codeGtsi);
+                jsonBody.put(Constants.CODE_INFRA_KEY, codeInfrastrucure);
+            }
+            catch (Exception ignored){ ;
+            }
+            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                    COORDINATES_WS, jsonBody, response -> {
                         try {
                             if(response.length() > 0){
                                 double lat = response.getDouble(Constants.LATITUDE_KEY);
@@ -520,13 +528,15 @@ public class MapViewModel extends Observable{
         }
     }
 
-    public void updateFavBtnColor(String codeGtsi){
+    public void updateFavBtnColor(String selectedPoi){
         Integer colorInt;
-        if(SessionHelper.isFavorite(activity, codeGtsi)){
+        if(SessionHelper.isFavorite(activity, selectedPoi)){
             colorInt = ContextCompat.getColor(activity, R.color.fifth);
+            System.out.println("======== NO EN ELSE");
         }
         else{
             colorInt = ContextCompat.getColor(activity, R.color.third);
+            System.out.println("======== EN ELSE");
         }
         ImageViewCompat.setImageTintList(activity.getViewHolder().favBtn, ColorStateList.valueOf(colorInt));
     }
@@ -577,7 +587,7 @@ public class MapViewModel extends Observable{
         return (Objects.requireNonNull(feature.properties()).has(Constants.CODE_GTSI_FIELD) ||
                 Objects.requireNonNull(feature.properties()).has(Constants.BLOCKNAME_FIELD) ||
                 Objects.requireNonNull(feature.properties()).has(Constants.ACADEMIC_UNIT_FIELD) ||
-                Objects.requireNonNull(feature.properties()).has(Constants.CODE_INFRASTRUCTURE) ||
+                Objects.requireNonNull(feature.properties()).has(Constants.CODE_INFRA_FIELD) ||
                 Objects.requireNonNull(feature.properties()).has(Constants.DESCRIPTION_FIELD));
     }
 
@@ -700,14 +710,14 @@ public class MapViewModel extends Observable{
      * the POI related to the code passed as argument.
      *
      * @author Galo Castillo
-     * @param codeGtsi The FavoriteUpdater URL request parameter.
+     * @param selectedPoi The FavoriteUpdater URL request parameter.
      * @return The method returns nothing.
      */
-    public void makeUpdateFavoriteRequest(String codeGtsi){
-        if(codeGtsi.trim().length() > 0){
+    public void makeUpdateFavoriteRequest(String selectedPoi){
+        if(selectedPoi.trim().length() > 0){
             setChanged();
             notifyObservers(ADD_FAVORITES_REQUEST_STARTED);
-            new FavoriteUpdater().execute(codeGtsi);
+            new FavoriteUpdater().execute(selectedPoi);
         }
         else{
             setChanged();
@@ -728,7 +738,7 @@ public class MapViewModel extends Observable{
     private class FavoriteUpdater extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... strings) {
-            String codeGtsi = activity.getSelectedPoi();
+            String selectedPoi = strings[0];
             if(!SessionHelper.hasAccessToken(activity)){
                 setChanged();
                 notifyObservers(ADD_FAVORITES_REQUEST_FAILED_LOADING);
@@ -739,8 +749,11 @@ public class MapViewModel extends Observable{
                     notifyObservers(REQUEST_FAILED_CONNECTION);
                 }
                 else {
+                    String[] codes = selectedPoi.split("\\|");
+                    String codeGtsi = codes[0];
+                    String codeInfrastrucure = codes[1];
                     String url;
-                    if(SessionHelper.isFavorite(activity, codeGtsi)){
+                    if(SessionHelper.isFavorite(activity, selectedPoi)){
                         url = Constants.getDeleteFavoriteURL();
                     }
                     else{
@@ -749,6 +762,7 @@ public class MapViewModel extends Observable{
                     JSONObject jsonBody = new JSONObject();
                     try{
                         jsonBody.put(Constants.CODE_GTSI_KEY, codeGtsi);
+                        jsonBody.put(Constants.CODE_INFRA_KEY, codeInfrastrucure);
                     }
                     catch (Exception ignored){ ;
                     }
@@ -756,19 +770,27 @@ public class MapViewModel extends Observable{
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                             url, jsonBody, response -> {
                                 try{
-                                    JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
+                                    JSONArray codesGtsi = response.getJSONArray(Constants.CODES_GTSI_KEY);                                    JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
+                                    JSONArray codesInfra = response.getJSONArray(Constants.CODES_INFRA_KEY);
                                     Set<String> favoritesSet = new HashSet<>();
-                                    if (jsonArray != null) {
-                                        int jsonArrayLen = jsonArray.length();
-                                        for (int i=0; i<jsonArrayLen; i++){
-                                            favoritesSet.add(jsonArray.get(i).toString());
-                                            System.out.println(jsonArray.get(i).toString());
+                                    if (codesGtsi != null && codesInfra != null &&
+                                            codesGtsi.length() == codesInfra.length()) {
+                                        int len = codesGtsi.length();
+                                        for (int i=0; i<len; i++){
+                                            String favGtsi = " ";
+                                            String favInfra = " ";
+                                            if(codesGtsi.get(i).toString().trim().length() > 0){
+                                                favGtsi = codesGtsi.get(i).toString();
+                                            }
+                                            if(codesInfra.get(i).toString().trim().length() > 0){
+                                                favInfra = codesInfra.get(i).toString();
+                                            }
+                                            favoritesSet.add(favGtsi + "|" + favInfra);
                                         }
                                     }
                                     SessionHelper.saveFavoritePois(activity, favoritesSet);
-                                    updateFavBtnColor(codeGtsi);
-                                    setChanged();
-                                    notifyObservers(ADD_FAVORITES_REQUEST_SUCCEEDED);
+                                    updateFavBtnColor(selectedPoi);
+                                    showFavUpdateFeedback(url);
                                 }
                                 catch (Exception e){
                                     setChanged();
@@ -788,12 +810,22 @@ public class MapViewModel extends Observable{
                             headers.put(Constants.ACCESS_TOKEN_HEADER_KEY, accessToken);
                             return headers;
                         }
-
                     };
                     AppController.getInstance(activity).addToRequestQueue(jsonObjReq);
                 }
             }
             return null;
+        }
+
+        public void showFavUpdateFeedback(String url){
+            if(url == Constants.getDeleteFavoriteURL()){
+                setChanged();
+                notifyObservers(REMOVE_FAVORITES_REQUEST_SUCCEEDED);
+            }
+            else{
+                setChanged();
+                notifyObservers(ADD_FAVORITES_REQUEST_SUCCEEDED);
+            }
         }
     }
 
@@ -804,13 +836,13 @@ public class MapViewModel extends Observable{
      * the POI related to the code passed as argument.
      *
      * @author GaloCastillo
-     * @param codeGtsi The MapCentering URL request parameter.
+     * @param selectedPoi The MapCentering URL request parameter.
      * @return The method returns nothing.
      */
-    public void centerMapOnResult(String codeGtsi){
+    public void centerMapOnResult(String selectedPoi){
         setChanged();
         notifyObservers(MAP_CENTERING_REQUEST_STARTED);
-        new MapCentering().execute(codeGtsi);
+        new MapCentering().execute(selectedPoi);
     }
 
     /**
@@ -824,21 +856,41 @@ public class MapViewModel extends Observable{
     private class MapCentering extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... strings) {
-            String codeGtsi = strings[0];
+            String selectedPoi = strings[0];
+            String[] codes = selectedPoi.split("\\|");
+            String codeGtsi = " ";
+            String codeInfra = " ";
+            try{
+                codeGtsi = codes[0].trim();
+            }
+            catch (Exception ignored){
+            }
+            try{
+                codeInfra = codes[1].trim();
+            }
+            catch (Exception ignored){
+            }
             if (!Constants.isNetworkAvailable(activity)) {
                 setChanged();
                 notifyObservers(REQUEST_FAILED_CONNECTION);
             }
-            else {
-                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                        COORDINATES_WS + codeGtsi, null, response -> {
+            else if (codeGtsi.trim().length() > 0 || codeInfra.trim().length() > 0){
+                JSONObject jsonBody = new JSONObject();
+                try{
+                    jsonBody.put(Constants.CODE_GTSI_KEY, codeGtsi);
+                    jsonBody.put(Constants.CODE_INFRA_KEY, codeInfra);
+                }
+                catch (Exception ignored){
+                }
+                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                        COORDINATES_WS, jsonBody, response -> {
                             try {
                                 double lat = response.getDouble(Constants.LATITUDE_KEY);
                                 double lon = response.getDouble(Constants.LONGITUDE_KEY);
                                 LatLng point = new LatLng(lat, lon);
                                 activity.setSelectedDestination(point);
-                                activity.getViewHolder().editDestination.setText(codeGtsi);
-                                activity.getViewHolder().editSearch.setText(codeGtsi);
+                                activity.getViewHolder().editDestination.setText(selectedPoi);
+                                activity.getViewHolder().editSearch.setText(selectedPoi);
                                 activity.getViewHolder().editSearch.clearFocus();
                                 activity.getViewHolder().mapView.getMapAsync(mapboxMap -> {
                                     if (activity.getViewHolder().featureMarker != null) {

@@ -19,6 +19,8 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -147,8 +149,6 @@ public class SearchViewAdapter extends BaseAdapter {
         catch (Exception e){
             holder.codeInfra = " ";
         }
-
-
         view.setOnClickListener(arg0 -> {
             Util.closeKeyboard(mContext);
             if (!Constants.isNetworkAvailable(getmContext())) {
@@ -156,8 +156,15 @@ public class SearchViewAdapter extends BaseAdapter {
                         Toast.LENGTH_LONG).show();
             } else if (holder.getCodeGtsi().trim().length() > 0 ||
                     holder.codeInfra.trim().length() > 0){
-                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                        COORDINATES_WS + holder.getCodeGtsi() + "/" + holder.codeInfra + "/", null, response -> {
+                JSONObject jsonBody = new JSONObject();
+                try{
+                    jsonBody.put(Constants.CODE_GTSI_KEY, holder.codeGtsi);
+                    jsonBody.put(Constants.CODE_INFRA_KEY, holder.codeInfra);
+                }
+                catch (Exception ignored){
+                }
+                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                        COORDINATES_WS, jsonBody, response -> {
                     MapActivity mapActivity = (MapActivity) mContext;
                     try {
                         if (response.length() > 0) {

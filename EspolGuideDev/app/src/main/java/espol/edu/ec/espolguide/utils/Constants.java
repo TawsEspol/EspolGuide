@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class Constants {
 
-    public final static String SERVER_URL = "http://192.168.0.13:8080";
+    public final static String SERVER_URL = "http://espol-guide.espol.edu.ec";
     public final static int CLOSE_ZOOM = 18;
     public final static int FAR_AWAY_ZOOM = 16;
     public final static double ESPOL_CENTRAL_LAT = -2.14630;
@@ -45,7 +45,6 @@ public class Constants {
     public final static String BLOCKNAME_FIELD = "name_espol";
     public final static String ACADEMIC_UNIT_FIELD = "unity";
     public final static String DESCRIPTION_FIELD = "descriptio";
-    public final static String CODE_INFRASTRUCTURE = "code_infra";
 
     public final static int ROUTE_ZOOM_PADDING_LEFT = 80;
     public final static int ROUTE_ZOOM_PADDING_TOP = 350;
@@ -57,7 +56,9 @@ public class Constants {
     public final static String DATA_KEY = "data";
     public final static String USERNAME_KEY = "username";
     public final static String CODES_GTSI_KEY = "codes_gtsi";
+    public final static String CODES_INFRA_KEY = "codes_infra";
     public final static String CODE_GTSI_KEY = "code_gtsi";
+    public final static String CODE_INFRA_KEY = "code_infra";
     public final static String LATITUDE_KEY = "lat";
     public final static String LONGITUDE_KEY = "long";
 

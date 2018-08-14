@@ -36,6 +36,7 @@ public class ToPoiListener implements View.OnClickListener {
     }
 
     public void goToBuilding(String codeGtsi){
+        codeGtsi = codeGtsi + "|" + " ";
         Intent mapIntent = new Intent(this.context, MapActivity.class);
         mapIntent.putExtra(Constants.SELECTED_OPTION, R.id.map_op);
         mapIntent.putExtra(Constants.SELECTED_GTSI_CODE, codeGtsi);

@@ -302,7 +302,7 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         }
         if (message.equals(MapViewModel.ROUTE_REQUEST_FAILED)) {
             MapActivity.this.runOnUiThread(() -> Toast.makeText(MapActivity.this, getResources().getString(R.string.error_on_calculating_route),
-                    Toast.LENGTH_LONG).show());
+                    Toast.LENGTH_SHORT).show());
             showMapLayoutView();
         }
         if (message.equals(MapViewModel.LOCATION_REQUEST_SUCCEEDED_ON_CREATE)) {
@@ -311,6 +311,18 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
         }
         if (message.equals(MapViewModel.MAP_CENTERING_REQUEST_SUCCEEDED)) {
             getViewHolder().routeBtn.setVisibility(View.VISIBLE);
+        }
+        if (message.equals(MapViewModel.ADD_FAVORITES_REQUEST_FAILED_LOADING)) {
+            Toast.makeText(this, getResources().getString(R.string.error_on_adding_favorite),
+                    Toast.LENGTH_SHORT).show();
+        }
+        if (message.equals(MapViewModel.ADD_FAVORITES_REQUEST_SUCCEEDED)) {
+            Toast.makeText(this, getResources().getString(R.string.added_to_favorite),
+                    Toast.LENGTH_SHORT).show();
+        }
+        if (message.equals(MapViewModel.REMOVE_FAVORITES_REQUEST_SUCCEEDED)) {
+            Toast.makeText(this, getResources().getString(R.string.removed_from_favorites),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
