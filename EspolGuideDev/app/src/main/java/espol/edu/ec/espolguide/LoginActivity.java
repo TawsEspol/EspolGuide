@@ -215,6 +215,10 @@ public class LoginActivity extends BaseActivity implements Observer {
             viewModel.makeEgLoginRequest(espolUsername);
             this.viewHolder.username.setText("");
             this.viewHolder.password.setText("");
+            if (getClient()!=null){
+                GoogleLogout(getClient());
+            }
+            SessionHelper.fbLogout();
             this.finish();
         }
 
