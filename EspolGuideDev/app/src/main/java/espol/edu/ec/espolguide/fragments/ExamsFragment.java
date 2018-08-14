@@ -22,14 +22,14 @@ public class ExamsFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_exams, container, false);
+        return inflater.inflate(R.layout.activity_subjects_boxes, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String username = SessionHelper.getEspolUsername(Objects.requireNonNull(getView()).getContext());
-        User user = new User(getView().getContext(), username, false, getView().findViewById(R.id.exams_container) );
+        String username = SessionHelper.getEspolUsername(getView().getContext());
+        User user = new User(getView().getContext(), username, false, getView().findViewById(R.id.subjects_container) );
         new SubjectsSoapHelper().execute(user);
     }
 }
