@@ -54,6 +54,8 @@
     <string name="empty_time">   -   </string>
 
     <string name="getting_your_location">Obtaining your location</string>
-    <string name="day">day</string>
+    <string name="day">day(s)</string>
+    <string name="block">block</string>
+    <string name="room">room</string>
 </resources>
 

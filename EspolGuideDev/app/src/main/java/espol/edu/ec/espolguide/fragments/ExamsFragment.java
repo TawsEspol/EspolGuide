@@ -7,8 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.Objects;
-
 import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.utils.SessionHelper;
 import espol.edu.ec.espolguide.utils.User;
@@ -22,7 +20,7 @@ public class ExamsFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_subjects_boxes, container, false);
+        return inflater.inflate(R.layout.subjects_list, container, false);
     }
 
     @Override
