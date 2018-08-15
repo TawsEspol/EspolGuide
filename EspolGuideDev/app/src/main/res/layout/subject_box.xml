@@ -4,25 +4,37 @@
     android:layout_height="fill_parent"
     android:paddingTop="5dp"
     android:paddingBottom="5dp"
-    android:layout_marginBottom="10dp">
+    android:layout_marginBottom="10dp"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:id="@+id/subjectBox">
+        android:id="@+id/subjectBox"
+        android:background="@drawable/border_subject_box">
 
         <TextView
             android:id="@+id/subjectName"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
+            android:padding="5dp"
             android:layout_alignWithParentIfMissing="true"
             android:gravity="center_horizontal"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:background="@color/first"
-            android:textColor="@color/white"/>
+            android:textColor="@color/first"
+            android:background="@drawable/border_title"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/first"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/subjectRooms"
+            android:orientation="vertical">
+
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

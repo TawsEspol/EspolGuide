@@ -55,4 +55,6 @@
 
     <string name="getting_your_location">Obtendo sua localização</string>
     <string name="day">dia</string>
+    <string name="block">quadra</string>
+    <string name="room">sala</string>
 </resources>
