@@ -4,19 +4,21 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import espol.edu.ec.espolguide.utils.Util;
 import espol.edu.ec.espolguide.viewModels.PoiInfoViewModel;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
 /**
- * Auxiliar class that helps to model and visualize the information of each POI.
+ * Auxiliary class that helps to model and visualize the information of each POI.
  * Created by fabricio on 07/01/18.
  */
 
@@ -29,13 +31,15 @@ public class PoiInfo extends AppCompatActivity implements Observer {
     private int favoritesCount;
     private String description;
     private String codeInfrastructure;
-    private ArrayList<String> alternativeNames = new ArrayList<String>();
-    private PoiInfoViewModel viewModel;
+    private ArrayList<String> alternativeNames = new ArrayList<>();
+    private final ViewHolder viewHolder;
+    private final PoiInfoViewModel viewModel;
 
     public PoiInfo(String blockName, String academicUnit, String description, String codeInfrastructure,
                    Context ctx, View view){
         this.ctx = ctx;
         this.view = view;
+        this.viewHolder = new ViewHolder();
         viewModel = new PoiInfoViewModel(this);
         viewModel.addObserver(this);
         this.name = blockName;
@@ -47,39 +51,57 @@ public class PoiInfo extends AppCompatActivity implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         String message = (String)arg;
-        if (message == viewModel.POI_INFO_REQUEST_STARTED) {
+        if (message.equals(PoiInfoViewModel.POI_INFO_REQUEST_FAILED_CONNECTION)) {
+            Activity activityTemp = (Activity) getCtx();
+            activityTemp.runOnUiThread(() -> Toast.makeText(getCtx(), getResources().getString(R.string.failed_connection_msg),
+                    Toast.LENGTH_LONG).show());
+        }
+        if (message.equals(PoiInfoViewModel.POI_INFO_REQUEST_FAILED_LOADING)) {
+            Activity activityTemp = (Activity) getCtx();
+            activityTemp.runOnUiThread(() -> Toast.makeText(getCtx(), getResources().getString(R.string.loading_poi_info_error_msg),
+                    Toast.LENGTH_LONG).show());
+        }
+        if (message.equals(PoiInfoViewModel.POI_INFO_REQUEST_FAILED_HTTP)) {
+            Activity activityTemp = (Activity) getCtx();
+            activityTemp.runOnUiThread(() -> Toast.makeText(getCtx(), getResources().getString(R.string.http_error_msg),
+                    Toast.LENGTH_SHORT).show());
+        }
+    }
 
-        }
-        if (message == viewModel.POI_INFO_REQUEST_SUCCEED) {
+    public class ViewHolder{
+        public TextView nameTv;
+        public TextView unityTv;
+        public TextView descriptionTv;
+        public ImageView photo;
+        public Button poiRoute;
 
+        public ViewHolder(){
+            findViews();
+            setPoiRouteListener();
         }
-        if (message == viewModel.POI_INFO_REQUEST_FAILED_CONNECTION) {
-            Activity activityTemp = (Activity) getCtx();
-            activityTemp.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(getCtx(), getResources().getString(R.string.failed_connection_msg),
-                            Toast.LENGTH_LONG).show();
+
+        public void findViews(){
+            Activity parentActivity = (Activity) ctx;
+            nameTv = parentActivity.findViewById(R.id.name_tv);
+            unityTv = parentActivity.findViewById(R.id.unity_tv);
+            photo = parentActivity.findViewById(R.id.flag);
+            poiRoute = parentActivity.findViewById(R.id.poi_route_btn);
+        }
+
+        public void setPoiRouteListener(){
+            this.poiRoute.setOnClickListener(v -> {
+                MapActivity parentActivity = (MapActivity) ctx;
+                if(parentActivity.getSelectedPoi().trim().length()>0){
+                    parentActivity.getViewHolder().editDestination.setText(Util.choseName(parentActivity.getSelectedPoi()));
+                    parentActivity.getViewHolder().closePoiInfo();
+                    parentActivity.getViewHolder().drawRoute();
                 }
             });
         }
-        if (message == viewModel.POI_INFO_REQUEST_FAILED_LOADING) {
-            Activity activityTemp = (Activity) getCtx();
-            activityTemp.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(getCtx(), getResources().getString(R.string.loading_poi_info_error_msg),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-        if (message == viewModel.POI_INFO_REQUEST_FAILED_HTTP) {
-            Activity activityTemp = (Activity) getCtx();
-            activityTemp.runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(getCtx(), getResources().getString(R.string.http_error_msg),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
+    }
+
+    public ViewHolder getViewHolder(){
+        return this.viewHolder;
     }
 
     public Context getCtx(){

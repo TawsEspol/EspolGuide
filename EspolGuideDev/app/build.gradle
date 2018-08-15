@@ -10,11 +10,11 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.example.galo.espolguide"
+        applicationId "espol.edu.ec.espolguide"
         minSdkVersion 15
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "4.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
@@ -73,5 +73,14 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
     implementation "com.google.android.gms:play-services-location:15.0.1"
+
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+
+    // Required -- JUnit 4 framework
+    testImplementation 'junit:junit:4.12'
+    // Optional -- Mockito framework
+    testImplementation 'org.mockito:mockito-core:1.10.19'
+
+
 
 }

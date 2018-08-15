@@ -8,27 +8,37 @@
     <string name="password">Senha</string>
     <string name="login">Entrar</string>
 
+    <string name="name">Nome</string>
+    <string name="unity">Unidade</string>
+    <string name="description">Descrição</string>
+
     <string name="failed_connection_msg">Ligação à Internet não disponível</string>
     <string name="http_error_msg">Erro do servidor</string>
-    <string name="loading_pois_names_error_msg">Erro ao carregar nomes de lugares...</string>
-    <string name="loading_poi_info_error_msg">Erro ao carregar informações do local...</string>
-    <string name="wrong_credentials_msg">Credenciais erradas inseridas...</string>
-    <string name="error_on_getting_location">Erro ao obter sua localização...</string>
-    <string name="error_on_calculating_route">Erro calculando ruta...</string>
+    <string name="loading_pois_names_error_msg">Erro ao carregar nomes de lugares</string>
+    <string name="loading_poi_info_error_msg">Erro ao carregar informações do local</string>
+    <string name="wrong_credentials_msg">Credenciais erradas inseridas</string>
+    <string name="error_on_getting_location">Erro ao obter sua localização</string>
+    <string name="error_on_calculating_route">Erro calculando ruta</string>
+    <string name="error_on_loading_favorites">Erro ao carregar lugares favoritos</string>
+    <string name="error_on_adding_favorite">Error ao remover o favorito</string>
+    <string name="added_to_favorite">Adicionado aos lugares favoritos</string>
+    <string name="removed_from_favorites">Removido aos lugares favoritos</string>
 
-    <string name="google_wrong_credentials_msg">Credenciais Google erradas...</string>
+    <string name="google_wrong_credentials_msg">Credenciais Google erradas</string>
     <string name="google_auth">Autenticado com Google</string>
 
     <string name="your_location">Sua localização</string>
     <string name="search_origin">Procurar uma origem</string>
     <string name="search_destination">Procurar um destino</string>
+    <string name="draw_route">Ver\nRota</string>
+    <string name="draw_route_poi">Ver rota</string>
 
     <string name="greeting">Ola</string>
 
     <string name="map_menu_op">Mapa do Campus</string>
     <string name="events_menu_op">Eventos</string>
     <string name="courses_menu_op">Meus Materias</string>
-    <string name="favorites_menu_op">Meus Lugares Favoritos</string>
+    <string name="favorites_menu_op">Meus Favoritos</string>
     <string name="link_menu_op">Link Conta ESPOL</string>
     <string name="logout_menu_op">Sair</string>
 
@@ -36,4 +46,15 @@
     <string name="fb_login_protocol_scheme"></string>
     <string name="fb_auth">Autenticado com Facebook</string>
 
+    <string name="lectures">Classes</string>
+    <string name="exams">Exames</string>
+
+    <string name="hour_unit">h</string>
+    <string name="minute_unit">min</string>
+    <string name="empty_time">   -   </string>
+
+    <string name="getting_your_location">Obtendo sua localização</string>
+    <string name="day">dia</string>
+    <string name="block">quadra</string>
+    <string name="room">sala</string>
 </resources>

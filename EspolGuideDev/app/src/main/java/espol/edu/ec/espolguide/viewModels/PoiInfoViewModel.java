@@ -1,88 +1,78 @@
 package espol.edu.ec.espolguide.viewModels;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.provider.ContactsContract;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import espol.edu.ec.espolguide.PoiInfo;
 import espol.edu.ec.espolguide.R;
-import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
-import espol.edu.ec.espolguide.utils.Util;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Observable;
 
-import static espol.edu.ec.espolguide.utils.Constants.getBlockInfoURL;
-import static espol.edu.ec.espolguide.utils.Constants.isNetworkAvailable;
+/**
+ * Created by galo on 14/04/18.
+ */
 
 public class PoiInfoViewModel extends Observable {
-    public static String POI_INFO_REQUEST_STARTED = "poi_info_request_started";
-    public static String POI_INFO_REQUEST_SUCCEED = "poi_info_request_succeed";
-    public static String POI_INFO_REQUEST_FAILED_CONNECTION = "poi_info_request_failed_connection";
-    public static String POI_INFO_REQUEST_FAILED_HTTP = "poi_info_request_failed_http";
-    public static String POI_INFO_REQUEST_FAILED_LOADING = "poi_info_request_failed_loading";
+    public static final String POI_INFO_REQUEST_STARTED = "poi_info_request_started";
+    public static final String POI_INFO_REQUEST_SUCCEED = "poi_info_request_succeed";
+    public static final String POI_INFO_REQUEST_FAILED_CONNECTION = "poi_info_request_failed_connection";
+    public static final String POI_INFO_REQUEST_FAILED_HTTP = "poi_info_request_failed_http";
+    public static final String POI_INFO_REQUEST_FAILED_LOADING = "poi_info_request_failed_loading";
     public static String POI_PHOTO_REQUEST_STARTED = "poi_photo_request_started";
     public static String POI_PHOTO_REQUEST_SUCCEED = "poi_photo_request_succeed";
     public static String POI_PHOTO_REQUEST_FAILED_CONNECTION = "poi_photo_request_failed_connection";
-    public static String POI_PHOTO_REQUEST_FAILED_HTTP = "poi_photo_request_failed_http";
+    public static final String POI_PHOTO_REQUEST_FAILED_HTTP = "poi_photo_request_failed_http";
     public static String POI_PHOTO_REQUEST_FAILED_LOADING = "poi_photo_request_failed_loading";
 
-    private PoiInfo activity;
+    private final PoiInfo activity;
 
     public PoiInfoViewModel(PoiInfo activity) {
         this.activity = activity;
     }
 
-    private Drawable LoadImage(String url)  {
-        try {
-            InputStream is = (InputStream) new URL(url).getContent();
-            Drawable d = Drawable.createFromStream(is, "photoBlock");
-            return d;
-        } catch (Exception e) {
-            setChanged();
-            notifyObservers(POI_PHOTO_REQUEST_FAILED_HTTP);
-            return null;
-        }
-    }
-
     public void show() {
-        ViewGroup nextChild = (ViewGroup) ((ViewGroup)activity.getView()).getChildAt(0);
-        ViewGroup linear = (ViewGroup) ((ViewGroup)activity.getView()).getChildAt(1);
-        ImageView imageView = (ImageView) nextChild.getChildAt(1);
-        TextView name = (TextView) ((ViewGroup)linear.getChildAt(0)).getChildAt(0);
-        name.setText(activity.getName());
-        TextView academicUnit = (TextView) ((ViewGroup)linear.getChildAt(1)).getChildAt(0);
-        academicUnit.setText(activity.getacAdemicUnit());
-        TextView description = (TextView) ((ViewGroup)linear.getChildAt(2)).getChildAt(0);
-        description.setText(activity.getDescription());
-        new Counter().execute(new PhotoData(activity.getCtx(),imageView, activity.getCodeInfrastructure()));
+        activity.getViewHolder().nameTv.setText(activity.getName());
+        activity.getViewHolder().unityTv.setText(activity.getacAdemicUnit());
+        String url = Constants.getBlockPhotoURL() + activity.getCodeInfrastructure();
+        ImageView img = activity.getViewHolder().photo;
+        img.setImageResource(R.drawable.noplace);
         activity.getView().setVisibility(View.VISIBLE);
+
+
+        Picasso.with(activity.getCtx()).load(url).into(new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                img.setImageDrawable(new BitmapDrawable(bitmap));
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+                setChanged();
+                notifyObservers(POI_PHOTO_REQUEST_FAILED_HTTP);
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                //Log.(TAG, "Getting ready to get the image");
+                //Here you should place a loading gif in the ImageView to
+                //while image is being obtained.
+            }
+        });
+
     }
 
     private class PhotoData{
-        Context context;
-        ImageView imgvw;
-        String id;
+        final Context context;
+        final ImageView imgvw;
+        final String id;
 
         public PhotoData(Context ctx, ImageView imgvw, String id) {
             this.context = ctx;
@@ -92,33 +82,6 @@ public class PoiInfoViewModel extends Observable {
     }
 
 
-    private class Counter extends AsyncTask<PhotoData, Void, Drawable> {
-        Context context;
-        ImageView iv;
-        String identifier;
-        @Override
-        protected Drawable doInBackground(PhotoData... datas) {
-            context = datas[0].context;
-            identifier = datas[0].id;
-            iv = datas[0].imgvw;
-            Drawable d;
-            if (!Constants.isNetworkAvailable(context)) {
-                d = null;
-                setChanged();
-                notifyObservers(POI_PHOTO_REQUEST_FAILED_CONNECTION);
-            }
-            else {
-                d = LoadImage(Constants.getBlockPhoto()+ identifier);
-            }
-            return d;
-        }
-
-        @Override
-        protected void onPostExecute(Drawable d) {
-            super.onPostExecute(d);
-            iv.setImageDrawable(d);
-        }
-    }
 
 }
 
