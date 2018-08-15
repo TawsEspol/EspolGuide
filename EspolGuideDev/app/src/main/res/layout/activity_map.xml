@@ -21,7 +21,7 @@
                 android:layout_height="match_parent"
                 mapbox:mapbox_cameraTargetLat="-2.14630"
                 mapbox:mapbox_cameraTargetLng="-79.96575"
-                mapbox:mapbox_styleUrl="mapbox://styles/mguarand/cjgty8tqc000n2ss2p69lu0re"
+                mapbox:mapbox_styleUrl="mapbox://styles/mguarand/cjkqa9hf100922rn4b15tlahg"
                 mapbox:mapbox_cameraZoom="16" />
             />
         </LinearLayout>
@@ -85,12 +85,11 @@
                                 android:background="@drawable/shape_searchview_poi"
                                 android:textSize="14dp"
                                 android:hint="@string/search_origin"
-                                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789ÁÉÍÓÚáéíóú "
                                 android:paddingTop="5dp"
                                 android:paddingLeft="15dp"
                                 android:paddingBottom="5dp"
-                                style="@style/input_barra_pois"
-                                >
+                                style="@style/input_barra_pois">
                                 <requestFocus />
                             </EditText>
                             <ListView
@@ -115,7 +114,7 @@
                                 android:background="@drawable/shape_searchview_poi"
                                 android:textSize="14dp"
                                 android:hint="@string/search_destination"
-                                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789ÁÉÍÓÚáéíóú "
                                 android:paddingTop="5dp"
                                 android:paddingLeft="15dp"
                                 android:paddingBottom="5dp"
@@ -136,7 +135,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="10dp">
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center_vertical">
                     <LinearLayout
                         android:id="@+id/walk_button_box"
                         android:layout_width="wrap_content"
@@ -150,8 +150,8 @@
                         >
                         <ImageButton
                             android:id="@+id/walk_button"
-                            android:layout_width="40dp"
-                            android:layout_height="45dp"
+                            android:layout_width="30dp"
+                            android:layout_height="35dp"
                             android:src="@drawable/ic_walk_icon"
                             android:tint="@color/white"
                             android:background="@android:color/transparent"/>
@@ -164,16 +164,43 @@
                         android:orientation="horizontal"
                         android:paddingLeft="15dp"
                         android:paddingRight="15dp"
-                        android:layout_marginRight="5dp"
+                        android:layout_marginLeft="10dp"
                         android:background="@drawable/login_button"
                         >
                         <ImageButton
                             android:id="@+id/car_button"
-                            android:layout_width="40dp"
-                            android:layout_height="45dp"
+                            android:layout_width="30dp"
+                            android:layout_height="35dp"
                             android:src="@drawable/ic_car_icon"
                             android:tint="@color/white"
                             android:background="@android:color/transparent"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/time_box"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@android:color/transparent"
+                        android:gravity="right"
+                        >
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_time"
+                            android:tint="@color/white"
+                            android:background="@android:color/transparent"
+                            />
+                        <TextView
+                            android:id="@+id/time_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            android:text="@string/empty_time"/>
                     </LinearLayout>
 
                 </LinearLayout>
@@ -187,7 +214,7 @@
             <EditText
                 android:id="@+id/search_destiny"
                 style="@style/input_barra_pois"
-                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789ÁÉÍÓÚáéíóú "
                 >
                 <requestFocus />
             </EditText>
@@ -211,52 +238,50 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/login_button"
-                android:text="Ver\nRuta"
+                android:text="@string/draw_route"
                 android:textColor="#ffffff"
                 android:textAllCaps="false"
                 android:textSize="16dp"
                 android:visibility="gone"
                 />
         </LinearLayout>
-        <!--Layout de fondo de información del POI-->
+
+        <!--POI's information view's background-->
         <LinearLayout
             android:id="@+id/overlay"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginBottom="30dip"
-            android:layout_marginLeft="20dip"
-            android:layout_marginRight="20dip"
-            android:layout_marginTop="40dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dip"
+            android:layout_marginRight="25dip"
+            android:layout_marginTop="85dip"
             android:orientation="vertical"
             android:background="@color/second"
             android:visibility="gone">
-
-            <!--Layout de información del POI-->
             <LinearLayout
                 android:id="@+id/overlayinside"
                 android:layout_width="fill_parent"
-                android:layout_height="310dp"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dip"
                 android:clickable="true"
                 android:orientation="vertical"
-                android:background="#ffffff"
+                android:background="@color/white"
                 >
                 <Button
                     android:id="@+id/close_poi_info_button"
                     android:layout_width="30dip"
                     android:layout_height="25dip"
                     android:layout_gravity="right"
-                    android:layout_margin="3dip"
+                    android:layout_margin="4dip"
                     android:layout_alignParentRight="true"
                     android:background="@drawable/close_poi_round_button"
                     android:text="X"
-                    android:textColor="#ffffff"
+                    android:textColor="@color/white"
                     android:textSize="16dip"
                     />
                 <ImageView
                     android:id="@+id/flag"
                     android:layout_width="fill_parent"
-                    android:layout_height="250dip"
+                    android:layout_height="190dip"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentRight="true"
                     android:layout_marginLeft="10dip"
@@ -264,75 +289,72 @@
                     android:layout_marginTop="10dip"
                     android:layout_marginBottom="10dip"
                     android:scaleType="fitXY"
+                    android:src="@drawable/noplace"
                     />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="5dp"
+                android:background="@android:color/white">
                 <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_margin="5dp"
-                    android:background="@android:color/white">
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <TextView
-                            android:id="@+id/name_poi"
-                            style="@style/data"
+                    android:layout_marginLeft="10dp">
+                    <TextView
+                        android:id="@+id/name_tv"
+                        style="@style/summarized_data"
+                        android:textStyle="bold"
+                        />
+                    <TextView
+                        android:id="@+id/unity_tv"
+                        style="@style/summarized_data"
+                        />
+                </LinearLayout>
+                <RelativeLayout
+                    android:id="@+id/actionBtns"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="12dp"
+                    >
+                        <Button
+                            android:id="@+id/poi_route_btn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/login_button"
+                            android:text="@string/draw_route_poi"
+                            android:textColor="#ffffff"
+                            android:textAllCaps="false"
+                            android:textSize="14dp"
+                            android:layout_alignParentLeft="true"
                             />
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginLeft="70dp"
-                            android:layout_marginRight="70dp"
-                            android:background="@color/third"/>
-                        <TextView
-                            android:text="nombre"
-                            style="@style/property"
+                        <ImageButton
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:id="@+id/favoriteBtn"
+                            android:src="@drawable/ic_star"
+                            android:tint="@color/third"
+                            android:layout_marginRight="10dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignBottom="@id/poi_route_btn"
+                            android:backgroundTint="@android:color/transparent"
                             />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="10dp"
+                    >
 
-                        <TextView
-                            android:id="@+id/unidad"
-                            style="@style/data"
-                            />
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginLeft="70dp"
-                            android:layout_marginRight="70dp"
-                            android:background="@color/third"/>
-                        <TextView
-                            android:text="unidad"
-                            style="@style/property"
-                            />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/descripcion"
-                            style="@style/data"
-                            />
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginLeft="70dp"
-                            android:layout_marginRight="70dp"
-                            android:background="@color/third"/>
-                        <TextView
-                            android:text="descripcion"
-                            style="@style/property"
-                            />
-                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+        </LinearLayout>
     </FrameLayout>
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:mapbox="http://schemas.android.com/apk/res-auto"
@@ -349,7 +371,7 @@
             <EditText
                 android:id="@+id/search_routes"
                 style="@style/input_barra_pois"
-                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789 "
+                android:digits="QWERTYUIOPASDFGHJKLÑZXCVBNMqwertyuiopasdfghjklñzxcvbnm-0123456789ÁÉÍÓÚáéíóú "
                 >
                 <requestFocus />
             </EditText>
@@ -370,4 +392,8 @@
         android:src="@drawable/ic_drawer"
         android:backgroundTint="@android:color/transparent"
         android:tint="@color/first" />
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent" />
 </FrameLayout>
