@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -24,7 +23,7 @@ public class LecturesFragment extends Fragment implements Observer {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_subjects_boxes, container, false);
+        return inflater.inflate(R.layout.subjects_list, container, false);
     }
 
     @Override

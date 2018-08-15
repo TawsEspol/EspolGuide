@@ -1,7 +1,6 @@
 package espol.edu.ec.espolguide.utils.assync;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -10,13 +9,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.apache.commons.lang3.text.WordUtils;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,7 +26,6 @@ import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.adapters.SubjectsAdapter;
 import espol.edu.ec.espolguide.controllers.listeners.ToPoiListener;
 import espol.edu.ec.espolguide.utils.Constants;
-import espol.edu.ec.espolguide.utils.SubjectRoom;
 import espol.edu.ec.espolguide.utils.SubjectsSet;
 import espol.edu.ec.espolguide.utils.User;
 import espol.edu.ec.espolguide.utils.Util;
@@ -39,13 +37,17 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void,HashMap>{
 
     private Context ctx;
     private ListView layout;
+    private LayoutInflater inflater;
 
     //Creates a box for containing info about subject (room, place)
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void addSubject(List container, HashMap subjectData, String name){
-        LayoutInflater inflater = LayoutInflater.from(ctx);
+
+
+
 
         LinearLayout subjectBox = (LinearLayout) inflater.inflate(R.layout.subject_box, null);
+        ctx = subjectBox.getContext();
 
         subjectBox.setOrientation(LinearLayout.VERTICAL);
         TextView subjectName = subjectBox.findViewById(R.id.subjectName);
@@ -62,21 +64,44 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void,HashMap>{
 
     private void addRooms(LinearLayout subjectBox, HashMap rooms) {
         for (Object o : rooms.entrySet()) {
+            LinearLayout roomContainer = subjectBox.findViewById(R.id.subjectRooms);
+            LinearLayout roomBox = (LinearLayout) inflater.inflate(R.layout.room_box, null);
+
             Map.Entry e = (Map.Entry) o;
-            SubjectRoom subjectRoom;
+
+            String date = e.getValue().toString();
+            String place = (String) e.getKey();
+
+            ArrayList placeInfo = new ArrayList<>();
+            placeInfo.addAll(Arrays.asList(place.split("\\|")));
+            roomBox.setClickable(true);
+            roomBox.setOnClickListener(new ToPoiListener(((String)placeInfo.get(1)).trim(), ctx));
+            String[] labels = {ctx.getString(R.string.room),ctx.getString(R.string.block),ctx.getString(R.string.day)};
+            placeInfo.add(date);
+
+            TextView block = roomBox.findViewById(R.id.block);
+            TextView block_value = roomBox.findViewById(R.id.block_value);
+            block.setText(labels[0]);
+            block_value.setText((String)placeInfo.get(0));
+
+
+            TextView room = roomBox.findViewById(R.id.room);
+            TextView room_value = roomBox.findViewById(R.id.room_value);
+            room.setText(labels[1]);
             try {
-                subjectRoom = new SubjectRoom(ctx, (e.getValue()).toString(), (String) e.getKey());
-            } catch (Exception a) {
-                subjectRoom = new SubjectRoom(ctx, (String) e.getValue(), (String) e.getKey());
+                room_value.setText(((String) placeInfo.get(1)).split("BLOQUE")[1].trim());
+            }catch(Exception a){
+                room_value.setText(((String) placeInfo.get(1)).trim());
             }
-            subjectRoom.setBackgroundColor(Color.parseColor(Constants.COLOR_FOURTH));
 
-            String[] placeInfo = ((String) e.getKey()).split("\\|");
+            TextView day = roomBox.findViewById(R.id.day);
+            TextView day_value = roomBox.findViewById(R.id.day_value);
+            day.setText(labels[2]);
+            day_value.setText((String)placeInfo.get(2));
 
-            subjectRoom.setOnClickListener(new ToPoiListener(placeInfo[1].trim(), ctx));
-            subjectRoom.setTextColor(Color.parseColor(Constants.COLOR_SECOND));
-            subjectRoom.setText(subjectRoom.toString());
-            subjectBox.addView(subjectRoom);
+            roomContainer.addView(roomBox);
+
+
         }
     }
     @Override
@@ -84,6 +109,7 @@ public class SubjectsSoapHelper extends AsyncTask<User, Void,HashMap>{
         HashMap<String,HashMap> subjectsMap = new HashMap<>();
         ctx = data[0].getContext();
         layout = data[0].getLayout();
+        inflater = LayoutInflater.from(ctx);
 
         if (!Constants.isNetworkAvailable(ctx)) {
         } else {
