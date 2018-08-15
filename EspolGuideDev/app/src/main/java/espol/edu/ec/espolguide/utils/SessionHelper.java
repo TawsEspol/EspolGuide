@@ -12,6 +12,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.util.HashSet;
 import java.util.Set;
 
+import static espol.edu.ec.espolguide.BaseActivity.setClient;
+
 /**
  * Created by galo on 13/06/18.
  */
@@ -80,10 +82,10 @@ public class SessionHelper {
         return isEspolLoggedIn(context) && sharedPref.contains(FAVORITES);
     }
 
-    public static boolean isFavorite(Context context, String codeGtsi){
+    public static boolean isFavorite(Context context, String selectedPoi){
         if(isEspolLoggedIn(context) && hasFavorites(context)){
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-            return sharedPref.getStringSet(FAVORITES, new HashSet<>()).contains(codeGtsi);
+            return sharedPref.getStringSet(FAVORITES, new HashSet<>()).contains(selectedPoi);
         }
         return false;
     }
@@ -188,9 +190,7 @@ public class SessionHelper {
         editor.commit();
     }
 
-    public static void fbLogout(Context context){
+    public static void fbLogout(){
         LoginManager.getInstance().logOut();
-        clear(context);
     }
-
 }

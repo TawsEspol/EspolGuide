@@ -52,6 +52,7 @@ public class LoginActivity extends BaseActivity implements Observer {
     private CallbackManager callbackManager;
     private GoogleApiClient mGoogleSignInClient;
 
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +74,7 @@ public class LoginActivity extends BaseActivity implements Observer {
         this.viewHolder = new ViewHolder(this);
         this.viewModel = new LoginViewModel(this);
         this.viewModel.addObserver(this);
-        this.viewModel.checkSessions();
+        this.viewHolder.checkToLinkStatus();
     }
 
     public class ViewHolder {
@@ -92,18 +93,18 @@ public class LoginActivity extends BaseActivity implements Observer {
             setAuthButtonListener();
             setFbLogin();
             setGoogleAuthButtonListener();
-            checkToLinkStatus();
         }
 
         public void checkToLinkStatus(){
             Bundle bundle = getIntent().getExtras();
             if(Objects.requireNonNull(bundle).containsKey(Constants.TO_LINK_ACCOUNT)){
-                Util.allowSwipeGesture(LoginActivity.this);
-                this.fbAuthBtn.setVisibility(View.INVISIBLE);
+                this.fbAuthBtn.setVisibility(View.GONE);
+                this.googlAuthBtn.setVisibility(View.GONE);
             }
             else{
-                Util.lockSwipeGesture(LoginActivity.this);
+                viewModel.checkSessions();
             }
+            Util.lockSwipeGesture(LoginActivity.this);
         }
 
         private void setFbLogin() {
@@ -184,9 +185,7 @@ public class LoginActivity extends BaseActivity implements Observer {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         callbackManager.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == Constants.RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach a listener.
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
@@ -207,16 +206,20 @@ public class LoginActivity extends BaseActivity implements Observer {
         String message = (String)arg;
         if (message.equals(LoginViewModel.AUTH_REQUEST_STARTED)) {
             System.out.println("STARTED");
-
         }
         else if (message.equals(LoginViewModel.AUTH_REQUEST_SUCCEED)) {
             Intent intent = new Intent(this, MapActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             this.startActivity(intent);
             String espolUsername = this.getViewHolder().username.getText().toString().trim();
             SessionHelper.saveEspolSession(getApplicationContext(), espolUsername);
             viewModel.makeEgLoginRequest(espolUsername);
             this.viewHolder.username.setText("");
             this.viewHolder.password.setText("");
+            if (getClient()!=null){
+                GoogleLogout(getClient());
+            }
+            SessionHelper.fbLogout();
             this.finish();
         }
 

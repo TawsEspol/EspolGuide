@@ -124,10 +124,9 @@ public class LoginViewModel extends Observable {
             notifyObservers(GOOGL_AUTH_REQUEST_SUCCEED);
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            //con este account puedes manejar la data.
+            //Google account data can be managed with 'acct'.
             if (acct != null) {
                 String personName = acct.getDisplayName();
-                System.out.println(personName);
                 String personGivenName = acct.getGivenName();
                 SessionHelper.saveGoogleName(activity.getApplicationContext(),personGivenName);
 
@@ -140,13 +139,10 @@ public class LoginViewModel extends Observable {
                 }catch(Exception e){
                     e.printStackTrace();
                 }
-                updateUI();
-
             }
         } else {
             setChanged();
             notifyObservers(GOOGL_AUTH_WRONG_CREDENTIALS);
-            // Signed out, show unauthenticated UI.
         }
     }
 
@@ -165,16 +161,6 @@ public class LoginViewModel extends Observable {
             notifyObservers(GOOGLE_AUTHENTICATION);
             GoogleSignInResult result = opr.get();
             handleSignInResult(result,mGoogleSignInClient);
-        } else {
-            // If the user has not previously signed in on this device or the sign-in has expired,
-            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-            // single sign-on will occur in this branch.
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(GoogleSignInResult googleSignInResult) {
-                    handleSignInResult(googleSignInResult,mGoogleSignInClient);
-                }
-            });
         }
     }
     private class AuthScreen {
@@ -285,7 +271,6 @@ public class LoginViewModel extends Observable {
                             try {
                                 if(response.has(Constants.ACCESS_TOKEN_KEY)){
                                     accessToken = response.getString(Constants.ACCESS_TOKEN_KEY);
-                                    System.out.println(accessToken);
                                     SessionHelper.saveAccessToken(activity, accessToken);
                                     setChanged();
                                     notifyObservers(EG_LOGIN_REQUEST_SUCCEED);
@@ -327,16 +312,24 @@ public class LoginViewModel extends Observable {
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                             FAVORITES_WS, null, response -> {
                                 try{
-                                    JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
-                                    ArrayList<String> favoritesList = new ArrayList<>();
-                                    if (jsonArray != null) {
-                                        int len = jsonArray.length();
-                                        for (int i=0;i<len;i++){
-                                            favoritesList.add(jsonArray.get(i).toString());
+                                    JSONArray codesGtsi = response.getJSONArray(Constants.CODES_GTSI_KEY);                                    JSONArray jsonArray = response.getJSONArray(Constants.CODES_GTSI_KEY);
+                                    JSONArray codesInfra = response.getJSONArray(Constants.CODES_INFRA_KEY);
+                                    Set<String> favoritesSet = new HashSet<>();
+                                    if (codesGtsi != null && codesInfra != null &&
+                                            codesGtsi.length() == codesInfra.length()) {
+                                        int len = codesGtsi.length();
+                                        for (int i=0; i<len; i++){
+                                            String favGtsi = " ";
+                                            String favInfra = " ";
+                                            if(codesGtsi.get(i).toString().trim().length() > 0){
+                                                favGtsi = codesGtsi.get(i).toString();
+                                            }
+                                            if(codesInfra.get(i).toString().trim().length() > 0){
+                                                favInfra = codesInfra.get(i).toString();
+                                            }
+                                            favoritesSet.add(favGtsi + "|" + favInfra);
                                         }
                                     }
-                                    Set<String> favoritesSet = new HashSet<>();
-                                    favoritesSet.addAll(favoritesList);
                                     SessionHelper.saveFavoritePois(activity, favoritesSet);
                                     setChanged();
                                     notifyObservers(GET_FAVORITES_REQUEST_SUCCEEDED);
@@ -346,8 +339,6 @@ public class LoginViewModel extends Observable {
                                     notifyObservers(GET_FAVORITES_REQUEST_FAILED_LOADING);
                                 }
                             }, error -> {
-                                System.out.println("======================== ERROR EN RESPONSE ========================");
-
                                 VolleyLog.d("tag", "Error: " + error.getMessage());
                                 setChanged();
                                 notifyObservers(REQUEST_FAILED_HTTP);
