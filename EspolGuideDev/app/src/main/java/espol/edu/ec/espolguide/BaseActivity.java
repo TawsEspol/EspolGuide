@@ -57,10 +57,16 @@ public class BaseActivity extends AppCompatActivity implements Observer {
             String endGreeting = "!";
             if(SessionHelper.isEspolLoggedIn(BaseActivity.this.getApplicationContext())){
                 name = SessionHelper.getEspolName(BaseActivity.this).trim();
-                String espolPhoto = SessionHelper.getEspolPhoto(BaseActivity.this);
-                byte[] imageAsBytes = Base64.decode(espolPhoto.getBytes(), Base64.DEFAULT);
-                Bitmap imgBitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
-                imgView.setImageBitmap(imgBitmap);
+                if(name!= ""){
+                    String espolPhoto = SessionHelper.getEspolPhoto(BaseActivity.this);
+                    byte[] imageAsBytes = Base64.decode(espolPhoto.getBytes(), Base64.DEFAULT);
+                    Bitmap imgBitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+                    imgView.setImageBitmap(imgBitmap);
+                }else{
+                    name = SessionHelper.getEspolUsername(BaseActivity.this).trim();
+                    imgView.setImageResource(R.drawable.profileblank);
+                }
+
             }else{
                 String photo = "";
                 if(SessionHelper.isFacebookLoggedIn(getApplicationContext())){

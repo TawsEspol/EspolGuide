@@ -6,6 +6,15 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.widget.EditText;
 
+import com.android.volley.Request;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.facebook.AccessToken;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+
 import org.apache.commons.lang3.text.WordUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,7 +27,6 @@ import org.ksoap2.transport.HttpTransportSE;
 import org.kxml2.kdom.Element;
 import org.kxml2.kdom.Node;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -32,16 +40,6 @@ import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SessionHelper;
-
-import com.android.volley.Request;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.facebook.AccessToken;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 
 /**
  * Created by fabricio on 19/05/18.
@@ -382,12 +380,17 @@ public class LoginViewModel extends Observable {
                     HttpTransportSE transport = new HttpTransportSE(Constants.URL);
                     transport.call(Constants.USR_INFO_SOAP_ACTION, envelope);
                     SoapObject response = (SoapObject) envelope.getResponse();
-                    SoapObject userInfo = (SoapObject) ((SoapObject) ((SoapObject) response.getProperty("diffgram")).getProperty("NewDataSet")).getProperty("ESTUDIANTE");
-                    String name = userInfo.getPropertyAsString("NOMBRES").split(" ")[0].toLowerCase();
-                    studentNumber = userInfo.getPropertyAsString("MATRICULA");
-                    name = WordUtils.capitalize(name);
-                    SessionHelper.saveEspolName(ctx, name);
-                    SessionHelper.saveEspolUserIdNumber(ctx, studentNumber);
+                    try {
+                        SoapObject userInfo = (SoapObject) ((SoapObject) ((SoapObject) response.getProperty("diffgram")).getProperty("NewDataSet")).getProperty("ESTUDIANTE");
+                        String name = userInfo.getPropertyAsString("NOMBRES").split(" ")[0].toLowerCase();
+                        studentNumber = userInfo.getPropertyAsString("MATRICULA");
+                        name = WordUtils.capitalize(name);
+                        SessionHelper.saveEspolName(ctx, name);
+                        SessionHelper.saveEspolUserIdNumber(ctx, studentNumber);
+                    }catch (Exception e){
+                        SessionHelper.saveEspolName(ctx,"");
+                        SessionHelper.saveEspolUserIdNumber(ctx,"");
+                    }
                 } catch (Exception e) {
                     setChanged();
                     notifyObservers(REQUEST_FAILED_HTTP);
@@ -401,7 +404,9 @@ public class LoginViewModel extends Observable {
             super.onPostExecute(aVoid);
             setChanged();
             notifyObservers(NAME_REQUEST_SUCCEED);
-            new PhotoSoapHelper().execute(studentNumber);
+            if (studentNumber!= null){
+                new PhotoSoapHelper().execute(studentNumber);
+            }
         }
     }
 
@@ -445,4 +450,8 @@ public class LoginViewModel extends Observable {
             notifyObservers(AUTH_REQUEST_SUCCEED);
         }
     }
+
+
+
+
 }
