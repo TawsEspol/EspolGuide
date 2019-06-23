@@ -135,6 +135,12 @@ public class BaseActivity extends AppCompatActivity implements Observer {
                     startActivityForResult(subjIntent, Constants.SUBJECTS_REQUEST_CODE);
                     break;
 
+                case R.id.events_op:
+                    Intent eventsIntent = new Intent(getApplicationContext(), EventsActivity.class);
+                    eventsIntent.putExtra(Constants.SELECTED_OPTION, R.id.events_op);
+                    startActivityForResult(eventsIntent, Constants.EVENTS_REQUEST_CODE);
+                    break;
+
                 case R.id.favorites_op:
                     Intent favIntent = new Intent(getApplicationContext(), FavoritesActivity.class);
                     favIntent.putExtra(Constants.SELECTED_OPTION, R.id.favorites_op);

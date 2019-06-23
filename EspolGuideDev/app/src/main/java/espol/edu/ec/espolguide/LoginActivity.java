@@ -97,7 +97,7 @@ public class LoginActivity extends BaseActivity implements Observer {
 
         public void checkToLinkStatus(){
             Bundle bundle = getIntent().getExtras();
-            if(Objects.requireNonNull(bundle).containsKey(Constants.TO_LINK_ACCOUNT)){
+            if(bundle!= null && Objects.requireNonNull(bundle).containsKey(Constants.TO_LINK_ACCOUNT)){
                 this.fbAuthBtn.setVisibility(View.GONE);
                 this.googlAuthBtn.setVisibility(View.GONE);
             }
@@ -257,12 +257,9 @@ public class LoginActivity extends BaseActivity implements Observer {
                     Toast.LENGTH_SHORT).show());
         }
         else if (message.equals(LoginViewModel.IS_ESPOL_LOGGED_IN)) {
-            Bundle bundle = getIntent().getExtras();
-            if(!Objects.requireNonNull(bundle).containsKey(Constants.TO_LINK_ACCOUNT)){
-                Intent intent = new Intent(this, MapActivity.class);
-                this.startActivity(intent);
-                this.finish();
-            }
+            Intent intent = new Intent(this, MapActivity.class);
+            this.startActivity(intent);
+            this.finish();
         }
         else if (message.equals(LoginViewModel.EG_LOGIN_REQUEST_SUCCEED)) {
             viewModel.makeGetFavoritesRequest();

@@ -75,6 +75,7 @@ public class Constants {
 
     public final static int FAVORITES_REQUEST_CODE = 1;
     public final static int SUBJECTS_REQUEST_CODE = 2;
+    public final static int EVENTS_REQUEST_CODE = 3;
 
     public final static String ON_PERMISSION_RESULT = "on_permission_result";
     public final static String ON_CREATE = "on_create";

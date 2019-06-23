@@ -12,6 +12,10 @@
             android:title="@string/courses_menu_op" />
 
         <item
+            android:id="@+id/events_op"
+            android:title="@string/events_menu_op" />
+
+        <item
             android:id="@+id/favorites_op"
             android:title="@string/favorites_menu_op" />
 
