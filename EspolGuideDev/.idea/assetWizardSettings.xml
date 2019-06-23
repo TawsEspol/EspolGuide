@@ -19,8 +19,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="$USER_HOME$/Escritorio/generic_profile.jpg" />
-                                      <entry key="outputName" value="ic_generic_profile" />
+                                      <entry key="imageAsset" value="$USER_HOME$/Descargas/exampe-png.png" />
+                                      <entry key="outputName" value="example-png" />
                                     </map>
                                   </option>
                                 </PersistentState>

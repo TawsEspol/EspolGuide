@@ -33,7 +33,7 @@ public class EventsActivity extends BaseActivity implements Observer {
         this.viewHolder = new ViewHolder();
         this.viewModel = new EventsViewModel(this);
         this.viewModel.addObserver(this);
-        //this.viewModel.loadFavorites();
+        this.viewModel.loadEvents();
         Util.lockSwipeGesture(this);
     }
 
@@ -57,6 +57,10 @@ public class EventsActivity extends BaseActivity implements Observer {
             String activityName = getApplicationContext().getString(R.string.events_menu_op);
             eventsToolbar.setTitle(activityName);
         }
+    }
+
+    public ViewHolder getViewHolder(){
+        return this.viewHolder;
     }
 
     @Override

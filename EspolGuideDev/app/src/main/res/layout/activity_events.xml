@@ -13,13 +13,20 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/espol_campus"
+        android:adjustViewBounds="true"
+        android:paddingTop="5dp"
+        />
     <ListView
         android:id="@+id/events_lv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="15dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginRight="10dp"
         android:background="@color/white"
         android:divider="@color/fourth"
         android:dividerHeight="1.4dp"/>
