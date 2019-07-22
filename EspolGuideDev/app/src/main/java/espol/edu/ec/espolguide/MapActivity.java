@@ -1,16 +1,28 @@
 package espol.edu.ec.espolguide;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.RingtoneManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 
+import android.support.v4.app.NotificationCompat;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -32,6 +44,7 @@ import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 
+import espol.edu.ec.espolguide.utils.AlarmReceiver;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SessionHelper;
 import espol.edu.ec.espolguide.utils.Util;

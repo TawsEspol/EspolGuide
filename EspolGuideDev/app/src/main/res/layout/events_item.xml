@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:orientation="horizontal"
-    android:paddingBottom="5dp"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:layout_marginBottom="15dp">
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:orientation="vertical"
-        android:paddingRight="15dp"
-        android:gravity="center_vertical">
+        android:layout_weight=".85">
         <TextView
             android:id="@+id/date_tv"
             android:layout_width="match_parent"
@@ -43,14 +40,25 @@
             android:text=""
             android:textColor="@color/second"
             android:background="@color/white"/>
+            />
+
     </LinearLayout>
-<!--    <ImageButton
-        android:id="@+id/goToBtn"
-        android:layout_width="5dp"
-        android:layout_height="5dp"
-        android:src="@drawable/ic_maneuver_arrive_right"
-        android:tint="@color/first"
-        android:background="@android:color/transparent"/> -->
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="30dp"
+        android:layout_width="0dp"
+        android:orientation="vertical"
+        android:layout_weight=".15"
+        android:layout_marginLeft="10dp">
+        <ImageButton
+            android:id="@+id/optionsBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:src="@drawable/ic_more_vert_black_24dp"
+            android:onClick="showPopup"
+            android:backgroundTint="@android:color/transparent"/>
+    </LinearLayout>
 </LinearLayout>
 
 

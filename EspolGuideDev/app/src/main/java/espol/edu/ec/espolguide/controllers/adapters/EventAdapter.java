@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -36,6 +39,7 @@ public class EventAdapter extends BaseAdapter{
         private String date;
         private TextView date_tv;
         private ImageButton goToBtn_btn;
+        private ImageButton optionsBtn_btn;
 
         public ViewHolder(String eventName){
             this.eventName = eventName;
@@ -118,6 +122,7 @@ public class EventAdapter extends BaseAdapter{
             holder.place_tv = view.findViewById(R.id.place_tv);
             holder.time_tv = view.findViewById(R.id.time_tv);
 //            holder.goToBtn_btn = view.findViewById(R.id.goToBtn);
+            holder.optionsBtn_btn = view.findViewById(R.id.optionsBtn);
             view.setTag(holder);
         } else{
             holder = (ViewHolder) view.getTag();
@@ -132,6 +137,7 @@ public class EventAdapter extends BaseAdapter{
             holder.eventName_tv.setVisibility(View.GONE);
             holder.place_tv.setVisibility(View.GONE);
             holder.time_tv.setVisibility(View.GONE);
+            holder.optionsBtn_btn.setVisibility(View.GONE);
         }
         else{
             String eventName = parts[0];
@@ -172,4 +178,6 @@ public class EventAdapter extends BaseAdapter{
         getActivity().setResult(RESULT_OK, mapIntent);
         getActivity().finish();
     }
+
+
 }

@@ -1,11 +1,15 @@
 package espol.edu.ec.espolguide.viewModels;
 
 import android.os.AsyncTask;
+import android.support.v7.widget.PopupMenu;
+import android.view.MenuInflater;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Observable;
 
 import espol.edu.ec.espolguide.EventsActivity;
+import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.adapters.EventAdapter;
 
 /**
@@ -47,7 +51,7 @@ public class EventsViewModel extends Observable {
             String event1 = "Charla 'Inteligencia Artificial en la Industria';11A-A103 - Auditorio de FIEC;11h00";
             String event2 = "Conversatorio 'Mujeres en la Inteligencia Artificial';11A-A103 - Auditorio de FIEC;11h00";
             String event3 = "Inauguración de DataJam 2019';7B-S105 - Sala de Eventos de FIMCP;11h00";
-            String event4 = "Taller de Analítica de Datos en el Sector Público';6C-L201 - Laboratorio de Computación de FCSH;13h30";
+            String event4 = "Taller de Analítica de Datos en el Sector Público jajajaja asfcsaf';6C-L201 - Laboratorio de Computación de FCSH;13h30";
             eventsList = new ArrayList<>();
             eventsList.add(date1);
             eventsList.add(event1);
@@ -73,4 +77,8 @@ public class EventsViewModel extends Observable {
             return null;
         }
     }
+
+
+
+
 }

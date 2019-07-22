@@ -7,8 +7,8 @@
         android:supportsRtl="true"
         android:label="EspolGuide"
         android:theme="@style/AppTheme">
+        <receiver android:name=".utils.AlarmReceiver" />
         <activity android:name=".LoginActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.SEARCH" />
