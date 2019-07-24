@@ -133,7 +133,6 @@ public class EventAdapter extends BaseAdapter{
         if(parts.length<2){
             String date = parts[0];
             holder.date_tv.setText(date);
-//            holder.getGoToBtn_btn().setVisibility(View.GONE);
             holder.eventName_tv.setVisibility(View.GONE);
             holder.place_tv.setVisibility(View.GONE);
             holder.time_tv.setVisibility(View.GONE);
@@ -148,12 +147,6 @@ public class EventAdapter extends BaseAdapter{
             holder.time_tv.setText(time);
             holder.date_tv.setVisibility(View.GONE);
         }
-
-        //holder. = parts[0];
-
-//        holder.setCodeGtsi(events.get(position));
-//        holder.codeGtsi_tv.setText(Util.choseName(holder.getCodeGtsi()));
-//        view.setOnClickListener(v -> goToBuilding(holder.getCodeGtsi()));
         return view;
     }
 

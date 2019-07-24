@@ -57,4 +57,7 @@
     <string name="day">día(s)</string>
     <string name="block">bloque</string>
     <string name="room">aula</string>
+
+    <string name="events_tab_name">Eventos</string>
+    <string name="reminder_tab_name">Recordatorios</string>
 </resources>

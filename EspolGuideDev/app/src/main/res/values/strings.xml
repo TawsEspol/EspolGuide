@@ -57,5 +57,8 @@
     <string name="day">day(s)</string>
     <string name="block">block</string>
     <string name="room">room</string>
+
+    <string name="events_tab_name">Events</string>
+    <string name="reminder_tab_name">Reminders</string>
 </resources>
 

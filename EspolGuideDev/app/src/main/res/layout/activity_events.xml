@@ -20,14 +20,18 @@
         android:adjustViewBounds="true"
         android:paddingTop="5dp"
         />
-    <ListView
-        android:id="@+id/events_lv"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/events_tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="10dp"
-        android:background="@color/white"
-        android:divider="@color/fourth"
-        android:dividerHeight="1.4dp"/>
+        android:layout_below="@+id/toolbar"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"/>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/events_pager"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/tab_layout"
+        android:background="#ffffff"/>
 </LinearLayout>

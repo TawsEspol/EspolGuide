@@ -11,7 +11,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -25,6 +27,7 @@ import android.widget.PopupMenu;
 import java.util.Calendar;
 import java.util.Observer;
 
+import espol.edu.ec.espolguide.controllers.adapters.EventsPageAdapter;
 import espol.edu.ec.espolguide.utils.AlarmReceiver;
 import espol.edu.ec.espolguide.utils.Util;
 import espol.edu.ec.espolguide.viewModels.EventsViewModel;
@@ -43,6 +46,10 @@ public class EventsActivity extends BaseActivity implements Observer {
     private EventsViewModel viewModel;
     private ViewHolder viewHolder;
 
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +58,9 @@ public class EventsActivity extends BaseActivity implements Observer {
         this.viewHolder = new ViewHolder();
         this.viewModel = new EventsViewModel(this);
         this.viewModel.addObserver(this);
-        this.viewModel.loadEvents();
+        this.viewHolder.setTabs();
+        this.viewHolder.setEventsPageAdapter();
+
         Util.lockSwipeGesture(this);
     }
 
@@ -74,11 +83,47 @@ public class EventsActivity extends BaseActivity implements Observer {
         public void findViews(){
             eventsLv = findViewById(R.id.events_lv);
             eventsToolbar = findViewById(R.id.events_toolbar);
+
+            tabLayout = findViewById(R.id.events_tab_layout);
+            viewPager = findViewById(R.id.events_pager);
+            toolbar = findViewById(R.id.events_toolbar);
+        }
+
+        public void setEventsLv(ListView eventsLv){
+            this.eventsLv = eventsLv;
         }
 
         public void setActivityTitle(){
             String activityName = getApplicationContext().getString(R.string.events_menu_op);
             eventsToolbar.setTitle(activityName);
+        }
+
+        public void setTabs() {
+            tabLayout.addTab(tabLayout.newTab().setText(R.string.events_tab_name));
+            tabLayout.addTab(tabLayout.newTab().setText(R.string.reminder_tab_name));
+            tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        }
+
+        public void setEventsPageAdapter(){
+            EventsPageAdapter adapter = new EventsPageAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+            viewPager.setAdapter(adapter);
+            viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+            tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    viewPager.setCurrentItem(tab.getPosition());
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
+                }
+            });
         }
     }
 
