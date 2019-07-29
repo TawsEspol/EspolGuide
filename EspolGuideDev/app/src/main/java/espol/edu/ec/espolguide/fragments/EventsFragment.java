@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -34,6 +35,7 @@ public class EventsFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.events_list, container, false);
     }
 
@@ -49,10 +51,10 @@ public class EventsFragment extends Fragment {
             String date1 = "Lunes 25 de junio";
             String date2 = "Martes 26 de junio";
             String date3 = "Miércoles 27 de junio";
-            String event1 = "Charla 'Inteligencia Artificial en la Industria';11A-A103 - Auditorio de FIEC;11h00";
-            String event2 = "Conversatorio 'Mujeres en la Inteligencia Artificial';11A-A103 - Auditorio de FIEC;11h00";
-            String event3 = "Inauguración de DataJam 2019';7B-S105 - Sala de Eventos de FIMCP;11h00";
-            String event4 = "Taller de Analítica de Datos en el Sector Público jajajaja asfcsaf';6C-L201 - Laboratorio de Computación de FCSH;13h30";
+            String event1 = "001;Charla Inteligencia Artificial en la Industria;11A-A103 - Auditorio de FIEC;11h00;25/06/2019";
+            String event2 = "002;Conversatorio 'Mujeres en la Inteligencia Artificial';11A-A103 - Auditorio de FIEC;11h00;25/06/2019";
+            String event3 = "003;Inauguración de DataJam 2019;7B-S105 - Sala de Eventos de FIMCP;11h00;26/06/2019";
+            String event4 = "004;Taller de Analítica de Datos en el Sector Público;6C-L201 - Laboratorio de Computación de FCSH;13h30;27/06/2019";
             eventsList = new ArrayList<>();
             eventsList.add(date1);
             eventsList.add(event1);

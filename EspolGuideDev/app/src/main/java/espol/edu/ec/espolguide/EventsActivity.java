@@ -19,10 +19,13 @@ import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.Observer;
@@ -141,28 +144,9 @@ public class EventsActivity extends BaseActivity implements Observer {
         return super.onOptionsItemSelected(item);
     }
 
-    public void showPopup(View v) {
-        PopupMenu popup = new PopupMenu(this, v);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.event_menu, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int id = item.getItemId();
-                switch(id) {
-                    case R.id.viewInformation:
-                        finish();
-                        return true;
-                    case R.id.scheduleReminder:
-                        scheduleNotification(getApplicationContext(), 5,100);
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });
-        popup.show();
-    }
+
+
+
 
 
 

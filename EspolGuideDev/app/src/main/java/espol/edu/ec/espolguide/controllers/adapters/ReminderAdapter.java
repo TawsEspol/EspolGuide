@@ -10,21 +10,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.utils.Constants;
-import espol.edu.ec.espolguide.utils.Util;
 
 import static android.app.Activity.RESULT_OK;
 
-public class EventAdapter extends BaseAdapter{
+public class ReminderAdapter extends BaseAdapter {
     private final List<String> events;
     private ViewHolder viewHolder;
     private final Context mContext;
@@ -41,7 +38,8 @@ public class EventAdapter extends BaseAdapter{
         private TextView time_tv;
         private String date;
         private TextView date_tv;
-        private ImageButton goToBtn_btn;
+        private String reminderTime;
+        private TextView reminderTime_tv;
         private ImageButton optionsBtn_btn;
 
         public ViewHolder(String eventName){
@@ -92,16 +90,12 @@ public class EventAdapter extends BaseAdapter{
             this.time = time;
         }
 
-        public ImageButton getGoToBtn_btn(){
-            return this.goToBtn_btn;
-        }
+        public String getReminderTime(){ return this.reminderTime; }
 
-        public void setGoToBtn_btn(ImageButton goToBtn_btn){
-            this.goToBtn_btn = goToBtn_btn;
-        }
+        public void setReminderTime(String reminderTime){ this.reminderTime = reminderTime; }
     }
 
-    public EventAdapter(Context context, List<String> events){
+    public ReminderAdapter(Context context, List<String> events){
         this.events = events;
         this.mContext = context;
         this.inflater = LayoutInflater.from(mContext);
@@ -133,14 +127,13 @@ public class EventAdapter extends BaseAdapter{
             holder.eventName_tv = view.findViewById(R.id.event_name_tv);
             holder.place_tv = view.findViewById(R.id.place_tv);
             holder.time_tv = view.findViewById(R.id.time_tv);
+            holder.reminderTime_tv = view.findViewById(R.id.reminderTime_tv);
 //            holder.goToBtn_btn = view.findViewById(R.id.goToBtn);
             holder.optionsBtn_btn = view.findViewById(R.id.optionsBtn);
-            TextView reminderTime_tv = view.findViewById(R.id.reminderTime_tv);
-            reminderTime_tv.setVisibility(View.GONE);
             holder.optionsBtn_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showEventsMenu(view);
+                    showRemindersMenu(view);
                 }
             });
             view.setTag(holder);
@@ -150,34 +143,32 @@ public class EventAdapter extends BaseAdapter{
 
         String data = events.get(position);
         String[] parts = data.trim().split(";");
-        if(parts.length<2){
-            String date = parts[0];
-            holder.date_tv.setText(date);
-            holder.eventName_tv.setVisibility(View.GONE);
-            holder.place_tv.setVisibility(View.GONE);
-            holder.time_tv.setVisibility(View.GONE);
-            holder.optionsBtn_btn.setVisibility(View.GONE);
-            holder.date_tv.setVisibility(View.VISIBLE);
-        }
-        else{
-            String eventId = parts[0];
-            String eventName = parts[1];
-            String place = parts[2];
-            String time = parts[3];
-            String date = parts[4];
-            holder.setEventId(eventId);
-            holder.setEventName(eventName);
-            holder.setPlace(place);
-            holder.setTime(time);
+        String eventId = parts[0];
+        String eventName = parts[1];
+        String place = parts[2];
+        String time = parts[3];
+        String date = parts[4];
+        String reminderTime = parts[5];
+        holder.setEventId(eventId);
+        holder.setEventName(eventName);
+        holder.setPlace(place);
+        holder.setTime(time);
+        holder.setReminderTime(reminderTime);
 
-            holder.date_tv.setText(date);
-            holder.eventId_tv.setText(eventId);
-            holder.eventName_tv.setText(eventName);
-            holder.place_tv.setText(place);
-            holder.time_tv.setText(time);
-
-            holder.date_tv.setVisibility(View.GONE);
+        holder.date_tv.setText(date);
+        holder.eventId_tv.setText(eventId);
+        holder.eventName_tv.setText(eventName);
+        holder.place_tv.setText(place);
+        holder.time_tv.setText(time);
+        if(reminderTime==null){
+            System.out.println("==================== ES LA VARIABLE");
         }
+        if(holder.reminderTime_tv == null){
+            System.out.println("=================== ES LA CAJA");
+        }
+        holder.reminderTime_tv.setText(date + " - " + reminderTime);
+
+        holder.reminderTime_tv.setVisibility(View.VISIBLE);
         return view;
     }
 
@@ -195,46 +186,20 @@ public class EventAdapter extends BaseAdapter{
         return (Activity) this.mContext;
     }
 
-    public void goToBuilding(String codeGtsi){
-        Intent mapIntent = new Intent(getActivity().getApplicationContext(), MapActivity.class);
-        mapIntent.putExtra(Constants.SELECTED_OPTION, R.id.map_op);
-        mapIntent.putExtra(Constants.SELECTED_GTSI_CODE, codeGtsi);
-        getActivity().setResult(RESULT_OK, mapIntent);
-        getActivity().finish();
-    }
-
-    public void showEventsMenu(View v) {
+    public void showRemindersMenu(View v) {
         PopupMenu popup = new PopupMenu(getActivity(), v);
-
         MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.event_menu, popup.getMenu());
+        inflater.inflate(R.menu.reminder_menu, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
                 switch(id) {
                     case R.id.viewInformation:
-                       // finish();
                         return true;
-                    case R.id.scheduleReminder:
-                        LinearLayout eventLayout = (LinearLayout) ((ViewGroup) v.getParent()).getParent();
-                        String eventId = ((TextView) eventLayout.findViewById(R.id.event_id_tv)).getText().toString();
-                        String eventName = ((TextView) eventLayout.findViewById(R.id.event_name_tv)).getText().toString();
-                        String eventPlace = ((TextView) eventLayout.findViewById(R.id.place_tv)).getText().toString();
-                        String eventDate = ((TextView) eventLayout.findViewById(R.id.date_tv)).getText().toString();
-                        String eventTime = ((TextView) eventLayout.findViewById(R.id.time_tv)).getText().toString();
-
-                        String partsDate[] = eventDate.trim().split("/");
-                        int day = Integer.parseInt(partsDate[0]);
-                        int month = Integer.parseInt(partsDate[1]);
-                        int year = Integer.parseInt(partsDate[2]);
-
-                        String partsTime[] = eventTime.trim().split("h");
-                        int hour = Integer.parseInt(partsTime[0]);
-                        int minute = Integer.parseInt(partsTime[1]);
-                        LinearLayout reminderBoxLayout = getActivity().findViewById(R.id.reminderBox);
-                        reminderBoxLayout.setVisibility(View.VISIBLE);
-                        //scheduleNotification(getApplicationContext(), 5,100);
+                    case R.id.updateReminder:
+                        return true;
+                    case R.id.removeReminder:
                         return true;
                     default:
                         return false;
@@ -243,4 +208,5 @@ public class EventAdapter extends BaseAdapter{
         });
         popup.show();
     }
+
 }
