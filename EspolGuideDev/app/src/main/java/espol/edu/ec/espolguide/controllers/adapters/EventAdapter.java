@@ -1,6 +1,7 @@
 package espol.edu.ec.espolguide.controllers.adapters;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -8,15 +9,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import espol.edu.ec.espolguide.EventsActivity;
 import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.utils.Constants;
@@ -232,8 +236,18 @@ public class EventAdapter extends BaseAdapter{
                         String partsTime[] = eventTime.trim().split("h");
                         int hour = Integer.parseInt(partsTime[0]);
                         int minute = Integer.parseInt(partsTime[1]);
-                        LinearLayout reminderBoxLayout = getActivity().findViewById(R.id.reminderBox);
-                        reminderBoxLayout.setVisibility(View.VISIBLE);
+
+
+                        AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
+                        View mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_event_reminder, null);
+                        mBuilder.setView(mView);
+                        AlertDialog alertDialog = mBuilder.create();
+                        fillTimesSpinner(mView);
+                        alertDialog.show();
+
+
+
+
                         //scheduleNotification(getApplicationContext(), 5,100);
                         return true;
                     default:
@@ -243,4 +257,13 @@ public class EventAdapter extends BaseAdapter{
         });
         popup.show();
     }
+    public void fillTimesSpinner(View v){
+        Spinner spinner = (Spinner) v.findViewById(R.id.reminder_times_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                getActivity(), R.array.reminders_times_array, R.layout.reminder_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(0);
+    }
+
 }
