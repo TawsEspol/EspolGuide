@@ -4,13 +4,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -20,6 +23,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import espol.edu.ec.espolguide.EventInfoActivity;
 import espol.edu.ec.espolguide.EventsActivity;
 import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.R;
@@ -33,6 +37,7 @@ public class EventAdapter extends BaseAdapter{
     private ViewHolder viewHolder;
     private final Context mContext;
     private final LayoutInflater inflater;
+    private AlertDialog reminderDialog;
 
     private class ViewHolder{
         private String eventId;
@@ -111,6 +116,14 @@ public class EventAdapter extends BaseAdapter{
         this.inflater = LayoutInflater.from(mContext);
     }
 
+    public AlertDialog getReminderDialog(){
+        return this.reminderDialog;
+    }
+
+    public void setReminderDialog(AlertDialog reminderDialog){
+        this.reminderDialog = reminderDialog;
+    }
+
     @Override
     public int getCount() {
         return this.events.size();
@@ -154,34 +167,21 @@ public class EventAdapter extends BaseAdapter{
 
         String data = events.get(position);
         String[] parts = data.trim().split(";");
-        if(parts.length<2){
-            String date = parts[0];
-            holder.date_tv.setText(date);
-            holder.eventName_tv.setVisibility(View.GONE);
-            holder.place_tv.setVisibility(View.GONE);
-            holder.time_tv.setVisibility(View.GONE);
-            holder.optionsBtn_btn.setVisibility(View.GONE);
-            holder.date_tv.setVisibility(View.VISIBLE);
-        }
-        else{
-            String eventId = parts[0];
-            String eventName = parts[1];
-            String place = parts[2];
-            String time = parts[3];
-            String date = parts[4];
-            holder.setEventId(eventId);
-            holder.setEventName(eventName);
-            holder.setPlace(place);
-            holder.setTime(time);
+        String eventId = parts[0];
+        String eventName = parts[1];
+        String place = parts[2];
+        String time = parts[3];
+        String date = parts[4];
+        holder.setEventId(eventId);
+        holder.setEventName(eventName);
+        holder.setPlace(place);
+        holder.setTime(time);
 
-            holder.date_tv.setText(date);
-            holder.eventId_tv.setText(eventId);
-            holder.eventName_tv.setText(eventName);
-            holder.place_tv.setText(place);
-            holder.time_tv.setText(time);
-
-            holder.date_tv.setVisibility(View.GONE);
-        }
+        holder.date_tv.setText(date);
+        holder.eventId_tv.setText(eventId);
+        holder.eventName_tv.setText(eventName);
+        holder.place_tv.setText(place);
+        holder.time_tv.setText(time);
         return view;
     }
 
@@ -218,7 +218,8 @@ public class EventAdapter extends BaseAdapter{
                 int id = item.getItemId();
                 switch(id) {
                     case R.id.viewInformation:
-                       // finish();
+                        Intent infoIntent = new Intent(getActivity(), EventInfoActivity.class);
+                        getActivity().startActivity(infoIntent);
                         return true;
                     case R.id.scheduleReminder:
                         LinearLayout eventLayout = (LinearLayout) ((ViewGroup) v.getParent()).getParent();
@@ -228,25 +229,23 @@ public class EventAdapter extends BaseAdapter{
                         String eventDate = ((TextView) eventLayout.findViewById(R.id.date_tv)).getText().toString();
                         String eventTime = ((TextView) eventLayout.findViewById(R.id.time_tv)).getText().toString();
 
-                        String partsDate[] = eventDate.trim().split("/");
+/**                        String partsDate[] = eventDate.trim().split("/");
                         int day = Integer.parseInt(partsDate[0]);
                         int month = Integer.parseInt(partsDate[1]);
                         int year = Integer.parseInt(partsDate[2]);
 
-                        String partsTime[] = eventTime.trim().split("h");
+                        String partsTime[] = eventTime.trim().split(":");
                         int hour = Integer.parseInt(partsTime[0]);
                         int minute = Integer.parseInt(partsTime[1]);
-
+*/
 
                         AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
                         View mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_event_reminder, null);
                         mBuilder.setView(mView);
-                        AlertDialog alertDialog = mBuilder.create();
+                        setReminderDialog(mBuilder.create());
                         fillTimesSpinner(mView);
-                        alertDialog.show();
-
-
-
+                        getReminderDialog().show();
+                        setSpinnerButtonsActions(mView);
 
                         //scheduleNotification(getApplicationContext(), 5,100);
                         return true;
@@ -257,6 +256,7 @@ public class EventAdapter extends BaseAdapter{
         });
         popup.show();
     }
+
     public void fillTimesSpinner(View v){
         Spinner spinner = (Spinner) v.findViewById(R.id.reminder_times_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -266,4 +266,15 @@ public class EventAdapter extends BaseAdapter{
         spinner.setSelection(0);
     }
 
+    public void setSpinnerButtonsActions(View v){
+        Button scheduleBtn = v.findViewById(R.id.scheduleBtn);
+        Button cancelBtn = v.findViewById(R.id.cancelScheduleBtn);
+        AlertDialog reminderDialog = getReminderDialog();
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                reminderDialog.dismiss();
+            }
+        });
+    }
 }

@@ -21,7 +21,7 @@
                 android:layout_height="match_parent"
                 mapbox:mapbox_cameraTargetLat="-2.14630"
                 mapbox:mapbox_cameraTargetLng="-79.96575"
-                mapbox:mapbox_styleUrl="mapbox://styles/mguarand/cjkqa9hf100922rn4b15tlahg"
+                mapbox:mapbox_styleUrl="mapbox://styles/mguarand/cjyohhehy4nsc1cpcaoyunmv3"
                 mapbox:mapbox_cameraZoom="16" />
             />
         </LinearLayout>
