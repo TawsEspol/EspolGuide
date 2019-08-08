@@ -1,159 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:orientation="vertical"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="60dp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Conversatorio 'Mujeres en la IA'"
-                android:textColor="@color/first"
-                android:textStyle="bold"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/event_info_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/first"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="60dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Conversatorio 'Mujeres en la IA'"
+                    android:textColor="@color/first"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/second"
+                    android:text="Como parte de la II Jornada de conferencias de innovacion y tecnologia, FIEC ha reunido a mujeres profesionales en el campo de la Inteligencia Artificial en un entretenido debate."/>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 android:layout_marginTop="20dp"
-                android:textColor="@color/second"
-                android:text="Como parte de la II Jornada de conferencias de innovacion y tecnologia, FIEC ha reunido a mujeres profesionales en el campo de la Inteligencia Artificial en un entretenido debate."/>
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2">
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_time"
+                        android:tint="@color/fifth"
+                        android:backgroundTint="@color/white"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/first"
+                        android:text="Fecha"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/second"
+                        android:text="5/8/2019 - 13h00"/>
+                </LinearLayout>
+            </LinearLayout>
+
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.2">
-                <ImageButton
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2">
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_location"
+                        android:tint="@color/fifth"
+                        android:backgroundTint="@color/white"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/first"
+                        android:text="Lugar"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/second"
+                        android:text="11A - Auditorio de la FIEC"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2">
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_information"
+                        android:tint="@color/fifth"
+                        android:backgroundTint="@color/white"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/first"
+                        android:text="Mas informacion"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/second"
+                        android:text="email@fiec.espol.edu.ec"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="40dp"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal">
+                <Button
+                    android:id="@+id/place_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_time"
-                    android:tint="@color/fifth"
-                    android:backgroundTint="@color/white"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.8"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/first"
-                    android:text="Fecha"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/second"
-                    android:text="5/8/2019 - 13h00"/>
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.2">
-                <ImageButton
+                    android:padding="16dp"
+                    android:layout_marginRight="5dp"
+                    android:text="Ubicar sitio"
+                    android:drawableLeft="@drawable/ic_location"
+                    android:drawableTint="@color/white"
+                    android:textSize="10sp"
+                    android:background="@drawable/login_button"/>
+                <Button
+                    android:id="@+id/reminder_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_location"
-                    android:tint="@color/fifth"
-                    android:backgroundTint="@color/white"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.8"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:layout_marginLeft="5dp"
+                    android:text="Recordatorio"
                     android:textColor="@color/first"
-                    android:text="Lugar"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/second"
-                    android:text="11A - Auditorio de la FIEC"/>
+                    android:drawableLeft="@drawable/ic_notification"
+                    android:drawableTint="@color/first"
+                    android:textSize="10sp"
+                    android:background="@drawable/border_subject_box" />
             </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.2">
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_information"
-                    android:tint="@color/fifth"
-                    android:backgroundTint="@color/white"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.8"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/first"
-                    android:text="Mas informacion"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/second"
-                    android:text="email@fiec.espol.edu.ec"/>
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginTop="40dp"
-            android:orientation="horizontal"
-            android:gravity="center_horizontal">
-            <Button
-                android:id="@+id/place_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:layout_marginRight="5dp"
-                android:text="Ubicar sitio"
-                android:drawableLeft="@drawable/ic_location"
-                android:drawableTint="@color/white"
-                android:textSize="10sp"
-                android:background="@drawable/login_button"/>
-            <Button
-                android:id="@+id/reminder_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:layout_marginLeft="5dp"
-                android:text="Recordatorio"
-                android:textColor="@color/first"
-                android:drawableLeft="@drawable/ic_notification"
-                android:drawableTint="@color/first"
-                android:textSize="10sp"
-                android:background="@drawable/border_subject_box" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

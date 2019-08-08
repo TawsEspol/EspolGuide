@@ -49,7 +49,6 @@ public class EventsActivity extends BaseActivity implements Observer {
     private EventsViewModel viewModel;
     private ViewHolder viewHolder;
 
-    private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
@@ -89,7 +88,6 @@ public class EventsActivity extends BaseActivity implements Observer {
 
             tabLayout = findViewById(R.id.events_tab_layout);
             viewPager = findViewById(R.id.events_pager);
-            toolbar = findViewById(R.id.events_toolbar);
         }
 
         public void setEventsLv(ListView eventsLv){

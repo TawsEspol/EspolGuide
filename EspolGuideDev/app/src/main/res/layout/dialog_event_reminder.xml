@@ -47,6 +47,7 @@
             android:id="@+id/reminder_times_spinner"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
+            android:dropDownWidth="fill_parent"
             android:paddingLeft="15dp"
             android:layout_weight=".70" />
     </LinearLayout>
@@ -60,6 +61,15 @@
         android:layout_marginRight="10dp"
         android:gravity="right">
         <Button
+            android:id="@+id/cancelScheduleBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancelar"
+            android:textColor="@color/first"
+            android:paddingLeft="10dp"
+            android:textSize="12sp"
+            android:background="@android:color/transparent" />
+        <Button
             android:id="@+id/scheduleBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -68,21 +78,5 @@
             android:textSize="12sp"
             android:background="@android:color/transparent"
             />
-        <Button
-            android:id="@+id/cancelScheduleBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cancelar"
-            android:textColor="@color/third"
-            android:paddingLeft="10dp"
-            android:textSize="12sp"
-            android:background="@android:color/transparent"
-            />
     </LinearLayout>
-
-
-
-
-
-
 </LinearLayout>
