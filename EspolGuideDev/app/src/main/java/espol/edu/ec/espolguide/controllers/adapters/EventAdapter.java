@@ -216,14 +216,15 @@ public class EventAdapter extends BaseAdapter{
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
+                LinearLayout eventLayout = (LinearLayout) ((ViewGroup) v.getParent()).getParent();
+                String eventId = ((TextView) eventLayout.findViewById(R.id.event_id_tv)).getText().toString();
                 switch(id) {
                     case R.id.viewInformation:
                         Intent infoIntent = new Intent(getActivity(), EventInfoActivity.class);
+                        infoIntent.putExtra("event_id", eventId);
                         getActivity().startActivity(infoIntent);
                         return true;
                     case R.id.scheduleReminder:
-                        LinearLayout eventLayout = (LinearLayout) ((ViewGroup) v.getParent()).getParent();
-                        String eventId = ((TextView) eventLayout.findViewById(R.id.event_id_tv)).getText().toString();
                         String eventName = ((TextView) eventLayout.findViewById(R.id.event_name_tv)).getText().toString();
                         String eventPlace = ((TextView) eventLayout.findViewById(R.id.place_tv)).getText().toString();
                         String eventDate = ((TextView) eventLayout.findViewById(R.id.date_tv)).getText().toString();

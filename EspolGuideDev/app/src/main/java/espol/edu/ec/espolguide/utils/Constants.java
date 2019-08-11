@@ -152,5 +152,9 @@ public class Constants {
     public static String getEspolEventsURL(){ return "http://www.espol.edu.ec/API/eventos/list.php";
     }
 
+    public static String getEspolEventInfoURL(){
+        return "http://www.espol.edu.ec/API/eventos/show.php?id=";
+    }
+
 
 }
