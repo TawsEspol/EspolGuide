@@ -28,7 +28,6 @@
                     android:id="@+id/event_name_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Conversatorio 'Mujeres en la IA'"
                     android:textColor="@color/first"
                     android:textStyle="bold"/>
                 <TextView
@@ -36,8 +35,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:textColor="@color/second"
-                    android:text="Como parte de la II Jornada de conferencias de innovacion y tecnologia, FIEC ha reunido a mujeres profesionales en el campo de la Inteligencia Artificial en un entretenido debate."/>
+                    android:textColor="@color/second" />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
@@ -68,8 +66,7 @@
                         android:id="@+id/event_time_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/second"
-                        android:text="5/8/2019 - 13h00"/>
+                        android:textColor="@color/second"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -103,8 +100,7 @@
                         android:id="@+id/event_place_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/second"
-                        android:text="11A - Auditorio de la FIEC"/>
+                        android:textColor="@color/second"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -138,8 +134,7 @@
                         android:id="@+id/event_info_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/second"
-                        android:text="email@fiec.espol.edu.ec"/>
+                        android:textColor="@color/second"/>
                 </LinearLayout>
             </LinearLayout>
 

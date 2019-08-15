@@ -669,5 +669,15 @@ public class MapActivity extends BaseActivity implements Observer, LocationEngin
                 }
             }
         }
+
+        else if(requestCode == Constants.EVENTS_REQUEST_CODE){
+            if (resultCode == RESULT_OK) {
+                if(Objects.requireNonNull(data.getExtras()).containsKey(Constants.SELECTED_GTSI_CODE)){
+                    codeGtsi = data.getExtras().getString(Constants.SELECTED_GTSI_CODE);
+                    cleanMapLayoutView();
+                    viewModel.centerMapOnResult(codeGtsi);
+                }
+            }
+        }
     }
 }

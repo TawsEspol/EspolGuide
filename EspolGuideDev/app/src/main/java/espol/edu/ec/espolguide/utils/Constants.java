@@ -77,6 +77,7 @@ public class Constants {
     public final static int FAVORITES_REQUEST_CODE = 1;
     public final static int SUBJECTS_REQUEST_CODE = 2;
     public final static int EVENTS_REQUEST_CODE = 3;
+    public final static int EVENTS_INFO_REQUEST_CODE = 4;
 
     public final static String ON_PERMISSION_RESULT = "on_permission_result";
     public final static String ON_CREATE = "on_create";
@@ -141,6 +142,15 @@ public class Constants {
     public static String getCoordinatesURL(){
         return SERVER_URL + "/coordinates/";
     }
+
+    public static String getUserRemindersURL(){
+        return SERVER_URL + "/user/notifications/";
+    }
+
+    public static String getCreateReminderURL(){
+        return SERVER_URL + "/notification/";
+    }
+
 
     public static String getBuildingInfoURL(){
         return SERVER_URL + "/buildingInfo/";

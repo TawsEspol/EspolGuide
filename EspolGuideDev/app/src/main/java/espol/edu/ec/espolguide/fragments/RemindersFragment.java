@@ -1,5 +1,6 @@
 package espol.edu.ec.espolguide.fragments;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,10 +13,21 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import espol.edu.ec.espolguide.R;
+import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.controllers.adapters.ReminderAdapter;
+import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SessionHelper;
 import espol.edu.ec.espolguide.utils.User;
 
@@ -42,7 +54,7 @@ public class RemindersFragment  extends Fragment {
         loadReminders();
     }
 
-    private class RemindersLoader extends AsyncTask<Void, Void, Void> {
+/**    private class RemindersLoader extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
             String reminder = "001;Charla 'Inteligencia Artificial en la Industria;11A-A103 - Auditorio de FIEC;11h00;25/06/2019;Recordar 1 hora antes";
@@ -53,9 +65,73 @@ public class RemindersFragment  extends Fragment {
             remindersLv.setAdapter(reminderAdapter);
             return null;
         }
-    }
+    }*/
 
     public void loadReminders(){
-        new RemindersLoader().execute();
+        new RemindersLoader().execute(this.getActivity());
+    }
+
+
+    private class RemindersLoader extends AsyncTask<Context, Void, ArrayList> {
+        Context context;
+
+        @Override
+        protected ArrayList doInBackground(Context... contexts) {
+            context = contexts[0];
+            if (!Constants.isNetworkAvailable(context)) {
+                //  setChanged();
+                //  notifyObservers(REQUEST_FAILED_CONNECTION);
+            } else {
+                System.out.println("======================= " + "LLEGO AL ELSE");
+                String userToken = SessionHelper.getAccessToken(getActivity());
+                JSONObject jsonBody = new JSONObject();
+                try {
+                    jsonBody.put("token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImdhZGFjYXN0IiwiZXhwIjoxNTY0ODk4MjMxfQ.pKIOr0ZRDvZhfZ7htgUNvprNw8LViJUESb9Mg7OKFYk");
+                } catch (Exception ignored) {
+                    ;
+                }
+                remindersList = new ArrayList<>();
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
+                        Constants.getUserRemindersURL(), jsonBody, response -> {
+                    try {
+                        System.out.println("======================= " + "LLEGO AL TRY");
+                        JSONArray notificationsArray = response.getJSONArray("notifications");
+                        int notificationsAmount = notificationsArray.length();
+                        System.out.println("======================= " + "SALI DEL FOR " + notificationsAmount);
+                        for (int i = 0; i < notificationsAmount; i++) {
+                            JSONObject notificationInfo = (JSONObject) notificationsArray.get(i);
+                            String eventName = notificationInfo.getString("event_title");
+
+                            String notificationDateTime = notificationInfo.getString("notification_ts");
+                            String eventDateTime = notificationInfo.getString("event_ts");
+                            int timeUnit = notificationInfo.getInt("time_unit");
+                            int notificationId = notificationInfo.getInt("notification_id");
+                            int timeValue = notificationInfo.getInt("value");
+
+                            String eventDate = eventDateTime.split(" ")[0];
+                            String eventTime = eventDateTime.split(" ")[1];
+
+                            String reminder = notificationId + ";" + eventName + ";" + "11A-A103 - Auditorio de FIEC" +
+                                    ";" + eventTime + ";" + eventDate + ";" + "Recordar 1 hora antes";
+                            remindersList.add(reminder);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    reminderAdapter = new ReminderAdapter(getActivity(), remindersList);
+                    ListView remindersLv = (ListView) getView().findViewById(R.id.events_lv);
+                    remindersLv.setAdapter(reminderAdapter);
+
+//                    setChanged();
+                    //                  notifyObservers(NAMES_REQUEST_SUCCEEDED);
+                }, error -> {
+                    VolleyLog.d("tag", "Error: " + error.getMessage());
+                    //               setChanged();
+                    //             notifyObservers(REQUEST_FAILED_HTTP);
+                });
+                AppController.getInstance(context).addToRequestQueue(jsonObjectRequest);
+            }
+            return remindersList;
+        }
     }
 }

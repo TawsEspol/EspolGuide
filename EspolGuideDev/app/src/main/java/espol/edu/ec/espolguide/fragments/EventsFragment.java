@@ -90,7 +90,7 @@ public class EventsFragment extends Fragment {
                                 String eventTime = eventInfo.getString("hora_inicio");
 
                                 String eventString = eventId + ";" + eventName + ";" + eventPlace +
-                                        ";" + eventTime + ";" + eventDate;
+                                        ";" + eventTime + ";" + eventDate + ";" + eventZone;
                                 eventsList.add(eventString);
                             }
                         } catch (JSONException e) {

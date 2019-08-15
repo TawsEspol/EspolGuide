@@ -160,13 +160,7 @@ public class ReminderAdapter extends BaseAdapter {
         holder.eventName_tv.setText(eventName);
         holder.place_tv.setText(place);
         holder.time_tv.setText(time);
-        if(reminderTime==null){
-            System.out.println("==================== ES LA VARIABLE");
-        }
-        if(holder.reminderTime_tv == null){
-            System.out.println("=================== ES LA CAJA");
-        }
-        holder.reminderTime_tv.setText(date + " - " + reminderTime);
+        holder.reminderTime_tv.setText(reminderTime);
 
         holder.reminderTime_tv.setVisibility(View.VISIBLE);
         return view;

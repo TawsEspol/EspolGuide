@@ -28,10 +28,12 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.Objects;
 import java.util.Observer;
 
 import espol.edu.ec.espolguide.controllers.adapters.EventsPageAdapter;
 import espol.edu.ec.espolguide.utils.AlarmReceiver;
+import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.Util;
 import espol.edu.ec.espolguide.viewModels.EventsViewModel;
 import espol.edu.ec.espolguide.viewModels.FavoritesViewModel;
@@ -193,6 +195,25 @@ public class EventsActivity extends BaseActivity implements Observer {
         //      alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
         alarmManager.set(AlarmManager.RTC_WAKEUP, timeCal.getTimeInMillis(), pendingIntent);
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String zoneArea = "";
+        if (requestCode == Constants.EVENTS_INFO_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                if(Objects.requireNonNull(data.getExtras()).containsKey(Constants.SELECTED_GTSI_CODE)){
+                    zoneArea = data.getExtras().getString(Constants.SELECTED_GTSI_CODE);
+                    if(zoneArea.trim().length() > 0){
+                        Intent mapIntent = new Intent(getApplicationContext(), MapActivity.class);
+                        mapIntent.putExtra(Constants.SELECTED_OPTION, R.id.map_op);
+                        mapIntent.putExtra(Constants.SELECTED_GTSI_CODE, zoneArea);
+                        setResult(RESULT_OK, mapIntent);
+                        finish();
+                    }
+                }
+            }
+        }
     }
 
 }

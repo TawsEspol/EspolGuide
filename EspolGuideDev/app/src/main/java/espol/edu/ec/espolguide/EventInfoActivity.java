@@ -1,9 +1,11 @@
 package espol.edu.ec.espolguide;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -11,12 +13,14 @@ import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
+import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.viewModels.EventInfoViewModel;
 
 public class EventInfoActivity extends AppCompatActivity implements Observer {
     private ViewHolder viewHolder;
     private EventInfoViewModel viewModel;
     private String eventId;
+    private String eventZoneArea;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,11 +29,14 @@ public class EventInfoActivity extends AppCompatActivity implements Observer {
         this.viewHolder = new ViewHolder();
         Bundle bundle = getIntent().getExtras();
         if(bundle!= null && Objects.requireNonNull(bundle).containsKey("event_id")){
-            this.viewHolder.eventNameTv.setText(bundle.getString("event_id"));
             this.eventId = bundle.getString("event_id");
+        }
+        if(bundle!= null && Objects.requireNonNull(bundle).containsKey("event_zone_area")){
+            this.eventZoneArea = bundle.getString("event_zone_area");
         }
         this.viewModel = new EventInfoViewModel(this, this.eventId);
         this.viewModel.makeGetEventInfoRequest();
+          setClickListeners();
     }
 
     @Override
@@ -91,5 +98,24 @@ public class EventInfoActivity extends AppCompatActivity implements Observer {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public String getEventZoneArea(){
+        return this.eventZoneArea;
+    }
+
+    public void setClickListeners(){
+        viewHolder.locateBuildingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(getEventZoneArea().trim().length() > 0){
+                    Intent eventIntent = new Intent(getApplicationContext(), EventsActivity.class);
+                    eventIntent.putExtra(Constants.SELECTED_OPTION, R.id.events_op);
+                    eventIntent.putExtra(Constants.SELECTED_GTSI_CODE, getEventZoneArea().trim());
+                    setResult(RESULT_OK, eventIntent);
+                    finish();
+                }
+            }
+        });
     }
 }
