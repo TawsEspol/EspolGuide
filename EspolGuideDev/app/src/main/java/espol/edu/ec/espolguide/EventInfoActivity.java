@@ -31,12 +31,10 @@ public class EventInfoActivity extends AppCompatActivity implements Observer {
         if(bundle!= null && Objects.requireNonNull(bundle).containsKey("event_id")){
             this.eventId = bundle.getString("event_id");
         }
-        if(bundle!= null && Objects.requireNonNull(bundle).containsKey("event_zone_area")){
-            this.eventZoneArea = bundle.getString("event_zone_area");
-        }
         this.viewModel = new EventInfoViewModel(this, this.eventId);
         this.viewModel.makeGetEventInfoRequest();
-          setClickListeners();
+        this.eventZoneArea = this.viewModel.getEventZoneArea();
+        setClickListeners();
     }
 
     @Override
@@ -108,7 +106,7 @@ public class EventInfoActivity extends AppCompatActivity implements Observer {
         viewHolder.locateBuildingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(getEventZoneArea().trim().length() > 0){
+                if(getEventZoneArea() != null && getEventZoneArea().trim().length() > 0){
                     Intent eventIntent = new Intent(getApplicationContext(), EventsActivity.class);
                     eventIntent.putExtra(Constants.SELECTED_OPTION, R.id.events_op);
                     eventIntent.putExtra(Constants.SELECTED_GTSI_CODE, getEventZoneArea().trim());

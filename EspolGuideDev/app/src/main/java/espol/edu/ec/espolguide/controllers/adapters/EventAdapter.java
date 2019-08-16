@@ -321,8 +321,8 @@ public class EventAdapter extends BaseAdapter{
                     String userToken = SessionHelper.getAccessToken(mContext);
                     int timeUnit = spinner.getSelectedItemPosition();
                     String eventTs = eventDate + " " + eventTime + ":00";
-           //         makeCreateReminderRequest(eventId, Integer.parseInt(reminderTimeValue.trim()),
-             //               timeUnit, eventTs, eventName, userToken);
+                    makeCreateReminderRequest(eventId, Integer.parseInt(reminderTimeValue.trim()),
+                               timeUnit, eventTs, eventName, userToken);
                 }
             }
         });
@@ -336,12 +336,19 @@ public class EventAdapter extends BaseAdapter{
         } else {
             JSONObject jsonBody = new JSONObject();
             try{
+
                 jsonBody.put("event_id", eventId);
                 jsonBody.put("value", value);
                 jsonBody.put("time_unit", timeUnit);
                 jsonBody.put("event_ts", eventTs);
                 jsonBody.put("event_title", eventTitle);
                 jsonBody.put("token", token);
+
+                /**
+                 * Volley automatically adds backslashes when sending slashes in JSON bodies. Then,
+                 * it is necessary to remove them.
+                 */
+                jsonBody.toString().replace("\\\\","");
             }
             catch (Exception ignored){ ;
             }

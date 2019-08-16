@@ -13,6 +13,7 @@ import java.util.Objects;
 public class Constants {
 
     public final static String SERVER_URL = "http://espol-guide.espol.edu.ec";
+//    public final static String SERVER_URL = "http://192.168.0.8:8000";
 
     public final static int CLOSE_ZOOM = 18;
     public final static int FAR_AWAY_ZOOM = 16;
@@ -151,6 +152,13 @@ public class Constants {
         return SERVER_URL + "/notification/";
     }
 
+    public static String getRemoveReminderURL(){
+        return SERVER_URL + "/deleteNotification/";
+    }
+
+    public static String getUpdateReminderURL(){
+        return SERVER_URL + "/notification/";
+    }
 
     public static String getBuildingInfoURL(){
         return SERVER_URL + "/buildingInfo/";

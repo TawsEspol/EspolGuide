@@ -82,11 +82,10 @@ public class RemindersFragment  extends Fragment {
                 //  setChanged();
                 //  notifyObservers(REQUEST_FAILED_CONNECTION);
             } else {
-                System.out.println("======================= " + "LLEGO AL ELSE");
                 String userToken = SessionHelper.getAccessToken(getActivity());
                 JSONObject jsonBody = new JSONObject();
                 try {
-                    jsonBody.put("token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImdhZGFjYXN0IiwiZXhwIjoxNTY0ODk4MjMxfQ.pKIOr0ZRDvZhfZ7htgUNvprNw8LViJUESb9Mg7OKFYk");
+                    jsonBody.put("token", userToken);
                 } catch (Exception ignored) {
                     ;
                 }
@@ -94,10 +93,8 @@ public class RemindersFragment  extends Fragment {
                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
                         Constants.getUserRemindersURL(), jsonBody, response -> {
                     try {
-                        System.out.println("======================= " + "LLEGO AL TRY");
                         JSONArray notificationsArray = response.getJSONArray("notifications");
                         int notificationsAmount = notificationsArray.length();
-                        System.out.println("======================= " + "SALI DEL FOR " + notificationsAmount);
                         for (int i = 0; i < notificationsAmount; i++) {
                             JSONObject notificationInfo = (JSONObject) notificationsArray.get(i);
                             String eventName = notificationInfo.getString("event_title");
@@ -120,7 +117,8 @@ public class RemindersFragment  extends Fragment {
                     }
                     reminderAdapter = new ReminderAdapter(getActivity(), remindersList);
                     ListView remindersLv = (ListView) getView().findViewById(R.id.events_lv);
-                    remindersLv.setAdapter(reminderAdapter);
+                    if(reminderAdapter.getViewTypeCount() > 0){ remindersLv.setAdapter(reminderAdapter); }
+
 
 //                    setChanged();
                     //                  notifyObservers(NAMES_REQUEST_SUCCEEDED);
