@@ -31,6 +31,7 @@ import java.util.List;
 import espol.edu.ec.espolguide.EventInfoActivity;
 import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.AppController;
+import espol.edu.ec.espolguide.fragments.RemindersFragment;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SessionHelper;
 
@@ -42,6 +43,7 @@ public class ReminderAdapter extends BaseAdapter {
     private final Context mContext;
     private final LayoutInflater inflater;
     private AlertDialog reminderDialog;
+    private RemindersFragment remindersFragment;
 
     private class ViewHolder{
         private String eventId;
@@ -117,11 +119,14 @@ public class ReminderAdapter extends BaseAdapter {
         public void setNotificationId(String notificationId){ this.notificationId = notificationId; }
     }
 
-    public ReminderAdapter(Context context, List<String> events){
+    public ReminderAdapter(Context context, List<String> events, RemindersFragment remindersFragment){
         this.events = events;
         this.mContext = context;
         this.inflater = LayoutInflater.from(mContext);
+        this.remindersFragment = remindersFragment;
     }
+
+    public RemindersFragment getRemindersFragment(){ return this.remindersFragment; }
 
     public AlertDialog getReminderDialog(){
         return this.reminderDialog;
@@ -330,7 +335,7 @@ public class ReminderAdapter extends BaseAdapter {
                     Constants.getRemoveReminderURL(), jsonBody, response -> {
                 try {
                     if(response.length() > 0){
-                        eventLayout.removeAllViews();
+                        getRemindersFragment().loadReminders();
                     }
                     else{
 
@@ -372,6 +377,7 @@ public class ReminderAdapter extends BaseAdapter {
                 try {
                     if(response.length() > 0){
                         getReminderDialog().dismiss();
+                        getRemindersFragment().loadReminders();
                     }
                     else{
 

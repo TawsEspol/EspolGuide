@@ -116,7 +116,7 @@ public class RemindersFragment  extends Fragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    reminderAdapter = new ReminderAdapter(getActivity(), remindersList);
+                    reminderAdapter = new ReminderAdapter(getActivity(), remindersList, RemindersFragment.this);
                     ListView remindersLv = (ListView) getView().findViewById(R.id.events_lv);
                     if(reminderAdapter.getViewTypeCount() > 0){ remindersLv.setAdapter(reminderAdapter); }
 

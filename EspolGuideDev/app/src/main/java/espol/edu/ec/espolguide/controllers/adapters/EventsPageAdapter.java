@@ -17,8 +17,8 @@ public class EventsPageAdapter extends FragmentStatePagerAdapter {
     public EventsPageAdapter(FragmentManager fm, int NumOfTabs) {
         super(fm);
         this.mNumOfTabs = NumOfTabs;
-        eventsTab = new EventsFragment();
         remindersTab = new RemindersFragment();
+        eventsTab = new EventsFragment(remindersTab);
     }
 
     @Override

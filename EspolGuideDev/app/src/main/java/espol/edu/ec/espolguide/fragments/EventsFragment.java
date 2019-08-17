@@ -1,5 +1,6 @@
 package espol.edu.ec.espolguide.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -46,6 +47,14 @@ public class EventsFragment extends Fragment {
 
     private ArrayList<String> eventsList = new ArrayList<>();
     private EventAdapter eventAdapter;
+    private RemindersFragment remindersFragment;
+
+    @SuppressLint("ValidFragment")
+    public EventsFragment(RemindersFragment remindersFragment){
+        this.remindersFragment = remindersFragment;
+    }
+
+    public EventsFragment(){ }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -97,7 +106,7 @@ public class EventsFragment extends Fragment {
                             e.printStackTrace();
                         }
                     }
-                    eventAdapter = new EventAdapter(getActivity(), eventsList);
+                    eventAdapter = new EventAdapter(getActivity(), eventsList, remindersFragment);
                     ListView eventsLv = (ListView) getView().findViewById(R.id.events_lv);
                     eventsLv.setAdapter(eventAdapter);
 

@@ -153,11 +153,12 @@
                     android:paddingRight="17dp"
                     android:paddingLeft="17dp"
                     android:layout_marginRight="5dp"
+                    android:textColor="@color/first"
                     android:text="Ubicar sitio"
                     android:drawableLeft="@drawable/ic_location"
-                    android:drawableTint="@color/white"
+                    android:drawableTint="@color/first"
                     android:textSize="10sp"
-                    android:background="@drawable/locate_building_info_border"/>
+                    android:background="@drawable/border_subject_box"/>
                 <Button
                     android:id="@+id/reminder_btn"
                     android:layout_width="wrap_content"

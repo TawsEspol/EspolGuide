@@ -36,6 +36,7 @@ import espol.edu.ec.espolguide.EventsActivity;
 import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.AppController;
+import espol.edu.ec.espolguide.fragments.RemindersFragment;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SessionHelper;
 import espol.edu.ec.espolguide.utils.Util;
@@ -48,6 +49,7 @@ public class EventAdapter extends BaseAdapter{
     private final Context mContext;
     private final LayoutInflater inflater;
     private AlertDialog reminderDialog;
+    private RemindersFragment remindersFragment;
 
     private class ViewHolder{
         private String eventId;
@@ -122,11 +124,14 @@ public class EventAdapter extends BaseAdapter{
         }
     }
 
-    public EventAdapter(Context context, List<String> events){
+    public EventAdapter(Context context, List<String> events, RemindersFragment remindersFragment){
         this.events = events;
         this.mContext = context;
         this.inflater = LayoutInflater.from(mContext);
+        this.remindersFragment = remindersFragment;
     }
+
+    public RemindersFragment getRemindersFragment(){ return this.remindersFragment; }
 
     public AlertDialog getReminderDialog(){
         return this.reminderDialog;
@@ -375,7 +380,7 @@ public class EventAdapter extends BaseAdapter{
                     Constants.getCreateReminderURL(), jsonBody, response -> {
                 try {
                     if(response.length() > 0){
-
+                        getRemindersFragment().loadReminders();
                     }
                     else{
 
