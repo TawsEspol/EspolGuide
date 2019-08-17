@@ -201,6 +201,16 @@ public class EventAdapter extends BaseAdapter{
         holder.place_tv.setText(place);
         holder.time_tv.setText(time);
         holder.zoneArea_tv.setText(zoneArea);
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent infoIntent = new Intent(getActivity(), EventInfoActivity.class);
+                infoIntent.putExtra("event_id", eventId);
+                getActivity().startActivityForResult(infoIntent, Constants.EVENTS_INFO_REQUEST_CODE);
+            }
+        });
+
         return view;
     }
 
@@ -304,7 +314,17 @@ public class EventAdapter extends BaseAdapter{
                                         String eventName){
         Button scheduleBtn = v.findViewById(R.id.scheduleBtn);
         Button cancelBtn = v.findViewById(R.id.cancelScheduleBtn);
+        ImageButton spinnerArrowBtn = v.findViewById(R.id.spinner_arrow_btn);
+        Spinner spinner = (Spinner) v.findViewById(R.id.reminder_times_spinner);
         AlertDialog reminderDialog = getReminderDialog();
+
+        spinnerArrowBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                spinner.performClick();
+            }
+        });
+
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -317,7 +337,6 @@ public class EventAdapter extends BaseAdapter{
                 EditText reminderTimeEdt = v.findViewById(R.id.reminder_time_et);
                 String reminderTimeValue = reminderTimeEdt.getText().toString();
                 if(reminderTimeValue.trim().length() > 0){
-                    Spinner spinner = (Spinner) v.findViewById(R.id.reminder_times_spinner);
                     String userToken = SessionHelper.getAccessToken(mContext);
                     int timeUnit = spinner.getSelectedItemPosition();
                     String eventTs = eventDate + " " + eventTime + ":00";

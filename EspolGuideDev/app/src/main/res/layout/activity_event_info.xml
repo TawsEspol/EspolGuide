@@ -148,13 +148,16 @@
                     android:id="@+id/place_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:paddingRight="17dp"
+                    android:paddingLeft="17dp"
                     android:layout_marginRight="5dp"
                     android:text="Ubicar sitio"
                     android:drawableLeft="@drawable/ic_location"
                     android:drawableTint="@color/white"
                     android:textSize="10sp"
-                    android:background="@drawable/login_button"/>
+                    android:background="@drawable/locate_building_info_border"/>
                 <Button
                     android:id="@+id/reminder_btn"
                     android:layout_width="wrap_content"

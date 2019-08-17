@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import espol.edu.ec.espolguide.EventInfoActivity;
 import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.utils.Constants;
@@ -179,8 +180,8 @@ public class ReminderAdapter extends BaseAdapter {
         String time = parts[3];
         String date = parts[4];
         String reminderTime = parts[5];
-//        String eventId = parts[6];
-//        holder.setEventId(eventId);
+        String eventId = parts[6];
+        holder.setEventId(eventId);
 
         holder.setEventName(eventName);
         holder.setPlace(place);
@@ -189,7 +190,7 @@ public class ReminderAdapter extends BaseAdapter {
         holder.setNotificationId(notificationId);
 
         holder.date_tv.setText(date);
-//        holder.eventId_tv.setText(eventId);
+        holder.eventId_tv.setText(eventId);
         holder.eventName_tv.setText(eventName);
         holder.place_tv.setText(place);
         holder.time_tv.setText(time);
@@ -197,6 +198,16 @@ public class ReminderAdapter extends BaseAdapter {
         holder.notificationId_tv.setText(notificationId);
 
         holder.reminderTime_tv.setVisibility(View.VISIBLE);
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent infoIntent = new Intent(getActivity(), EventInfoActivity.class);
+  //              infoIntent.putExtra("event_id", eventId);
+                getActivity().startActivityForResult(infoIntent, Constants.EVENTS_INFO_REQUEST_CODE);
+            }
+        });
+
         return view;
     }
 
@@ -237,9 +248,9 @@ public class ReminderAdapter extends BaseAdapter {
 
                 switch(id) {
                     case R.id.viewInformation:
-//                        Intent infoIntent = new Intent(getActivity(), EventInfoActivity.class);
-//                        infoIntent.putExtra("event_id", eventId);
-//                        getActivity().startActivityForResult(infoIntent, Constants.EVENTS_INFO_REQUEST_CODE);
+                        Intent infoIntent = new Intent(getActivity(), EventInfoActivity.class);
+                        infoIntent.putExtra("event_id", eventId);
+                        getActivity().startActivityForResult(infoIntent, Constants.EVENTS_INFO_REQUEST_CODE);
                         return true;
                     case R.id.updateReminder:
                         getReminderDialog().show();
@@ -268,7 +279,17 @@ public class ReminderAdapter extends BaseAdapter {
     public void setDialogButtonsActions(View v, String notificationId){
         Button scheduleBtn = v.findViewById(R.id.scheduleBtn);
         Button cancelBtn = v.findViewById(R.id.cancelScheduleBtn);
+        ImageButton spinnerArrowBtn = v.findViewById(R.id.spinner_arrow_btn);
+        Spinner spinner = (Spinner) v.findViewById(R.id.reminder_times_spinner);
         AlertDialog reminderDialog = getReminderDialog();
+
+        spinnerArrowBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                spinner.performClick();
+            }
+        });
+
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -281,7 +302,6 @@ public class ReminderAdapter extends BaseAdapter {
                 EditText reminderTimeEdt = v.findViewById(R.id.reminder_time_et);
                 String reminderTimeValue = reminderTimeEdt.getText().toString();
                 if(reminderTimeValue.trim().length() > 0){
-                    Spinner spinner = (Spinner) v.findViewById(R.id.reminder_times_spinner);
                     String userToken = SessionHelper.getAccessToken(mContext);
                     int timeUnit = spinner.getSelectedItemPosition();
                     makeUpdateReminderRequest(Integer.parseInt(notificationId.trim()),

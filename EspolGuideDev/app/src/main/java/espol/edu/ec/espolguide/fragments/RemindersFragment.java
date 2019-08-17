@@ -97,8 +97,8 @@ public class RemindersFragment  extends Fragment {
                         int notificationsAmount = notificationsArray.length();
                         for (int i = 0; i < notificationsAmount; i++) {
                             JSONObject notificationInfo = (JSONObject) notificationsArray.get(i);
+                            String eventId = notificationInfo.getString("event_id");
                             String eventName = notificationInfo.getString("event_title");
-
                             String notificationDateTime = notificationInfo.getString("notification_ts");
                             String eventDateTime = notificationInfo.getString("event_ts");
                             int timeUnit = notificationInfo.getInt("time_unit");
@@ -109,7 +109,8 @@ public class RemindersFragment  extends Fragment {
                             String eventTime = eventDateTime.split(" ")[1];
 
                             String reminder = notificationId + ";" + eventName + ";" + "11A-A103 - Auditorio de FIEC" +
-                                    ";" + eventTime + ";" + eventDate + ";" + "Recordar 1 hora antes";
+                                    ";" + eventTime + ";" + eventDate + ";" + "Recordar 1 hora antes" +
+                                    ";" + eventId;
                             remindersList.add(reminder);
                         }
                     } catch (JSONException e) {
