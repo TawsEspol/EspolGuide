@@ -2,6 +2,7 @@ package espol.edu.ec.espolguide.viewModels;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.view.View;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyLog;
@@ -17,13 +18,17 @@ public class EventInfoViewModel {
     public String eventId;
     public EventInfoActivity activity;
     private String eventZoneArea;
+    private View dialogView;
 
     public static final String EVENT_INFO_WS = Constants.getEspolEventInfoURL();
 
-    public EventInfoViewModel(EventInfoActivity activity, String eventId){
+    public EventInfoViewModel(EventInfoActivity activity, String eventId, View dialogView){
         this.eventId = eventId;
         this.activity = activity;
+        this.dialogView = dialogView;
     }
+
+    public View getDialogView(){ return this.dialogView; }
 
     public String getEventZoneArea(){
         return this.eventZoneArea;
@@ -60,6 +65,9 @@ public class EventInfoViewModel {
                             String eventInfoEmail = response.getString("email_responsable");
                             setDataOnScreen(eventName, eventDescription, eventPlace, getEventZoneArea(),
                                     eventDate, eventTime, eventInfoEmail);
+
+                            activity.setDialogButtonsActions(getDialogView(), eventId, eventDate, eventTime, eventName);
+                            activity.setEventZoneArea(getEventZoneArea());
                         }
                         catch (Exception e){
                            // setChanged();

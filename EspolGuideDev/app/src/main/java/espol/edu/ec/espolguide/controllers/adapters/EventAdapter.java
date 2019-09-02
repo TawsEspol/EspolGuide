@@ -37,6 +37,7 @@ import espol.edu.ec.espolguide.MapActivity;
 import espol.edu.ec.espolguide.R;
 import espol.edu.ec.espolguide.controllers.AppController;
 import espol.edu.ec.espolguide.fragments.RemindersFragment;
+import espol.edu.ec.espolguide.models.Time;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SessionHelper;
 import espol.edu.ec.espolguide.utils.Util;
@@ -287,7 +288,6 @@ public class EventAdapter extends BaseAdapter{
                         int hour = Integer.parseInt(partsTime[0]);
                         int minute = Integer.parseInt(partsTime[1]);
 */
-
                         AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
                         View mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_event_reminder, null);
                         mBuilder.setView(mView);
@@ -295,8 +295,6 @@ public class EventAdapter extends BaseAdapter{
                         fillTimesSpinner(mView);
                         getReminderDialog().show();
                         setDialogButtonsActions(mView, eventId, eventDate, eventTime, eventName);
-
-                        //scheduleNotification(getApplicationContext(), 5,100);
                         return true;
                     default:
                         return false;
@@ -381,6 +379,17 @@ public class EventAdapter extends BaseAdapter{
                 try {
                     if(response.length() > 0){
                         getRemindersFragment().loadReminders();
+                        Toast.makeText(mContext, "Recordatorio creado.",
+                                Toast.LENGTH_SHORT).show();
+                        if(response.has("notification_id") & response.has("notification_ts")){
+                            String eventDateTime = response.getString("notification_ts");
+                            int notificationId = response.getInt("notification_id");
+                            Time time = new Time(eventDateTime);
+                            System.out.println("===================== MES: " + time.getMonth());
+                            Time t2 = new Time(2019, 8, 25, 20, 5, 0);
+                            Util.scheduleNotification(getActivity(), notificationId, t2, "Evento de ejemplo",
+                                    timeUnit, value);
+                        }
                     }
                     else{
 

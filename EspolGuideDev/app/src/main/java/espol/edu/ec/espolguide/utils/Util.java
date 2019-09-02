@@ -1,15 +1,29 @@
 package espol.edu.ec.espolguide.utils;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.RingtoneManager;
+import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Objects;
 
+import espol.edu.ec.espolguide.EventsActivity;
 import espol.edu.ec.espolguide.R;
+import espol.edu.ec.espolguide.models.Time;
 
 /**
  * Class used to execute utilities tasks.
@@ -206,5 +220,70 @@ public class Util {
         }
 
         return builder.toString();
+    }
+
+    public static String getReminderTimeString(int timeUnit, int timeValue, String type){
+        String reminderTimeString = "";
+        HashMap<Integer, String> units = new HashMap<>();
+        units.put(0, "minutos");
+        units.put(1, "horas");
+        units.put(2, "dias");
+
+        String unitString = units.get(timeUnit);
+        if(type == "reminders_list"){
+            reminderTimeString = "Recordar " + timeValue + " " + unitString + " antes";
+        }
+        else if (type == "event_notification"){
+            reminderTimeString = "En " + timeValue + " " + unitString + " comienza el evento en ESPOL";
+        }
+        return reminderTimeString;
+    }
+
+    public static void scheduleNotification(Context context, int notificationId, Time time, String eventTitle,
+                                     int timeUnit, int timeValue) {
+        String CHANNEL_ID = "my_channel_01";// The id of the channel.
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+
+
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+                .setContentTitle(eventTitle)
+                .setContentText(getReminderTimeString(timeUnit, timeValue, "event_notification"))
+                .setAutoCancel(true)
+                .setSmallIcon(R.drawable.mapbox_mylocation_icon_default)
+                .setChannelId(CHANNEL_ID)
+                .setLargeIcon(((BitmapDrawable) context.getResources().getDrawable(R.drawable.mapbox_mylocation_icon_default)).getBitmap())
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+        Intent intent = new Intent(context, EventsActivity.class);
+        PendingIntent activity = PendingIntent.getActivity(context, notificationId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        builder.setContentIntent(activity);
+
+        Notification notification = builder.build();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {       // For Oreo and greater than it, we required Notification Channel.
+            CharSequence name_ = "My New Channel";                   // The user-visible name of the channel.
+            NotificationManager mNotificationManager;
+            mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,name_, importance); //Create Notification Channel
+            mNotificationManager.createNotificationChannel(channel);
+            //  mNotificationManager.notify(notificationId, notification);
+        }
+
+        Intent notificationIntent = new Intent(context, AlarmReceiver.class);
+        notificationIntent.putExtra(AlarmReceiver.NOTIFICATION_ID, notificationId);
+        notificationIntent.putExtra(AlarmReceiver.NOTIFICATION, notification);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationId, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        Calendar timeCal = Calendar.getInstance();
+        timeCal.set(Calendar.HOUR_OF_DAY, time.getHour());
+        timeCal.set(Calendar.MINUTE, time.getMinute());
+        timeCal.set(Calendar.SECOND, time.getSecond());
+        timeCal.set(Calendar.DAY_OF_MONTH, time.getDay());
+        timeCal.set(Calendar.MONTH, time.getMonth() - 1);
+        timeCal.set(Calendar.YEAR, time.getYear());
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, timeCal.getTimeInMillis(), pendingIntent);
+
     }
 }

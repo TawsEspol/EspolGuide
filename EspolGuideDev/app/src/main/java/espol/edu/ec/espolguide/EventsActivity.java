@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.Observer;
 
 import espol.edu.ec.espolguide.controllers.adapters.EventsPageAdapter;
+import espol.edu.ec.espolguide.models.Time;
 import espol.edu.ec.espolguide.utils.AlarmReceiver;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.Util;
@@ -71,6 +72,7 @@ public class EventsActivity extends BaseActivity implements Observer {
     public class ViewHolder{
         public ListView eventsLv;
         public Toolbar eventsToolbar;
+        public EventsPageAdapter eventsPageAdapter;
 
         public ViewHolder(){
             findViews();
@@ -108,8 +110,8 @@ public class EventsActivity extends BaseActivity implements Observer {
         }
 
         public void setEventsPageAdapter(){
-            EventsPageAdapter adapter = new EventsPageAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
-            viewPager.setAdapter(adapter);
+            this.eventsPageAdapter = new EventsPageAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+            viewPager.setAdapter(this.eventsPageAdapter);
             viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
             tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                 @Override
@@ -128,6 +130,8 @@ public class EventsActivity extends BaseActivity implements Observer {
                 }
             });
         }
+
+        public EventsPageAdapter getEventsPageAdapter(){ return this.eventsPageAdapter; }
     }
 
     public ViewHolder getViewHolder(){
@@ -144,64 +148,12 @@ public class EventsActivity extends BaseActivity implements Observer {
         return super.onOptionsItemSelected(item);
     }
 
-
-
-
-
-
-
-    public void scheduleNotification(Context context, long delay, int notificationId) {//delay is after how much time(in millis) from current time you want to schedule the notification
-        String CHANNEL_ID = "my_channel_01";// The id of the channel.
-        int importance = NotificationManager.IMPORTANCE_HIGH;
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-                .setContentTitle("Taller de Fundamentos de Scrum")
-                .setContentText("En 1 hora comienza el evento en 11A-A01")
-                .setAutoCancel(true)
-                .setSmallIcon(R.drawable.mapbox_mylocation_icon_default)
-                .setChannelId(CHANNEL_ID)
-                .setLargeIcon(((BitmapDrawable) context.getResources().getDrawable(R.drawable.mapbox_mylocation_icon_default)).getBitmap())
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-        Intent intent = new Intent(context, EventsActivity.class);
-        PendingIntent activity = PendingIntent.getActivity(context, notificationId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        builder.setContentIntent(activity);
-
-        Notification notification = builder.build();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {       // For Oreo and greater than it, we required Notification Channel.
-            CharSequence name_ = "My New Channel";                   // The user-visible name of the channel.
-            NotificationManager mNotificationManager;
-            mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,name_, importance); //Create Notification Channel
-            mNotificationManager.createNotificationChannel(channel);
-            //  mNotificationManager.notify(notificationId, notification);
-        }
-
-        Intent notificationIntent = new Intent(context, AlarmReceiver.class);
-        notificationIntent.putExtra(AlarmReceiver.NOTIFICATION_ID, notificationId);
-        notificationIntent.putExtra(AlarmReceiver.NOTIFICATION, notification);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationId, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        Calendar timeCal = Calendar.getInstance();
-        timeCal.set(Calendar.HOUR_OF_DAY, 0);
-        timeCal.set(Calendar.MINUTE, 30);
-        timeCal.set(Calendar.SECOND, 0);
-        timeCal.set(Calendar.DAY_OF_MONTH, 22);
-        timeCal.set(Calendar.MONTH, 7-1);
-        timeCal.set(Calendar.YEAR, 2019);
-
-//        long futureInMillis = SystemClock.elapsedRealtime() + delay;
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        //      alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, timeCal.getTimeInMillis(), pendingIntent);
-
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         String zoneArea = "";
         if (requestCode == Constants.EVENTS_INFO_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
+                // getViewHolder().getEventsPageAdapter().getRemindersTab().loadReminders();
                 if(Objects.requireNonNull(data.getExtras()).containsKey(Constants.SELECTED_GTSI_CODE)){
                     zoneArea = data.getExtras().getString(Constants.SELECTED_GTSI_CODE);
                     if(zoneArea.trim().length() > 0){

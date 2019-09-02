@@ -30,6 +30,7 @@ import espol.edu.ec.espolguide.controllers.adapters.ReminderAdapter;
 import espol.edu.ec.espolguide.utils.Constants;
 import espol.edu.ec.espolguide.utils.SessionHelper;
 import espol.edu.ec.espolguide.utils.User;
+import espol.edu.ec.espolguide.utils.Util;
 
 public class RemindersFragment  extends Fragment {
     public static final String LOAD_REMINDERS_STARTED = "load_reminders_started";
@@ -53,19 +54,6 @@ public class RemindersFragment  extends Fragment {
         super.onActivityCreated(savedInstanceState);
         loadReminders();
     }
-
-/**    private class RemindersLoader extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            String reminder = "001;Charla 'Inteligencia Artificial en la Industria;11A-A103 - Auditorio de FIEC;11h00;25/06/2019;Recordar 1 hora antes";
-            remindersList = new ArrayList<>();
-            remindersList.add(reminder);
-            reminderAdapter = new ReminderAdapter(getActivity(), remindersList);
-            ListView remindersLv = (ListView) getView().findViewById(R.id.events_lv);
-            remindersLv.setAdapter(reminderAdapter);
-            return null;
-        }
-    }*/
 
     public void loadReminders(){
         new RemindersLoader().execute(this.getActivity());
@@ -109,7 +97,7 @@ public class RemindersFragment  extends Fragment {
                             String eventTime = eventDateTime.split(" ")[1];
 
                             String reminder = notificationId + ";" + eventName + ";" + "11A-A103 - Auditorio de FIEC" +
-                                    ";" + eventTime + ";" + eventDate + ";" + "Recordar 1 hora antes" +
+                                    ";" + eventTime + ";" + eventDate + ";" + Util.getReminderTimeString(timeUnit, timeValue, "reminders_list") +
                                     ";" + eventId;
                             remindersList.add(reminder);
                         }

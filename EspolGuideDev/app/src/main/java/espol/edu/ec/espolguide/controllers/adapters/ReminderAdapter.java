@@ -204,14 +204,14 @@ public class ReminderAdapter extends BaseAdapter {
 
         holder.reminderTime_tv.setVisibility(View.VISIBLE);
 
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent infoIntent = new Intent(getActivity(), EventInfoActivity.class);
-  //              infoIntent.putExtra("event_id", eventId);
-                getActivity().startActivityForResult(infoIntent, Constants.EVENTS_INFO_REQUEST_CODE);
-            }
-        });
+//        view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent infoIntent = new Intent(getActivity(), EventInfoActivity.class);
+//                infoIntent.putExtra("event_id", eventId);
+//                getActivity().startActivityForResult(infoIntent, Constants.EVENTS_INFO_REQUEST_CODE);
+//            }
+//        });
 
         return view;
     }
@@ -252,11 +252,6 @@ public class ReminderAdapter extends BaseAdapter {
                 int id = item.getItemId();
 
                 switch(id) {
-                    case R.id.viewInformation:
-                        Intent infoIntent = new Intent(getActivity(), EventInfoActivity.class);
-                        infoIntent.putExtra("event_id", eventId);
-                        getActivity().startActivityForResult(infoIntent, Constants.EVENTS_INFO_REQUEST_CODE);
-                        return true;
                     case R.id.updateReminder:
                         getReminderDialog().show();
                         return true;
@@ -336,6 +331,8 @@ public class ReminderAdapter extends BaseAdapter {
                 try {
                     if(response.length() > 0){
                         getRemindersFragment().loadReminders();
+                        Toast.makeText(mContext, "Recordatorio removido.",
+                                                           Toast.LENGTH_SHORT).show();
                     }
                     else{
 
@@ -378,6 +375,8 @@ public class ReminderAdapter extends BaseAdapter {
                     if(response.length() > 0){
                         getReminderDialog().dismiss();
                         getRemindersFragment().loadReminders();
+                        Toast.makeText(mContext, "Recordatorio actualizado.",
+                                Toast.LENGTH_SHORT).show();
                     }
                     else{
 

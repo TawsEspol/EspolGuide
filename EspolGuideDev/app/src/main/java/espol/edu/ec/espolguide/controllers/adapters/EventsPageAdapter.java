@@ -34,6 +34,8 @@ public class EventsPageAdapter extends FragmentStatePagerAdapter {
         }
     }
 
+    public RemindersFragment getRemindersTab(){ return this.remindersTab; }
+
     @Override
     public int getCount() {
         return mNumOfTabs;
